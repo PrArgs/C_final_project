@@ -1,0 +1,4 @@
+/*This file contains the fuctions that will be used to convert the assembly code into machine code.
+one for instructions.
+and one for each type of directives.
+*/
