@@ -15,7 +15,7 @@
 typedef enum booleans{ 
     FALSE=0,
     TRUE=1 
-    } _bool;
+    } bool;
 
 /*Deffing the types of the commands*/
 typedef enum op_codes{
