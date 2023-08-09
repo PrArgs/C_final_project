@@ -64,6 +64,8 @@ typedef enum incoding_methods{
     RELOCATABLE=2
     } incoding_method;
 
+
+
 /*
 **************************************************
 ---------DEFINING THE 12 BIT WORDS TYPES----------

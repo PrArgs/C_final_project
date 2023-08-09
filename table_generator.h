@@ -21,7 +21,7 @@
 typedef struct macro
 {
     char *name;
-    char *data;
+    list *data;
     struct macro *next;    
 } macro;
 
@@ -48,10 +48,20 @@ macro_table *macro_table_init();
 
 /*This is the decleration of function wiil add a new data to the hash table
 @params macro_table: a pointer to the macro_table
-@params data: the macro to add
+@params name: the name of the macro to add
 @returns: 1 if the data was added successfully and 0 otherwise
 */
-bool add_macro(macro_table *macro_table, macro *data);
+bool add_new_macro(macro_table *macro_table, macro *name);
+
+/*This function will add new line to a macro in the macro table
+@params:
+    macro_table: a pointer to the macro table
+    data: the data to add
+    macro_name: the name of the macro to add the data to
+@returns: true if the data was added successfully and false otherwise
+*/
+bool add_to_macro(macro_table *macro_table, char *data, char *macro_name);
+
 
 /*This is the decleration of function wiil remove a data from the hash table
 @params macro_table: a pointer to the hash table
@@ -62,10 +72,10 @@ bool remove_macro(macro_table *macro_table, char *data);
 
 /*This is the decleration of function wiil check if a data is in the hash table 
 @params macro_table: a pointer to the hash table
-@params data: the data to check
+@params name: the the name of the macro to check
 @returns: 1 if the data is in the hash table and 0 otherwise
 */
-bool table_contains(macro_table *macro_table, char *data);
+bool table_contains(macro_table *macro_table, char *macro_name);
 
 /*This is the decleration of function wiil free the memory of the hash table
 @params map: a pointer to the hash table
@@ -88,6 +98,20 @@ char *print_macro_table(macro_table *table);
 
 
 
+/*Define a symbol in our assembler
+EXTERNAL: a symbol that is defined in another file value 0
+ENTRY: a symbol that is defined in the current file value 1
+NONE: a symbol that is not defined in any file value 2
+*/
+
+
+typedef enum symbol_type
+{
+    EXTERNAL=0,
+    ENTRY=1,
+    NONE=2
+} symbol_type;
+
 
 
 /*Define a symbols in our assembler
@@ -102,7 +126,7 @@ typedef struct symbol_list
 {
     char *name;
     long value;
-    bool is_external;
+    symbol_type symbol_type;
     struct symbol *next;
     
 } symbol_list;
