@@ -10,13 +10,14 @@ implementing the following data structures:
 
 typedef struct node
 {
-    char *data;
+    char *data[MAX_LINE_LENGTH];
     struct node *next;
+    
 } node;
 
 typedef struct list
 {
-    node *head;
+    node *head;    
 } list;
 
 /*This is the decleration of function wiil init a new list

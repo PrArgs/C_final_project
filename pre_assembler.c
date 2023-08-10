@@ -74,6 +74,11 @@ bool pre_assembler(char *file_name, macro_table *table){
             result = FALSE;
         }        
     }
+
+    /*free all alocaed memory*/
+    fclose(file);
+    fclose(file_as);
+    macro_table_free(macro_table);
     return result;
 }
 
@@ -111,6 +116,10 @@ bool can_ignore(char *line){
     return FALSE;
 }
 
+/*###########################
+#### Might be useless  ######
+#############################
+*/
 bool unfold_macros(char *line, macro_table *table, int *line_counter)
 {
     bool result = TRUE;
