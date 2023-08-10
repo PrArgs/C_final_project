@@ -21,7 +21,7 @@ bool pre_assembler(char *file_name, macro_table *table){
         return FALSE;
     }
     /*creat the .as file*/
-    char *file_name_as = strcat(strtok(file_name,"."), ".as");
+    char *file_name_as = strcat(strtok(file_name,"."), "_test.as");
     FILE *file_as = fopen(file_name_as, "w");
     if(!file_as){
         printf("Error: file %s could not be created\n", file_name_as);
