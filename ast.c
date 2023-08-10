@@ -1,0 +1,7 @@
+/*
+This file is the implementation of the ast.h file
+It contains the implementation of all the data structures used in the program
+Instruction struct
+Gideness struct
+Macro struct
+*/
