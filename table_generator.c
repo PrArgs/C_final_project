@@ -1,6 +1,18 @@
 #include "table_generator.h"
 
 
+macro *macro_init(char *name){
+
+    macro *macro = malloc(sizeof(macro));
+    if(macro == NULL){
+        printf("Error: memory allocation failed\n");
+        return NULL;
+    }
+    strcpy(macro->name, name);
+    macro->data = init_list();
+    macro->next = NULL;
+    return macro;
+}
 
 macro_table *macro_table_init(){
     macro_table *table = (macro_table *)malloc(sizeof(macro_table));
@@ -57,7 +69,8 @@ bool add_to_macro(macro_table *macro_table, char *data, char *macro_name){
     macro *current_macro = macro_table->macros_array[index];
     while(current_macro != NULL){
         if(strcmp(current_macro->name, macro_name) == 0){
-            add_to_list(current_macro->data, data);
+            node *new_node = node_init(data);
+            add_to_list(current_macro->data, new_node);
             return TRUE;
         }
         current_macro = current_macro->next;
@@ -67,11 +80,6 @@ bool add_to_macro(macro_table *macro_table, char *data, char *macro_name){
 
 bool remove_macro(macro_table *macro_table, char *data);
 
-/*This is the decleration of function wiil check if a data is in the hash table 
-@params macro_table: a pointer to the hash table
-@params name: the the name of the macro to check
-@returns: 1 if the data is in the hash table and 0 otherwise
-*/
 bool table_contains(macro_table *macro_table, char *macro_name){
     bool result = FALSE;
     int index = hash_function(macro_name);
@@ -84,7 +92,6 @@ bool table_contains(macro_table *macro_table, char *macro_name){
         current_macro = current_macro->next;
     }
 }
-
 
 bool free_macro_table(macro_table *macro_table){
     if(macro_table == NULL){
@@ -107,12 +114,6 @@ bool free_macro_table(macro_table *macro_table){
     return TRUE;
 }
 
-
-/*This function will return a pionter to the list of lines of a macro
-@params:
-    macro_table: a pointer to the macro table
-    macro_name: the name of the macro to get the lines of
-*/
 list *get_macro_lines(macro_table *macro_table,char *macro_name){
     if (!table_contains(macro_table, macro_name)){
         printf("Error: macro %s does not exists\n", macro_name);
