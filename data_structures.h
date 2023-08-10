@@ -31,7 +31,7 @@ list *list_init(char *data);
 @params data: the data to add
 @retuns : true if the data was added successfully and false otherwise
 */
-bool list_add(list *list, char *data);
+bool add_to_list(list *list, char *data);
 
 /*This is the decleration of function wiil remove a data from the list
 @params list: a pointer to the list
