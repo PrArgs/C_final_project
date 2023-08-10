@@ -2,12 +2,14 @@
 1. symbol table
 2. macro table
 */
+#ifndef TABLE_GENERATOR_H
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include "globals.h"
 #include "data_structures.h"
+
 
 /*Max size of a ligal table as a derectives of the memory size*/
 #define MAX_TABLE_SIZE 1023
@@ -20,7 +22,7 @@
 */
 typedef struct macro
 {
-    char *name;
+    char name[MAX_TABLE_SIZE];
     list *data;
     struct macro *next;    
 } macro;
@@ -36,6 +38,12 @@ typedef struct macro_table
 {
     macro **macros_array;    
 } macro_table;
+
+/*This function will return a pionter to a new macro
+@name: the name of the macro
+@returns: a pointer to the new macro
+*/
+macro *macro_init(char *name);
 
 
 /*This is the decleration of function wiil init a new hash table
@@ -228,6 +236,6 @@ bool default_compare_function(char *data1, char *data2)
 
 
 
-
+#endif
 
 

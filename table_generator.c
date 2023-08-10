@@ -38,18 +38,15 @@ bool add_new_macro(macro_table *macro_table, char *name){
         return FALSE;
     }
     int index = hash_function(name);
-    macro *new_macro = (macro *)malloc(sizeof(macro));
+    macro *new_macro = macro_init(name);
     if(new_macro == NULL){
         printf("Error: memory allocation failed\n");
         return FALSE;
     }
-    new_macro->name = name;
-    new_macro->data = init_list();
-    new_macro->next = NULL;
 
     if(macro_table->macros_array[index] != NULL)
     {
-        macro_table->macros_array[index] = &new_macro;
+        macro_table->macros_array[index] = new_macro;
     }
     else{
         macro *current_macro = macro_table->macros_array[index];

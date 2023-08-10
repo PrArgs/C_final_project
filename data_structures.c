@@ -1,61 +1,26 @@
 # include "data_structures.h"
 
-
-
-/*This is the decleration of function wiil add a new data to the list (each node in the list is unique)
-@params list: a pointer to the list
-@params data: the data to add
-@retuns : true if the data was added successfully and false otherwise
-*/
-bool add_to_list(list *list, char *data);
-
-/*This is the decleration of function wiil remove a data from the list
-@params list: a pointer to the list
-@params data: the data to remove
-@returns: true if the data was removed successfully and false otherwise
-*/
-bool list_remove(list *list, char *data);
-
-/*This is the decleration of function wiil check if a data is in the list
-@params list: a pointer to the list
-@params data: the data to check
-@returns: true if the data is in the list and false otherwise
-*/
-bool list_contains(list *list, char *data);
-
-/*This is the decleration of function wiil free the list
-@params list: a pointer to the list
-@returns: true if the list was freed successfully and false otherwise
-*/
-bool list_free(list *list);
-
 node *node_init(char *data){
     node *node = malloc(sizeof(node));
     if (!node){
         exit(1);/*exit if malloc fails*/
-    }
-    char *str = malloc(sizeof(char) * MAX_LINE_LENGTH);
-    if (!str){
-        exit(1);/*exit if malloc fails*/
-    }
-    strcpy(str, data);
-    node->data = str;
+    }    
+    strcpy(node->data, data);
     node->next = NULL;
     return node;
 }
 
-list *list_init(char *data)
+list *list_init()
 {  
     list *list = malloc(sizeof(list));
     if (!list){
        exit(1);/*exit if malloc fails*/
     }
-    node *head = node_init(data);
-    list->head = head;
+    list->head = NULL;
 }
 
-bool list_add(list *list, node *new_node){
-    if (!list->head){
+bool add_to_list(list *list, node *new_node){
+    if (!list->head){/*if the list is empty*/
         list->head = new_node;
         return TRUE;
     }
@@ -72,30 +37,29 @@ bool list_add(list *list, node *new_node){
     return FALSE;
 }
 
-bool list_remove(list *list, char *data){
+bool list_remove(list *list, node *r_node){
     node *current = list->head;
     node *previous = NULL;
     while(current){
-        if (strcmp(current->data, data) == 0){
-            if (!previous){ /*if the node to be removed is the head*/
-                list->head = current->next;
-            }
-            else
-            {
+        if (strcmp(current->data, r_node->data) == 0){
+            if (previous){/*if the node is not the first node in the list*/
                 previous->next = current->next;
             }
+            else{
+                list->head = current->next;
+            }            
             free(current);
             return TRUE;
         }
         previous = current;
         current = current->next;
     }
-    return FALSE;
 }
-bool list_contains(list *list, char *data){
+
+bool list_contains(list *list,  node *node_to_search){
     node *current = list->head;
     while(current){
-        if (strcmp(current->data, data) == 0){
+        if (strcmp(current->data, node_to_search->data) == 0){
             return TRUE;
         }
         current = current->next;
@@ -115,6 +79,13 @@ bool list_free(list *list){
     return TRUE;
 }
 
+void print_list(list *list){
+    node *current = list->head;
+    while(current){
+        printf("%s\n", current->data);
+        current = current->next;
+    }
+}
 
 
 

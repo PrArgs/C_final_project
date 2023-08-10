@@ -3,6 +3,7 @@ implementing the following data structures:
 3. List
 4. Map (Hash Table)
 */
+#ifndef DATA_STRUCTURES_H
 #include <stdlib.h>
 #include <string.h>
 #include "globals.h"
@@ -67,3 +68,4 @@ void print_list(list *list);
 
 
 
+#endif
