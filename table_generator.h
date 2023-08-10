@@ -51,7 +51,7 @@ macro_table *macro_table_init();
 @params name: the name of the macro to add
 @returns: 1 if the data was added successfully and 0 otherwise
 */
-bool add_new_macro(macro_table *macro_table, macro *name);
+bool add_new_macro(macro_table *macro_table, char *name);
 
 /*This function will add new line to a macro in the macro table
 @params:
@@ -61,7 +61,6 @@ bool add_new_macro(macro_table *macro_table, macro *name);
 @returns: true if the data was added successfully and false otherwise
 */
 bool add_to_macro(macro_table *macro_table, char *data, char *macro_name);
-
 
 /*This is the decleration of function wiil remove a data from the hash table
 @params macro_table: a pointer to the hash table
@@ -83,17 +82,20 @@ bool table_contains(macro_table *macro_table, char *macro_name);
 */
 bool free_macro_table(macro_table *macro_table);
 
-/*Adds a value to macro's data
+/*This function will return the list of lines of a macro
 @params:
     macro_table: a pointer to the macro table
-    data: the data to add
-    macro_name: the name of the macro to add the data to
-@returns: true if the data was added successfully and false otherwise
+    macro_name: the name of the macro to get the lines of
 */
-bool add_data_to_macro(macro_table *macro_table, char *data, char *macro_name);
+list *get_macro_lines(macro_table *macro_table,char *macro_name);
+
+/*This function will print a macro
+@params:
+    macro: a pointer to the macro to print
+*/
+void print_macro(macro *macro);
 
 /* A function that will return the string of all the macro table (for debugging)*/
-
 char *print_macro_table(macro_table *table);
 
 
