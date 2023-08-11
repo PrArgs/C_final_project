@@ -132,7 +132,6 @@ void print_macro(macro *macro){
     print_list(macro->data);
 }
 
-
 char *print_macro_table(macro_table *table){
     for (int i = 0; i < MAX_TABLE_SIZE; i++){
         macro *current_macro = table->macros_array[i];
@@ -143,56 +142,151 @@ char *print_macro_table(macro_table *table){
     }
 }
 
-
-
-
-symbol_list *init_symbol_list(void){
-    printf("init symbol list not implemented\n");
-    return NULL;
+symbol *symbol_init(char *name){
+    symbol *symbol = malloc(sizeof(symbol));
+    if(symbol == NULL){
+        printf("Error: memory allocation failed\n");
+        return NULL;
+    }
+    strcpy(symbol->name, name);
+    symbol->is_entry = FALSE;
+    symbol->is_external = FALSE;
+    return symbol;
 }
 
-
-/* A function that will add a new symbol to the symbol table
-returns TRUE if the symbol was added successfully
-returns FALSE if the symbol was not added successfully or the symbol already exists in the table*/
-
-int add_symbol(symbol_list *table, char *key, long value){
-    printf("add symbol not implemented\n");
-    return 0;
+void set_symbol_type(symbol *symbol, symbol_type type){
+    switch (type)
+    {   case EXTERNAL:
+            symbol->is_external = TRUE;
+            break;
+        case ENTRY:
+            symbol->is_entry = TRUE;
+            break;
+        default:
+            printf("Error: %d is invalid symbol type\n", type);
+            break;
+    }
 }
 
-
-/* A function that will remove a symbol from the symbol table and free the memory
-returns TRUE if the symbol was removed successfully
-returns FALSE if the symbol was not removed successfully or the symbol does not exist in the table*/
-
-int remove_symbol(symbol_list *table, char *key){
-    printf("remove symbol not implemented\n");
-    return 0;
+void set_symbol_value(symbol *symbol, long value){
+    if(symbol){
+        symbol->value = value;
+    }
+    else{
+        printf("Error: symbol is NULL\n");
+    }
 }
 
-
-/* A function that will search for a symbol in the symbol table and return a pionter to the symbol's address*/
-
-
-symbol_list *search_symbol(symbol_list *table, char *name){
-    printf("search symbol not implemented\n");
-    return NULL;
+char *print_symbol(symbol *symbol)
+{
+    char *result = "";
+    char **string[4] = {" ", " ", " ", " "};
+    if(symbol){
+        /*Turn each var to string*/
+        strcyp(string[0], symbol->name);
+        sprintf(string[1], "%ld", symbol->value);
+        if(symbol->is_entry){
+            strcpy(string[2], "True");
+        }
+        if(symbol->is_external){
+            strcpy(string[3], "True");
+        }
+        /*Concatenate all strings with tabs*/
+        result = strcat(result, string[0]);
+        result = strcat(result, "\t");
+        result = strcat(result, string[1]);
+        result = strcat(result, "\t");
+        result = strcat(result, string[2]);
+        result = strcat(result, "\t");
+        result = strcat(result, string[3]);
+        result = strcat(result, "\t");
+        return result;        
+    }
+    else{
+        printf("Error: symbol is NULL\n");
+        return NULL;
     }
 
-
-/* A function that will free the memory of all the symbols in the symbol table*/
-
-void free_symbol_list(symbol_list *table){
-    /*Print not implimnted yet*/
-    printf("free_symbol_list not implimnted yet\n");
 }
 
-/* A function that will print the symbol table (for debugging)*/
+symbol_list *init_symbol_list(void){
+    symbol_list *table = malloc(sizeof(symbol_list));
+    if(table == NULL){
+        printf("Error: memory allocation failed\n");
+        exit(1);
+    }
+    table->head = NULL;
+    table->tail = NULL;
+    return table;    
+}
+
+bool add_symbol(symbol_list *table, char *key, long value){
+    symbol *new_symbol = symbol_init(key); /*create new symbol no need to check if null because symbol_init does it*/
+    if(table->head == NULL){
+        table->head = new_symbol;
+        table->tail = new_symbol;
+        return TRUE;
+    }
+    else{
+        if(table->tail->next){/*check if tail next is null mainly for debugging*/
+            printf("Error: tail next is not NULL\n");
+            exit(1);
+        }
+        table->tail->next = new_symbol;
+        table->tail = new_symbol;
+        return TRUE;       
+    }
+}
+
+bool remove_symbol(symbol_list *table, char *key){
+    symbol *current_symbol = table->head;
+    symbol *prev_symbol = NULL;
+    while (current_symbol){
+        if(strcmp(current_symbol->name, key) == 0){
+            if(prev_symbol){
+                prev_symbol->next = current_symbol->next;
+            }
+            else{
+                table->head = current_symbol->next;
+            }
+            free(current_symbol);
+            return TRUE;
+        }
+        prev_symbol = current_symbol;
+        current_symbol = current_symbol->next;
+    }
+    return FALSE;
+}
+
+symbol_list *search_symbol(symbol_list *table, char *name){
+    symbol *current_symbol = table->head;
+    while (current_symbol){
+        if(strcmp(current_symbol->name, name) == 0){
+            return current_symbol;
+        }
+    }
+    printf("Error: symbol %s does not exist\n", name);
+    return NULL;
+}
+
+void free_symbol_list(symbol_list *table){
+    symbol *current_symbol = table->head;
+    symbol *prev_symbol = NULL;
+    while (current_symbol){
+        prev_symbol = current_symbol;
+        current_symbol = current_symbol->next;
+        free(prev_symbol);
+    }
+    free(table);
+}
 
 void print_symbol_list(symbol_list *table){
-    /*Print not implimnted yet*/
-    printf("print_symbol_list not implimnted yet\n");
+    printf("Symbol table:\t|\t value\t|\t is_entry\t|\t is_external\t|\n");
+    symbol *current_symbol = table->head;
+    while (current_symbol){
+        printf("%s\n", print_symbol(current_symbol));
+        current_symbol = current_symbol->next;
+    }
 }
 
 

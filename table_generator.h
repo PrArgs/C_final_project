@@ -129,16 +129,24 @@ typedef enum symbol_type
     name: the name of the symbol
     value: the value of the symbol (the address in the memory)
     is_external: a boolean that is true if the symbol is external and false otherwise
+    is_entry: a boolean that is true if the symbol is entry and false otherwise
     next: a pointer to the next symbol in the list (for the symbol table)
 the sybol list will in time be split into two lists, one for external symbols and one for internal symbols in the second pass
 */
-typedef struct symbol_list
+typedef struct symbol
 {
     char *name;
     long value;
-    symbol_type symbol_type;
-    struct symbol *next;
+    bool is_external;
+    bool is_entry;
+    struct symbol_list *next;
     
+} symbol;
+
+typedef struct symbol_list
+{
+    symbol *head;
+    symbol  *tail; 
 } symbol_list;
 
 
@@ -151,10 +159,19 @@ typedef struct symbol_list
 } symbol_list;
 */
 
+symbol *symbol_init(char *name);
+
+void set_symbol_type(symbol *symbol, symbol_type type);
+
+void set_symbol_value(symbol *symbol, long value);
+
+char *print_symbol(symbol *symbol);
+
+
 /* A function that will create a new symbol table
 returns a pointer to the new table*/
 
-symbol_list *init_symbol_list(void);
+symbol_list *init_symbol_list();
 
 
 /* A function that will add a new symbol to the symbol table
