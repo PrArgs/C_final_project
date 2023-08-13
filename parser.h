@@ -21,6 +21,9 @@ or an .as file with all the errors that were found in the pre assembling and par
 #include "util.h"
 #include "machine_code.h"
 
+data_word *data_image[MEMORY_SIZE];
+word *instruction_image[MEMORY_SIZE];
+
 
 /*This function will iterate over the lines of the .as file for the first time in order to build the following:
 1. Symbol table
@@ -31,9 +34,7 @@ or an .as file with all the errors that were found in the pre assembling and par
 in addition it will check for errors in the .as file and print them to the same file
 
 @param line - the line of the .as file
-@param symbol_table - the symbol
-@param entry_table - the entry table
-@param extern_table - the extern table
+@param symbol_table - the symbol table
 @param data_image - the data image
 @param instruction_image - the instruction image
 @param data_counter - the data counter
@@ -42,11 +43,7 @@ in addition it will check for errors in the .as file and print them to the same 
 
 */
 
-/*bool first_parse(char *line, symbol_table *symbol_table, entry_table *entry_table, extern_table *extern_table, data_image *data_image, 
-                instruction_image *instruction_image, int *data_counter, int *instruction_counter); 
-
-                ***---------IMPLEMET AFTER THE DATA STRUCTURES ARE DONE----------***              
-                */
+bool first_parse(char *line, symbol_list *symbol_table, data_word *data_image, instrction_word *instruction_image, int *data_counter, int *instruction_counter); 
 
 /*This function will iterate over the lines of the .as file for the second time in order to:
 1. inset missing data to instruction image
