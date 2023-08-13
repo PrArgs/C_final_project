@@ -1,0 +1,9 @@
+# ninja log v5
+5	1096	7136287954900000	build.ninja	86b430636b3513a8
+14	374	7136292784510000	CMakeFiles/C_final_project.dir/ast.c.obj	d391792f2db5262f
+40	410	7136292784520000	CMakeFiles/C_final_project.dir/machine_code.c.obj	a38a0a36ccc99ce4
+53	599	7136292786310000	CMakeFiles/C_final_project.dir/util.c.obj	8d73f4129695cd6e
+26	673	7136292787510000	CMakeFiles/C_final_project.dir/data_structures.c.obj	897bcebb3390e12c
+34	714	7136292787960000	CMakeFiles/C_final_project.dir/file_generator.c.obj	5f0206b6826f5d9d
+13	464	7136294424130000	CMakeFiles/C_final_project.dir/file_generator.c.obj	5f0206b6826f5d9d
+34	566	7136294425150000	CMakeFiles/C_final_project.dir/table_generator.c.obj	5d0d6054c528670c

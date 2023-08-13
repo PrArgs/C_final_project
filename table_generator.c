@@ -9,7 +9,7 @@ macro *macro_init(char *name){
         return NULL;
     }
     strcpy(macro->name, name);
-    macro->data = init_list();
+    macro->data = list_init();
     macro->next = NULL;
     return macro;
 }
@@ -37,7 +37,7 @@ bool add_new_macro(macro_table *macro_table, char *name){
         printf("Error: macro %s already exists\n", name);
         return FALSE;
     }
-    int index = hash_function(name);
+    int index = default_hash_function(name);
     macro *new_macro = macro_init(name);
     if(new_macro == NULL){
         printf("Error: memory allocation failed\n");
@@ -62,7 +62,7 @@ bool add_to_macro(macro_table *macro_table, char *data, char *macro_name){
         printf("Error: macro %s does not exists\n", macro_name);
         return FALSE;
     }
-    int index = hash_function(macro_name);
+    int index = default_hash_function(macro_name);
     macro *current_macro = macro_table->macros_array[index];
     while(current_macro != NULL){
         if(strcmp(current_macro->name, macro_name) == 0){
@@ -79,7 +79,7 @@ bool remove_macro(macro_table *macro_table, char *data);
 
 bool table_contains(macro_table *macro_table, char *macro_name){
     bool result = FALSE;
-    int index = hash_function(macro_name);
+    int index = default_hash_function(macro_name);
     macro *current_macro = macro_table->macros_array[index];
     while(current_macro){
         if(strcmp(current_macro->name, macro_name) == 0){
@@ -99,7 +99,7 @@ bool free_macro_table(macro_table *macro_table){
         while(current_macro){
             macro *temp = current_macro;
             current_macro = current_macro->next;
-            if (!free_list(temp->data)){
+            if (!list_free(temp->data)){
                 printf("Error: failed to free macro %s\n", temp->name);
                 return FALSE;
             }
@@ -116,7 +116,7 @@ list *get_macro_lines(macro_table *macro_table,char *macro_name){
         printf("Error: macro %s does not exists\n", macro_name);
         return NULL;
     }
-    int index = hash_function(macro_name);
+    int index = default_hash_function(macro_name);
     macro *current_macro = macro_table->macros_array[index];
     while(current_macro != NULL){
         if(strcmp(current_macro->name, macro_name) == 0){
@@ -183,7 +183,7 @@ char *print_symbol(symbol *symbol)
     char **string[4] = {" ", " ", " ", " "};
     if(symbol){
         /*Turn each var to string*/
-        strcyp(string[0], symbol->name);
+        strcpy(string[0], symbol->name);
         sprintf(string[1], "%ld", symbol->value);
         if(symbol->is_entry){
             strcpy(string[2], "True");

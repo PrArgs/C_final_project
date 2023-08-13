@@ -1,0 +1,3 @@
+G:/My Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/cmake-build-debug/CMakeFiles/C_final_project.dir
+G:/My Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/cmake-build-debug/CMakeFiles/edit_cache.dir
+G:/My Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/cmake-build-debug/CMakeFiles/rebuild_cache.dir

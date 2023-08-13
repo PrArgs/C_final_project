@@ -210,13 +210,9 @@ modulo the size of the map
 @params data: the data to hash
 
 */
-int default_hash_function(char *data,int arry_size)
+int default_hash_function(char *data)
 {
-
-    if (!arry_size)
-    {
-        arry_size=MEMORY_SIZE;
-    }
+    int arry_size = MEMORY_SIZE;
     int sum = 0, i=0,u=0;
     for (; i < strlen(data); i++)
     {
