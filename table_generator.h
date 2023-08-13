@@ -178,14 +178,14 @@ symbol_list *init_symbol_list();
 returns TRUE if the symbol was added successfully
 returns FALSE if the symbol was not added successfully or the symbol already exists in the table*/
 
-int add_symbol(symbol_list *table, char *key, long value);
+bool add_symbol(symbol_list *table, char *key, long value);
 
 
 /* A function that will remove a symbol from the symbol table and free the memory
 returns TRUE if the symbol was removed successfully
 returns FALSE if the symbol was not removed successfully or the symbol does not exist in the table*/
 
-int remove_symbol(symbol_list *table, char *key);
+bool remove_symbol(symbol_list *table, char *key);
 
 
 /* A function that will search for a symbol in the symbol table and return a pionter to the symbol's address*/
