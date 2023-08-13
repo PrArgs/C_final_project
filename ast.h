@@ -176,6 +176,7 @@ typedef struct line{
 
 
 
+list *line_to_list(char *line, long line_number);
 
 ast *line_to_ast(char *line, long line_number);
 

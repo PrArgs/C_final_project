@@ -21,6 +21,9 @@ or an .as file with all the errors that were found in the pre assembling and par
 #include "util.h"
 #include "machine_code.h"
 
+data_word *data_image[MEMORY_SIZE];
+word *instruction_image[MEMORY_SIZE];
+
 
 /*This function will iterate over the lines of the .as file for the first time in order to build the following:
 1. Symbol table
