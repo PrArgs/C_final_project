@@ -5,6 +5,7 @@ implementing the following data structures:
 */
 #ifndef DATA_STRUCTURES_H
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include "globals.h"
 
