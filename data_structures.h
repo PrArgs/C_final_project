@@ -26,7 +26,7 @@ typedef struct list
 @params data: a pointer to the data to store in the node
 @returns: a pointer to the new node
 */
-node *node_init(const char *data);
+node *node_init(char *data);
 
 /*This is the decleration of function wiil init a new list
 @returns: a pointer to the new list
