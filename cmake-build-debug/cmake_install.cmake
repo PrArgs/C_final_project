@@ -1,4 +1,4 @@
-# Install script for directory: G:/My Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project
+# Install script for directory: C:/Users/argam/Desktop/C_final_project
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "G:/My Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/argam/Desktop/C_final_project/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
