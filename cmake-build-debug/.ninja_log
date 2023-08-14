@@ -1,8 +1,15 @@
 # ninja log v5
-5	1096	7137081931856038	build.ninja	86b430636b3513a8
-14	374	7136292784510000	CMakeFiles/C_final_project.dir/ast.c.obj	d391792f2db5262f
-40	410	7136292784520000	CMakeFiles/C_final_project.dir/machine_code.c.obj	a38a0a36ccc99ce4
-53	599	7136292786310000	CMakeFiles/C_final_project.dir/util.c.obj	8d73f4129695cd6e
+5	1096	7137086807860978	build.ninja	86b430636b3513a8
 26	673	7136292787510000	CMakeFiles/C_final_project.dir/data_structures.c.obj	897bcebb3390e12c
+53	599	7136292786310000	CMakeFiles/C_final_project.dir/util.c.obj	8d73f4129695cd6e
+40	410	7136292784520000	CMakeFiles/C_final_project.dir/machine_code.c.obj	a38a0a36ccc99ce4
+14	374	7136292784510000	CMakeFiles/C_final_project.dir/ast.c.obj	d391792f2db5262f
 13	464	7136294424130000	CMakeFiles/C_final_project.dir/file_generator.c.obj	5f0206b6826f5d9d
 34	566	7136294425150000	CMakeFiles/C_final_project.dir/table_generator.c.obj	5d0d6054c528670c
+3	273	7137086807860978	build.ninja	9986665c21d05e8d
+7	342	7137086811932996	CMakeFiles/C_final_project.dir/ast.c.obj	35c6991463e9482f
+55	389	7137086812557857	CMakeFiles/C_final_project.dir/machine_code.c.obj	58a275330a4c1dac
+34	633	7137086814901055	CMakeFiles/C_final_project.dir/util.c.obj	ed18d35f75b3afec
+19	658	7137086815213479	CMakeFiles/C_final_project.dir/data_structures.c.obj	7c7e45b0e3379086
+12	734	7137086816153569	CMakeFiles/C_final_project.dir/file_generator.c.obj	401baec338f3d354
+66	947	7137086818353495	CMakeFiles/C_final_project.dir/table_generator.c.obj	a22082ed3ef3d9fc
