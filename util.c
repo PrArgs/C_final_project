@@ -2,4 +2,30 @@
 
 void free_theme_all(int num_of_pointers, ...)
 {
+    int i = num_of_pointers;
+    va_list valist;
+    va_start(valist, num_of_pointers);
+    while (i > 0)
+    {
+        free(va_arg(valist, void *));/*FIX MEEEEEEEEE*/
+        i--;
+    }
+
+    
+    
+}
+
+char *remove_first_word(char *current_line){
+    char *result;
+    int i;
+    while (current_line[i] != ' ')
+    {
+        if(current_line[i] != '\0'){
+            printf("you inserted an invalid command %s\n", current_line);
+            exit(1);
+        }
+        i++;
+    }
+    result = strcpy(result, current_line + i);
+    return result;   
 }

@@ -169,6 +169,9 @@ ast_line *ast_to_word(char *line);
 /*This part will contain function designed for checking legality and set error if needed*/
 bool is_label(char *first_frase);
 bool ligal_label(char *first_frase);
+ast_line *build_ast(char *current_line,symbol_list *symbol_table,long *data_counter,long *instruction_counter,char *error_msg,char *tmp_lable ,data_word *data_image[], instruction_word *instruction_image[]);
+bool is_guidance_of_label(char *frase);
+
 
 
 
