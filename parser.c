@@ -6,6 +6,7 @@ bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter,
         printf("Error: file %s does not exist\n", file_name);
         return FALSE;
     }
+    bool *label_flag = FALSE;
     char *current_line;
     bool result = TRUE;
     char *first_frase;
@@ -13,8 +14,8 @@ bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter,
     char *tmp_lable;
     char *error_msg;
     ast_line *ast_line = NULL;
-    data_word *data_image[]= malloc(sizeof(data_word) * MEMORY_SIZE);
-    instruction_word *instruction_image[] = malloc(sizeof(instruction_word) * MEMORY_SIZE);
+    data_word *data_image= malloc(sizeof(data_word) * MEMORY_SIZE) = {NULL}};
+    instruction_word *instruction_image = malloc(sizeof(instruction_word) * MEMORY_SIZE) = {NULL};
 
 
     
