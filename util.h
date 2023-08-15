@@ -28,6 +28,8 @@ char *get_second_word(char *line){
     return second_word;
 }
 
+char *remove_first_word(char *current_line);
+
 
 #endif
 
