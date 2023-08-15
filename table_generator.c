@@ -151,36 +151,50 @@ symbol *symbol_init(char *name){
     strcpy(symbol->name, name);
     symbol->is_entry = FALSE;
     symbol->is_external = FALSE;
+    symbol->value = -1;
+    symbol->is_data = FALSE;
     return symbol;
 }
 
-void set_symbol_type(symbol *symbol, symbol_type type){
-    switch (type)
+char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type *type){
+    symbol *tmp_symbol = get_symbol(table, symbol_name);
+    char *result = "";
+    int symbol_type = type;
+    switch (symbol_type)
     {   case EXTERNAL:
-            symbol->is_external = TRUE;
+            tmp_symbol->is_external = TRUE;
             break;
         case ENTRY:
-            symbol->is_entry = TRUE;
+            tmp_symbol->is_entry = TRUE;
             break;
         default:
-            printf("Error: %d is invalid symbol type\n", type);
+            sprintf(result, "Error: %d is an invalid symbol type", type);
             break;
     }
+    return result;
 }
 
-void set_symbol_value(symbol *symbol, long value){
-    if(symbol){
-        symbol->value = value;
+char *set_symbol_value(symbol_list *table,char *symbol_name, int *value){
+    symbol *tmp_symbol = get_symbol(table, symbol_name);
+    char *result = "";
+    if(tmp_symbol){
+        if(tmp_symbol->value >0){/*fix symbol check*/
+            sprintf(result, "Error: %s symbol already has a value e.g alreay declared", symbol_name);
+        }
+        else{
+            tmp_symbol->value = value;
+        }
     }
     else{
-        printf("Error: symbol is NULL\n");
+        sprintf(result, "Error: %s symbol does not exists", symbol_name);
     }
+    return result;
 }
 
 char *print_symbol(symbol *symbol)
 {
     char *result = "";
-    char **string[4] = {" ", " ", " ", " "};
+    char **string[5] = {" ", " ", " ", " ", " "};
     if(symbol){
         /*Turn each var to string*/
         strcpy(string[0], symbol->name);
@@ -191,6 +205,9 @@ char *print_symbol(symbol *symbol)
         if(symbol->is_external){
             strcpy(string[3], "True");
         }
+        if(symbol->is_data){
+            strcpy(string[4], "True");
+        }
         /*Concatenate all strings with tabs*/
         result = strcat(result, string[0]);
         result = strcat(result, "\t");
@@ -199,6 +216,8 @@ char *print_symbol(symbol *symbol)
         result = strcat(result, string[2]);
         result = strcat(result, "\t");
         result = strcat(result, string[3]);
+        result = strcat(result, "\t");
+        result = strcat(result, string[4]);
         result = strcat(result, "\t");
         return result;        
     }
@@ -220,8 +239,12 @@ symbol_list *init_symbol_list(void){
     return table;    
 }
 
-bool add_symbol(symbol_list *table, char *key, long value){
+bool add_symbol(symbol_list *table, char *key){
     symbol *new_symbol = symbol_init(key); /*create new symbol no need to check if null because symbol_init does it*/
+    if(!new_symbol){
+        printf("Error: failed to create new symbol\n");
+        exit(1);
+    }
     if(table->head == NULL){
         table->head = new_symbol;
         table->tail = new_symbol;
@@ -258,7 +281,7 @@ bool remove_symbol(symbol_list *table, char *key){
     return FALSE;
 }
 
-symbol_list *search_symbol(symbol_list *table, char *name){
+symbol *search_symbol(symbol_list *table, char *name){
     symbol *current_symbol = table->head;
     while (current_symbol){
         if(strcmp(current_symbol->name, name) == 0){

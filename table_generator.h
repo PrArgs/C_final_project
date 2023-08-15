@@ -118,7 +118,7 @@ typedef enum symbol_type
 {
     EXTERNAL=0,
     ENTRY=1,
-    NONE=2
+    
 } symbol_type;
 
 /*Define a symbols in our assembler
@@ -133,9 +133,10 @@ the sybol list will in time be split into two lists, one for external symbols an
 typedef struct symbol
 {
     char *name;
-    long value;
-    bool is_external;
-    bool is_entry;
+    int *value;
+    bool *is_external;
+    bool *is_entry;
+    bool *is_data;
     struct symbol_list *next;
     
 } symbol;
@@ -156,9 +157,11 @@ typedef struct symbol_list
 */
 symbol *symbol_init(char *name);
 
-void set_symbol_type(symbol *symbol, symbol_type type);
+char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type *type);
 
-void set_symbol_value(symbol *symbol, long value);
+char *set_symbol_value(symbol_list *table,char *symbol_name, int *value);
+
+bool *set_symbol_is_data(symbol_list *table,char *symbol_name, bool *is_data);
 
 char *print_symbol(symbol *symbol);
 
