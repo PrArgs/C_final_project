@@ -10,6 +10,7 @@ implementing the following data structures:
 #include "globals.h"
 
 
+
 typedef struct node
 {
     char *data[MAX_LINE_LENGTH];
