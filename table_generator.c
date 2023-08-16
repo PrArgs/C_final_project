@@ -159,6 +159,10 @@ symbol *symbol_init(char *name){
 char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type *type){
     symbol *tmp_symbol = get_symbol(table, symbol_name);
     char *result = "";
+    if(search_symbol(table, symbol_name) == NULL){
+        sprintf(result, "Error: %s symbol does not exist", symbol_name);
+        return result;
+    }
     int symbol_type = type;
     switch (symbol_type)
     {   case EXTERNAL:
@@ -243,7 +247,7 @@ bool add_symbol(symbol_list *table, char *key){
     symbol *new_symbol = symbol_init(key); /*create new symbol no need to check if null because symbol_init does it*/
     if(!new_symbol){
         printf("Error: failed to create new symbol\n");
-        exit(1);
+        return FALSE;
     }
     if(table->head == NULL){
         table->head = new_symbol;
@@ -253,7 +257,7 @@ bool add_symbol(symbol_list *table, char *key){
     else{
         if(table->tail->next){/*check if tail next is null mainly for debugging*/
             printf("Error: tail next is not NULL\n");
-            exit(1);
+            return FALSE;
         }
         table->tail->next = new_symbol;
         table->tail = new_symbol;
@@ -288,7 +292,6 @@ symbol *search_symbol(symbol_list *table, char *name){
             return current_symbol;
         }
     }
-    printf("Error: symbol %s does not exist\n", name);
     return NULL;
 }
 

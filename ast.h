@@ -111,13 +111,9 @@ typedef struct instruction_word{
     unsigned int dest_add:3;
     unsigned int op_code:4;
     unsigned int source_add:3;
-    unsigned int dest_val:2;
-    unsigned int source_val:2;
     } instruction_word;
 
-/*Deffing a word*/
-typedef struct ast_line{
-    char *label;
+typedef struct word{
     union word_type{
         data_word *data_word;
         register_word *register_word;
@@ -125,6 +121,12 @@ typedef struct ast_line{
         instruction_word *instruction_word;
         guidance_word *guidance_word;
         } word_type;
+    } word;
+
+/*Deffing a word*/
+typedef struct ast_line{
+    char *label;
+    word *word[3];
     char *error;
     } ast_line;
 

@@ -29,3 +29,12 @@ char *remove_first_word(char *current_line){
     result = strcpy(result, current_line + i);
     return result;   
 }
+
+char *toLowerCase(char *str){
+    char *result;
+    result = strcpy(result, str);
+    for (int i = 0; result[i]; i++) {
+        str[i] = tolower(result[i]);
+    }
+    return result;
+}

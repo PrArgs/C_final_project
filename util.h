@@ -7,6 +7,7 @@ distructors (freeing memory by type)
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 
 /*
@@ -29,6 +30,8 @@ char *get_second_word(char *line){
 }
 
 char *remove_first_word(char *current_line);
+
+char *toLowerCase(char *str);
 
 
 #endif
