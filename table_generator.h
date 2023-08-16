@@ -6,6 +6,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <ctype.h>
 #include <string.h>
 #include "globals.h"
 #include "data_structures.h"
@@ -127,6 +128,7 @@ typedef enum symbol_type
     value: the value of the symbol (the address in the memory)
     is_external: a boolean that is true if the symbol is external and false otherwise
     is_entry: a boolean that is true if the symbol is entry and false otherwise
+    is_data: a boolean that is true if the symbol is data and false otherwise
     next: a pointer to the next symbol in the list (for the symbol table)
 the sybol list will in time be split into two lists, one for external symbols and one for internal symbols in the second pass
 */
@@ -137,7 +139,8 @@ typedef struct symbol
     bool *is_external;
     bool *is_entry;
     bool *is_data;
-    struct symbol_list *next;
+    char *error; 
+    struct symbol *next;
     
 } symbol;
 

@@ -17,6 +17,7 @@ bool is_label(char *first_frase){
     }    
     return TRUE;
 }
+
 bool ligal_label(char *first_frase){
     /*too long*/
     if (strlen(first_frase) > MAX_LABEL_LEN){
@@ -26,62 +27,188 @@ bool ligal_label(char *first_frase){
     else if (first_frase[0] < 'A' || first_frase[0] > 'Z'){
         return FALSE;
     }
+}
 
-bool *parse_data(char *rest,data_word *data_image[],long *data_counter,char *error_msg){
-    bool *result = TRUE; 
-    rest = strtok(rest,",");
-
-    if(strcmp(frase,".data") == 0){ 
-        while(strcmp(rest,"\n") != 0){
-            int num = atoi(rest);
-            if(legal_num(num)){
-                strcpy(error_msg,"");                        
-            }
-            else{
-                *result = FALSE;
-                strcpy(error_msg,"Error: illegal number\n");
-            }
-            word *tmp_word = init_data_in_data(num,error_msg);
-            data_image[*data_counter] = tmp_word;
-            *data_counter++;
-            rest = strtok(rest,",");
-        }
+bool legal_indirect_num(int num){
+    if (num > MAX_NUM || num < MIN_NUM){
+        return FALSE;
     }
-    else
-    {
-        while(strcmp(rest,"\n") != 0){
-            int i = 0;
-            int *val = 0;
-            while(rest[i] != '\0'){
-                *val = rest[i];
-                if(legal_char(rest[i])){
-                    strcpy(error_msg,"");                                                    
-                }
-                else{
-                    *result = FALSE;
-                    strcpy(error_msg,"Error: illegal char\n");
-                    *val = 0;
-                }
+    return TRUE;
+}
 
-                word *tmp_word = init_data_in_data(val,error_msg);
-                data_image[*data_counter] = tmp_word;
-                *data_counter++;
-                i++;
-            }
-            strcpy(error_msg,"");
-            if (rest = strtok(rest,",") != NULL){
-                *result = FALSE;
-                strcpy(error_msg,"Error: illegal string\n");
-            }
-            word *tmp_word = init_data_in_data(0,error_msg);
-            data_image[*data_counter] = tmp_word;
-            *data_counter++;
-        }
+bool legal_reg(char *reg){    
+    if (reg[0] != 'r' || reg[1] < '0' || reg[1] > '7' || reg[2] != '\0'){
+        return FALSE;
     }
+    return TRUE;
+}
+
+bool legal_data_num(int num){
+    if (num > MAX_NUM || num < MIN_NUM){
+        return FALSE;
+    }
+    return TRUE;
+}
+
+bool legal_char(char c){
+    if (c < 0 || c > 127){
+        return FALSE;
+    }
+    return TRUE;
+}
+
+word *init_data_in_data(int num,char *error_msg)
+{
+    char *error;
+    int defualt_val = 0;
+    if(!legal_data_num(num)){
+        sprintf(error,"Error: %d is illegal number\n" , num);
+        strcat(error_msg,error);
+        num = defualt_val;
+    }
+    word *result = (word *)malloc(sizeof(word));
+    if (result == NULL){
+        printf("Error: unable to allocate memory\n");
+        exit(1);
+    }
+    data_word *data_word = (data_word *)malloc(sizeof(data_word));
+    if (result == NULL){
+        printf("Error: unable to allocate memory\n");
+        exit(1);
+    }
+    data_word->data = num;
+    result->data = data_word;
+    result->error = error_msg;
     return result;
 }
 
-bool *parse_extern(char *args, symbol_list *symbol_table,char *error_msg){
+bool loop_over_num(char *args,data_word *data_image[],long *data_counter,char *error_msg){
+    bool result = (strcmp(error_msg,"") == 0)? TRUE : FALSE;
+    int i = 0;
+    int len = strlen(args);
+    char *buffer = "";        
+    bool dubble_comma = TRUE;/*first arg can't be a comma*/
+    bool no_delimiter = FALSE; /*Flag that locates 2 diffrent numbers without a delimiter*/ 
+
+    while(i<len){
+        while(args[i] != '/n'){
+            strcpy(buffer,"");
+            if(args[i] == ' '){
+                if (strcmp(buffer,"") != 0){/*ignors befor comma or indicat 2 diffrent numbers without a delimiter*/
+                    no_delimiter = TRUE;
+                }
+                i++;
+            }
+            else if(args[i] == ',')
+            {
+                if(dubble_comma){
+                    *result = FALSE;
+                    strcpy(error_msg,"Error: dubble comma\n");
+                    i++;
+                }
+                else{
+                    if(args[i+1] == "\n"){
+                        restult = FALSE;
+                        strcpy(error_msg,"Error: can't end with a comma\n");
+                    }                
+                    num = atoi(buffer);
+                    strcpy(buffer,"");
+                    dubble_comma = TRUE;
+                    no_delimiter = FALSE;
+                    i++;
+                    break;
+                }
+            }
+            /*Checks if char is a digit*/
+            else if(args[i] >= '0' && args[i] <= '9'){
+                if(no_delimiter){
+                    *result = FALSE;
+                    strcpy(error_msg,"Error: missing delimiter\n");
+                    num = atoi(buffer);
+                    strcpy(buffer,"");
+                    dubble_comma = FALSE;
+                    no_delimiter = FALSE;                    
+                    break;
+                }
+                strcat(buffer,args[i]);
+                dubble_comma = FALSE;
+            }
+            else if(args[i+1] == "\n"){
+                if(dubble_comma){
+                    printf("Error: can't end with a comma\n");
+                    return FALSE;
+                }
+                else{
+                    num = atoi(buffer);
+                    i++;
+                    break;
+                }
+            }
+            else{
+                *result = FALSE;
+                strcpy(error_msg,"Error: illegal char\n");
+                if(strcmp(buffer,"") != 0){
+                    num = atoi(buffer);
+                    strcpy(buffer,"");
+                    dubble_comma = FALSE;
+                    no_delimiter = FALSE;
+                    i++;
+                    break;
+                }                
+            }
+        }
+        word *tmp_word = init_data_in_data(num,error_msg);
+        data_image[*data_counter] = tmp_word;
+        *data_counter++;
+    }    
+    return result;
+}
+
+bool loop_over_string(char *rest,data_word *data_image[],long *data_counter,char *error_msg){
+    bool result = (strcmp(error_msg,"") == 0)? TRUE : FALSE;
+    int i = 0;
+    int *val = 0;
+    while(strcmp(rest,"\n") != 0){
+        while(rest[i] != '\0'){
+            *val = rest[i]; /*Get the ascii value of the char*/
+            if(legal_char(rest[i])){
+                strcpy(error_msg,"");                                                    
+            }
+            else{
+                result = FALSE;
+                strcpy(error_msg,"Error: illegal char\n");
+                *val = 0;
+            }
+
+            word *tmp_word = init_data_in_data(val,error_msg);
+            data_image[*data_counter] = tmp_word;
+            *data_counter++;
+            i++;
+        }
+        strcpy(error_msg,"");
+        if (rest = strtok(rest,",") != NULL){
+            *result = FALSE;
+            strcpy(error_msg,"Error: illegal string\n");
+        }
+        word *tmp_word = init_data_in_data(0,error_msg);
+        data_image[*data_counter] = tmp_word;
+        *data_counter++;
+    }
+}
+
+
+
+bool parse_data(char *data_op,char *args,data_word *data_image[],long *data_counter,char *error_msg){    
+    if(strcmp(data_op,".data") == 0){
+        return loop_over_num(args,data_image,data_counter,error_msg);
+    }
+    else
+    {
+        return loop_over_string(args,data_image,data_counter,error_msg);        
+    }
+}
+
+bool parse_extern(char *args, symbol_list *symbol_table,char *error_msg){
     bool *result = TRUE;
     char *error;
     char *frase = strtok(args," ");
@@ -99,7 +226,7 @@ bool *parse_extern(char *args, symbol_list *symbol_table,char *error_msg){
         }
         frase = strtok(NULL,",");
     }
-    return result;
+    return *result;
 }
 
 int find_instructio(char *op_code char *error_msg){
@@ -153,7 +280,7 @@ int find_instructio(char *op_code char *error_msg){
     return -30;
 }
 
-bool *parse_entry(char *args, symbol_list *symbol_table,char *error_msg){
+bool parse_entry(char *args, symbol_list *symbol_table,char *error_msg){
     bool *result = TRUE;
     char *error;
     char *frase = strtok(args," ");
@@ -172,7 +299,7 @@ bool *parse_entry(char *args, symbol_list *symbol_table,char *error_msg){
     }
     return result;
 }
-
+/*
 bool *build_ast(char *current_line,symbol_list *symbol_table,long *data_counter,long *instruction_counter,char *error_msg,char *tmp_lable ,data_word *data_image[],
  instruction_word *instruction_image[],char *lable){
     bool *result = TRUE;
@@ -182,7 +309,7 @@ bool *build_ast(char *current_line,symbol_list *symbol_table,long *data_counter,
     symbol *tmp_symbol;
     label_flag = (lable != NULL)? TRUE:FALSE;
     char *frase = strtok(current_line," ");
-    char *rest = strtok(NULL,"\n");/*The line without the first word*/
+    char *rest = strtok(NULL,"\n");/*The line without the first word
 
     if ((strcmp(frase,".data") == 0) || (strcmp(frase,".string") == 0))
     {
@@ -194,7 +321,7 @@ bool *build_ast(char *current_line,symbol_list *symbol_table,long *data_counter,
             }
             else{
                 *data_counter++;
-                /*Add lable to data image*/
+                /*Add lable to data image
                 word *tmp_word = init_lable_in_data(lable,error_msg);
                 data_image[*data_counter] = tmp_word;                
             }
@@ -216,7 +343,7 @@ bool *build_ast(char *current_line,symbol_list *symbol_table,long *data_counter,
             }
             else{
                 *instruction_counter++;
-                /*Add lable to instruction image*/
+                /*Add lable to instruction image
                 word *tmp_word = init_lable_in_instruction(lable,error_msg);
                 instruction_image[*instruction_counter] = tmp_word;                
             }
@@ -225,24 +352,20 @@ bool *build_ast(char *current_line,symbol_list *symbol_table,long *data_counter,
         return parse_operation(frase,rest,symbol_table,instruction_counter,error_msg);
     }
     return result;   
-    
-    
-
-
-
  }
+ */
 
 
-bool *is_guidance_of_label(char *frase){
+bool is_guidance_of_label(char *frase){
     printf("Not implemented yet\n");
     return FALSE;
 }
 
-bool *is_guidnace_of_data(char *frase){
+bool is_guidnace_of_data(char *frase){
     if ((strcmp(frase,".data") == 0) || (strcmp(frase,".string") == 0)){
         return TRUE;
     }
     return FALSE;
 }
     
-}
+

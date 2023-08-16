@@ -79,8 +79,7 @@ FOR DATA
 */
 /*Define data word*/
 typedef struct data_word{
-    unsigned int ARE:2;
-    unsigned int data:10;
+    unsigned int data:12;
     } data_word;
 
 /*Define register word*/
@@ -114,13 +113,14 @@ typedef struct instruction_word{
     } instruction_word;
 
 typedef struct word{
-    union word_type{
+    union *word_type{
         data_word *data_word;
         register_word *register_word;
         immediate_direct_word *immediate_direct_word;
         instruction_word *instruction_word;
         guidance_word *guidance_word;
         } word_type;
+    char *error;
     } word;
 
 /*Deffing a word*/

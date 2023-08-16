@@ -142,8 +142,24 @@ char *print_macro_table(macro_table *table){
     }
 }
 
-symbol *symbol_init(char *name){
+bool ligal_label(char *label, char *error_massage){
+    if(label == NULL){
+        return FALSE;
+    }
+    if(strlen(label) > MAX_LABEL_LENGTH){
+        strcat(error_massage,"Error: label is too long\n");
+        return FALSE;
+    }
+    if(isalpha(label[0])){
+        strcat(error_massage,"Error: label must start with a letter\n");
+        return FALSE;
+    }
+    return TRUE;
+}
+
+symbol *symbol_init(char *name, int *value, bool *is_data, char *error_massage){
     symbol *symbol = malloc(sizeof(symbol));
+    ligal_label(name, error_massage);
     if(symbol == NULL){
         printf("Error: memory allocation failed\n");
         return NULL;
@@ -153,6 +169,7 @@ symbol *symbol_init(char *name){
     symbol->is_external = FALSE;
     symbol->value = -1;
     symbol->is_data = FALSE;
+    strcpy(symbol->error, error_massage);
     return symbol;
 }
 
@@ -243,15 +260,21 @@ symbol_list *init_symbol_list(void){
     return table;    
 }
 
-bool add_symbol(symbol_list *table, char *key){
-    symbol *new_symbol = symbol_init(key); /*create new symbol no need to check if null because symbol_init does it*/
+bool add_symbol(symbol_list *table, char *key,bool *is_data, int *val, char *error_msg){
+    bool result = TRUE;
+    symbol *new_symbol = symbol_init(key, val, is_data, error_msg);
     if(!new_symbol){
         printf("Error: failed to create new symbol\n");
-        return FALSE;
+        exit(1);
     }
+
     if(table->head == NULL){
         table->head = new_symbol;
         table->tail = new_symbol;
+        if(new_symbol->error != NULL){
+            char *result = strcat("Error: ", new_symbol->error);
+            result = FALSE;
+        }
         return TRUE;
     }
     else{
@@ -261,6 +284,10 @@ bool add_symbol(symbol_list *table, char *key){
         }
         table->tail->next = new_symbol;
         table->tail = new_symbol;
+        if(new_symbol->error != NULL){
+            char *result = strcat("Error: ", new_symbol->error);
+            result = FALSE;
+        }
         return TRUE;       
     }
 }
