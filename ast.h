@@ -177,6 +177,6 @@ bool is_guidance_of_label(char *frase);
 
 
 
-
+void set_ligal_params(int *ins_code, int *ligal_add_source, int *ligal_add_dest, int *word_limit);
 
 

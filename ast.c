@@ -367,5 +367,163 @@ bool is_guidnace_of_data(char *frase){
     }
     return FALSE;
 }
+
+bool parse_instruction(int ins_code,char *args,instruction_word *instruction_image[],long *instruction_counter,char *error_msg){
+    instruction_word *tmp_instruction = malloc(sizeof(instruction_word));
+    if(tmp_instruction == NULL){
+        strcat(error_msg,"Error: unable to allocate memory\n");
+        exit(1);
+    }
+    bool result = (strcmp(error_msg,"") == 0)? TRUE:FALSE;
+    int *word_limit = 0;
+    char *error;
+    int *ligal_add_source = 0;
+    int *ligal_add_dest = 0;
+    set_ligal_params(ins_code,ligal_add_source,ligal_add_dest,word_limit);
+    switch(*word_limit){
+        case 0:
+        tmp_instruction->ARE = 0;
+        tmp_instruction->dest_add = 0;
+        tmp_instruction->op_code = ins_code;
+        tmp_instruction->source_add = 0;
+        break;
+
+        case 1:
+        tmp_instruction->ARE = 0;
+        tmp_instruction->dest_add = parse_single_oprand(args,ligal_add_dest,error_msg,instruction_image,instruction_counter);
+        tmp_instruction->op_code = ins_code;
+        tmp_instruction->source_add = 0;
+    }
+    return (strcmp(error_msg,"") == 0)? TRUE:FALSE;
+
+
+    
+}
+
+int parse_single_oprand(char *args, int *ligal_add_dest,char *error_msg,instruction_word *instruction_image[],long *instruction_counter){
+    char *arg = strtok(args,",");
+    int result = 0;
+    word *tmp_word = malloc(sizeof(word));
+    if(tmp_word == NULL){
+        strcat(error_msg,"Error: unable to allocate memory\n");
+        exit(1);
+    }
+    if (arg == NULL){
+        strcat(error_msg,"Error: missing argument\n");
+        free(tmp_word);
+        return -1;
+    }
+    if(args[0]== '@'){
+        if(args[1] == 'r' && args[2] >= '0' && args[2] <= '7'){
+            tmp_word->ARE = 0;
+            tmp_word->dest_add = 0;
+            tmp_word->op_code = 0;
+            tmp_word->source_add = args[2] - '0';
+            instruction_image[*instruction_counter] = tmp_word;
+            *instruction_counter++;
+            return 1;
+        }
+        else{
+            strcat(error_msg,"Error: invalid register\n");
+            free(tmp_word);
+            return -1;
+        }
+    }
+}
+
+void set_ligal_params(int *ins_code, int *ligal_add_source, int *ligal_add_dest, int *word_limit){
+    IMMEDIATE=1,
+    DIRECT=3,
+    REGISTER = 5
+    int *all= 
+    switch (*ins_code){
+        case MOV:
+            *word_limit = 2;
+            *ligal_add_source = IMMEDIATE+DIRECT+REGISTER;
+            *ligal_add_dest = DIRECT+REGISTER;
+            break;
+
+        case CMP:
+            *word_limit = 2;
+            *ligal_add_source = IMMEDIATE+DIRECT+REGISTER;
+            *ligal_add_dest = IMMEDIATE+DIRECT+REGISTER;
+            break;
+
+        case ADD:
+            *word_limit = 2;
+            *ligal_add_source = IMMEDIATE+DIRECT+REGISTER;
+            *ligal_add_dest = DIRECT+REGISTER;
+            break;
+
+        case SUB:
+            *word_limit = 2;
+            *ligal_add_source = IMMEDIATE+DIRECT+REGISTER;
+            *ligal_add_dest = DIRECT+REGISTER;
+            break;
+
+        case NOT:
+            *word_limit = 1;
+            *ligal_add_source = 0;
+            *ligal_add_dest = DIRECT+REGISTER;
+            break;  
+
+        case CLR:
+            *word_limit = 1;
+            *ligal_add_source = 0;
+            *ligal_add_dest = DIRECT+REGISTER;
+            break;
+
+        case LEA:
+            *word_limit = 2;
+            *ligal_add_source = DIRECT;
+            *ligal_add_dest = DIRECT+REGISTER;
+            break;
+        
+        case INC:
+            *word_limit = 1;
+            *ligal_add_source = 0;
+            *ligal_add_dest = DIRECT+REGISTER;
+            break;
+
+        case DEC:
+            *word_limit = 1;
+            *ligal_add_source = 0;
+            *ligal_add_dest = DIRECT+REGISTER;
+            break;
+
+        case JMP:
+            *word_limit = 1;
+            *ligal_add_source = 0;
+            *ligal_add_dest = DIRECT+REGISTER;
+            break;
+
+        case BNE:
+            *word_limit = 1;
+            *ligal_add_source = 0;
+            *ligal_add_dest = DIRECT+REGISTER;
+            break;
+
+        case RED:
+            *word_limit = 1;
+            *ligal_add_source = 0;
+            *ligal_add_dest = DIRECT+REGISTER;
+            break;
+
+        case RED:
+            *word_limit = 1;
+            *ligal_add_source = 0;
+            *ligal_add_dest = DIRECT+REGISTER;
+            break;
+
+        case PRN:
+            *word_limit = 1;
+            *ligal_add_source = 0;
+            *ligal_add_dest = IMMEDIATE+DIRECT+REGISTER;
+            break;
+
+        default:
+            *word_limit = 0;
+    }   
+}
     
 
