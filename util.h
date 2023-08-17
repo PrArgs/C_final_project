@@ -33,6 +33,8 @@ char *remove_first_word(char *current_line);
 
 char *toLowerCase(char *str);
 
+int *complement_2(int *num);
+
 
 #endif
 

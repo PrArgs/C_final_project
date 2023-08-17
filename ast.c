@@ -368,41 +368,104 @@ bool is_guidnace_of_data(char *frase){
     return FALSE;
 }
 
-bool parse_instruction(int ins_code,char *args,instruction_word *instruction_image[],long *instruction_counter,char *error_msg){
-    instruction_word *tmp_instruction = malloc(sizeof(instruction_word));
-    if(tmp_instruction == NULL){
-        strcat(error_msg,"Error: unable to allocate memory\n");
-        exit(1);
+void get_args(char *args,char *array[]){
+    int i = 0;
+    int j = 0;
+    boll reading_arg = FALSE;
+    bool no_delimiter = FALSE;
+    array[0] = "";
+    array[1] = "";
+    array[2] = "";
+    while(args[i] !='\n'){
+        if(args[i] == ','){
+            if(j > 0){/*Only the first arg can be followed by a comma*/
+                strcat(arry[2],sprintf("Error: the %s part harms the ligal format\n",args[i]));
+                break;
+            }            
+            else if(array[0] == ""){
+                strcat(arry[2],"Error: expected argument before comma\n");
+                break;
+            }
+            else{
+                reading_arg = FALSE;/*End of reading arg*/
+                no_delimiter = FALSE;
+                j++;
+            }
+        }/*End of comma*/
+        
+        else if(args[i] == ' ' || args[i] == '\t'){/*Handle white spaces*/
+            if(reading_arg)
+            {
+                if(arry[j] == '-' || arry[j] == '+'){/*if sign is not followed by a number*/
+                    strcat(arry[2],sprintf("Error: %s must be followed by a number\n"),arry[j]);                    
+                }
+                no_delimiter = TRUE;/*We risk having a number without a delimiter*/
+            }
+        }/*End of white space*/
+
+        else if(args[i] == '-' || args[i] == '+'){
+                if(no_delimiter){
+                    if(j == 0){
+                        strcat(arry[2],sprintf("Error: expected delimiter between arguments\n"));
+                        j++;
+                        reading_arg = TRUE;
+                        no_delimiter = FALSE;
+                    }
+                    else{/*We allready have 2 args*/
+                        strcat(arry[2],sprintf("Error: remove %s\n"),args[i]);
+                        break;
+                    }
+                }
+                else if(reading_arg){/*We are reading a number*/
+                    if(j == 0){
+                        strcat(arry[2],"Error: expected delimiter between arguments \n");
+                        j++;
+                        reading_arg = TRUE;
+                        no_delimiter = FALSE;
+                        strcat(array[j],args[i]);
+                    }
+                    else{/*We allready have 2 args*/
+                        strcat(arry[2],sprintf("Error: remove %s\n"),args[i]);
+                        break;
+                    }
+                }                
+                else{/*We are not reading a number*/
+                    reading_arg = TRUE;
+                    no_delimiter = FALSE;
+                    strcat(array[j],args[i]);
+                }
+            }/*End of sign*/
+
+        else{/*We have a valid char*/                    
+            if(no_delimiter){                
+                if(j == 0){/*No delimiter between first and second arg*/
+                    strcat(arry[2],"Error: expected delimiter between arguments\n");
+                    j++;
+                    strcat(array[j],args[i]);
+                    no_delimiter = FALSE;
+                }
+                else{/*Too many arguments*/
+                    strcat(arry[2],sprintf("Error: too many argumants remove %s\n"),args[i]);
+                    break;
+                }
+            }
+            else{
+                if(arry[j] == '+'){/*if sign is positive remove it*/ 
+                    strcpy(arry[j],args[i]);
+                }
+                else{
+                reading_arg = TRUE;
+                strcat(array[j],args[i]);
+                }
+            }/*End of Ligal char*/
+        }
+        i++;        
     }
-    bool result = (strcmp(error_msg,"") == 0)? TRUE:FALSE;
-    int *word_limit = 0;
-    char *error;
-    int *ligal_add_source = 0;
-    int *ligal_add_dest = 0;
-    set_ligal_params(ins_code,ligal_add_source,ligal_add_dest,word_limit);
-    switch(*word_limit){
-        case 0:
-        tmp_instruction->ARE = 0;
-        tmp_instruction->dest_add = 0;
-        tmp_instruction->op_code = ins_code;
-        tmp_instruction->source_add = 0;
-        break;
-
-        case 1:
-        tmp_instruction->ARE = 0;
-        tmp_instruction->dest_add = parse_single_oprand(args,ligal_add_dest,error_msg,instruction_image,instruction_counter);
-        tmp_instruction->op_code = ins_code;
-        tmp_instruction->source_add = 0;
-    }
-    return (strcmp(error_msg,"") == 0)? TRUE:FALSE;
-
-
-    
 }
 
-int parse_single_oprand(char *args, int *ligal_add_dest,char *error_msg,instruction_word *instruction_image[],long *instruction_counter){
-    char *arg = strtok(args,",");
+word *parse_single_oprand(char *args,char *error_msg){
     int result = 0;
+    char *error_format ="";
     word *tmp_word = malloc(sizeof(word));
     if(tmp_word == NULL){
         strcat(error_msg,"Error: unable to allocate memory\n");
@@ -413,28 +476,83 @@ int parse_single_oprand(char *args, int *ligal_add_dest,char *error_msg,instruct
         free(tmp_word);
         return -1;
     }
-    if(args[0]== '@'){
-        if(args[1] == 'r' && args[2] >= '0' && args[2] <= '7'){
-            tmp_word->ARE = 0;
-            tmp_word->dest_add = 0;
-            tmp_word->op_code = 0;
-            tmp_word->source_add = args[2] - '0';
-            instruction_image[*instruction_counter] = tmp_word;
-            *instruction_counter++;
-            return 1;
+    
+    if(args[0]== '@'){/*Arg is a sespected */
+        if(args[1] == 'r' && args[2] >= '0' && args[2] <= '7' && args[3] == '\0'){
+            register_word *rand_word = malloc(sizeof(register_word));
+            if(rand_word == NULL){
+                strcat(error_msg,"Error: unable to allocate memory\n");
+                exit(1);
+            }
+            rand_word->ARE = 0;
+            rand_word->source_reg = 0;
+            rand_word->dest_reg = args[2] - '0';
+
+            tmp_word->label = NULL;
+            tmp_word->word_type = REGISTER;
+            tmp_word->word = rand_word;            
+            tmp_word->error = error_msg;
+            return tmp_word;
+            }
+
+        else{/*Invalid register won't be added to image*/
+            sprintf(error_format,"Error: %s is invalid register\n",args);
+            strcat(error_msg,error_format);
+            free(tmp_word);
+            return NULL;
+        }
+    }
+    else if(isalpha(args[0])){/*Arg is a label*/
+            immediate_word *rand_word = malloc(sizeof(immediate_word));
+            if(rand_word == NULL){
+                strcat(error_msg,"Error: unable to allocate memory\n");
+                free(tmp_word);
+                return null;
+            }
+
+            rand_word->ARE = 0;
+            rand_word->dest_add = 0;
+
+            tmp_word->label = args;
+            word->word_type = DIRECT;            
+            tmp_word->word = rand_word;
+            tmp_word->error = error_msg;
+            return tmp_word;
+        }
+        
+    else{
+        int *num = atoi(args);
+        if(*num < MIN_IMMEDIATE_VALUE || *num > MAX_IMMEDIATE_VALUE){
+            sprintf(error_format,"Error: %s is invalid immediate value\n",args);
+            strcat(error_msg,error_format);
+            free(tmp_word);
+            return NULL;
         }
         else{
-            strcat(error_msg,"Error: invalid register\n");
-            free(tmp_word);
-            return -1;
+            immediate_word *rand_word = malloc(sizeof(immediate_word));
+            if(rand_word == NULL){
+                strcat(error_msg,"Error: unable to allocate memory\n");
+                free(tmp_word);
+                return null;
+            }
+            if (num < 0 )
+            {
+                *num = complement_2(num);
+            }
+
+            rand_word->ARE = 0;
+            rand_word->dest_add = *num;
+
+            tmp_word->label = NULL;
+            tmp_word->word_type = IMMEDIATE;
+            tmp_word->word = rand_word;
+            tmp_word->error = error_msg;
+            return tmp_word;            
         }
     }
 }
 
-void set_ligal_params(int *ins_code, int *ligal_add_source, int *ligal_add_dest, int *word_limit){
-    IMMEDIATE=1,
-    DIRECT=3,
-    REGISTER = 5
+void set_ligal_params(int *ins_code, int *ligal_add_source, int *ligal_add_dest, int *word_limit){    
     int *all= 
     switch (*ins_code){
         case MOV:
@@ -524,6 +642,194 @@ void set_ligal_params(int *ins_code, int *ligal_add_source, int *ligal_add_dest,
         default:
             *word_limit = 0;
     }   
+}
+
+bool valid_addressing(int *given_addressing, int *ligal_addressing)
+{
+    switch (*ligal_addressing)
+    {/*Since the ligal addresings are 1,3,5 || 3,5 || 3, we and the sum of each is unique, we can didacte the ligal addressing by the sum of the ligal addressing*/
+    case 9:
+        if(*given_addressing == 1 || *given_addressing == 3 || *given_addressing == 5)
+            return TRUE;
+        else
+            return FALSE;
+        break;
+
+    case 8:
+        if(*given_addressing == 3 || *given_addressing == 5)
+            return TRUE;
+        else
+            return FALSE;
+        break;
+
+    case 3:
+        if(*given_addressing == 3)
+            return TRUE;
+        else
+            return FALSE;
+        break;
+    
+    default:/*For debuging*/
+        printf("Something is wrong at valid_addressing function given %d and %d\n",*given_addressing,*ligal_addressing);
+        retun FALSE;
+        break;
+    }
+}
+
+
+bool parse_instruction(int ins_code,char *args,instruction_word *instruction_image[],long *instruction_counter,char *error_msg){
+    word *rapping_word = malloc(sizeof(word));
+    if(rapping_word == NULL){
+        strcat(error_msg,"Error: unable to allocate memory\n");
+        exit(1);
+    }
+    instruction_op_word *tmp_instruction = malloc(sizeof(instruction_op_word));
+    if(tmp_instruction == NULL){
+        strcat(error_msg,"Error: unable to allocate memory\n");
+        exit(1);
+    }
+    bool result = (strcmp(error_msg,"") == 0)? TRUE:FALSE;
+    int *word_limit = 0;
+    char *error;
+    int *ligal_add_source = 0;
+    int *ligal_add_dest = 0;
+    char *args_array[3]= {NULL,NULL,NULL};
+    get_args(args,args_array);
+    set_ligal_params(ins_code,ligal_add_source,ligal_add_dest,word_limit);
+
+    switch(*word_limit){
+        case 0:
+            if(strcmp((args_array[0],"") != 0) || (strcmp((args_array[2],"") != 0))){
+                strcat(error_msg,args_array[2]);
+                strcat(error_msg,"Error: too many arguments\n");
+            }
+            tmp_instruction->ARE = 0;
+            tmp_instruction->dest_add = 0;
+            tmp_instruction->op_code = ins_code;
+            tmp_instruction->source_add = 0;
+
+            rapping_word->label = NULL;
+            rap_word->word_type = 0;
+            rapping_word->word = tmp_instruction;
+            rapping_word->error = error_msg;
+            instruction_image[*instruction_counter] = rapping_word;
+            *instruction_counter++;
+
+            if(strcmp((error_msg,"") != 0)){
+                result = FALSE;
+            }
+            return result;
+
+        case 1:
+            if(strcmp((args_array[2],"") != 0 || (strcmp((args_array[1],"") != 0)))){
+                strcat(error_msg,args_array[2]);
+                strcat(error_msg,"Error: too many arguments\n");
+                result = FALSE;
+            }/*TODO: decide when to stop else*/
+
+            word *first_rand = parse_single_oprand(args_array[0],"");
+            if(!(valid_addressing(first_rand->word_type,ligal_add_dest))){
+                strcat(error_msg,sprintf("Error: the %s is not a ligal addressing in this instruction\n",args_array[0]));
+                free(first_rand->word);
+                free(first_rand);
+            }  
+            tmp_instruction->ARE = 0;
+            tmp_instruction->dest_add = *first_rand->word_type;
+            tmp_instruction->op_code = ins_code;
+            tmp_instruction->source_add = 0;
+
+            rapping_word->label = NULL;
+            rap_word->word_type = 0;
+            rapping_word->word = tmp_instruction;
+            rapping_word->error = error_msg;
+            instruction_image[*instruction_counter] = rapping_word;
+            *instruction_counter++;        
+
+            if(first_rand->error != NULL){/*We will add the rand to the instruction but show the error*/
+                strcat(error_msg,first_rand->error);
+                strcat(rapping_word->error,first_rand->error);
+            }
+
+            instruction_image[*instruction_counter] = first_rand;
+            *instruction_counter++;    
+        
+            if(strcmp((error_msg,"") != 0)){
+                result = FALSE;
+            }
+        
+
+            return result;
+
+        case 2:
+            if(strcmp((args_array[2],"") != 0)){
+                strcat(error_msg,args_array[2]);
+            }
+            else if(strcmp((args_array[1],"") == 0)){
+                strcat(error_msg,"Error: missing arguments\n");
+            }
+            
+            word *first_rand = parse_single_oprand(args_array[0],"");
+            if(!(valid_addressing(first_rand->word_type,ligal_add_source))){
+                strcat(error_msg,sprintf("Error: the %s is not a ligal addressing in this instruction\n",args_array[0]));
+                free(first_rand->word);
+                free(first_rand);
+            }       
+
+            word *second_rand = parse_single_oprand(args_array[1],"");
+            if(!(valid_addressing(second_rand->word_type,ligal_add_dest))){
+                strcat(error_msg,sprintf("Error: the %s is not a ligal addressing in this instruction\n",args_array[1]));
+                free(second_rand->word);
+                free(second_rand);
+            }
+
+                    
+            tmp_instruction->ARE = 0;
+            tmp_instruction->dest_add = *first_rand->word_type;
+            tmp_instruction->op_code = ins_code;
+            tmp_instruction->source_add = *second_rand->word_type;
+
+
+            rapping_word->label = NULL;
+            rap_word->word_type = 0;
+            rapping_word->word = tmp_instruction;
+            rapping_word->error = error_msg;
+            instruction_image[*instruction_counter] = rapping_word;
+            *instruction_counter++;        
+
+            if(first_rand->error != NULL || second_rand->error != NULL ){/*We will add the rand to the instruction but show the error*/
+                strcat(error_msg,first_rand->error);
+                strcat(rapping_word->error,first_rand->error);
+            }
+            if(first_rand->word_type == REGISTER){/*first is register we should change it to be the source and make the dest the zero register*/
+                first_rand->word->source_add = first_rand->word->dest_add;
+                first_rand->word->dest_add = 0;
+                if(second_rand->word_type == REGISTER){/*Both are registers we can use the same line*/
+                    first_rand->word->dest_add = second_rand->word->dest_add;
+                    free(second_rand->word);
+                    free(second_rand);
+                }
+            }
+
+            if(second_rand == NULL){
+                instruction_image[*instruction_counter] = first_rand;
+                *instruction_counter++;    
+            }
+            else{
+                instruction_image[*instruction_counter] = first_rand;
+                *instruction_counter++;    
+                instruction_image[*instruction_counter] = second_rand;
+                *instruction_counter++;    
+            }  
+        
+            if(strcmp((error_msg,"") != 0)){
+                result = FALSE;
+            }
+            return result;
+
+        default:
+            strcat(error_msg,"Something went wrong with function parse_instruction");
+            return FALSE;
+    }
 }
     
 

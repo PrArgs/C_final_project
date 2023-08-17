@@ -22,6 +22,7 @@ bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter,
     int num_of_words;
     symbol *tmp_symbol;
     char *rest;
+    word *tmp_word
 
     
 
@@ -76,37 +77,25 @@ bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter,
             first_frase = strtok(current_line, " ");                   
         }
 
-        if ((strcmp(first_frase,".data") == 0) || (strcmp(first_frase,".string") == 0)){
+        else if ((strcmp(first_frase,".data") == 0) || (strcmp(first_frase,".string") == 0)){
             {           
                 if(!(parse_data(rest,data_image,data_counter,error_msg))){
                     result = FALSE;
                 }
             }    
         }
-        else if (strcmp(frase,".extern"))
+        else if (strcmp(first_frase,".extern"))
         {
              if(!(parse_extern(rest,symbol_table,error_msg))){
                 result = FALSE;
              }
         }
-        int *instruction = find_instructio(frase , error_msg);
-        if (*instruction > -1){
-            if(label_flag)
-            {
-                if(set_symbol_value(symbol_table,lable,instruction_counter) != ""){                
-                    strcat(error_msg,"Error: unable to add value to symbol\n");
-                    *result = FALSE;
-                }
-                else{
-                    *instruction_counter++;
-                    /*Add lable to instruction image*/
-                    word *tmp_word = init_lable_in_instruction(lable,error_msg);
-                    instruction_image[*instruction_counter] = tmp_word;                
-                }
-                strcpy(error_msg,"");
-            }
-            return parse_operation(frase,rest,symbol_table,instruction_counter,error_msg);
-        }
+        
+        int instruction = find_instructio(first_frase , error_msg);
+        if (*instruction > -1)
+            strcpy(error_msg,"");
+            parse_instruction(instrction,rest,symbol_table,instruction_counter,error_msg);
+    }
     
     }
     if(result){
@@ -133,7 +122,7 @@ bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter,
             return (parse_data(rest,data_image,data_counter,error_msg) && *result);
         }    
     }
-    if (strcmp(frase,".extern"))
+    else if (strcmp(frase,".extern"))
     {
         return parse_extern(rest,symbol_table,error_msg);
     }

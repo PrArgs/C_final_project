@@ -5,11 +5,17 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "globals.h"
 #include "table_generator.h"
 #include "util.h"
 #include "machine_code.h"
 #include "data_structures.h"
+
+#define MAX_REGISTER_VALUE 2047
+#define MIN_REGISTER_VALUE -2048
+#define MAX_IMMEDIATE_VALUE 511
+#define MIN_IMMEDIATE_VALUE -512
 
 /*Deffing the types of the commands*/
 typedef enum op_codes{
@@ -85,8 +91,8 @@ typedef struct data_word{
 /*Define register word*/
 typedef struct register_word{
     unsigned int ARE:2;
-    unsigned int dest_reg:5;
     unsigned int source_reg:5;
+    unsigned int dest_reg:5;
     } register_word;
 
 /*Define immediate direct word*/
@@ -105,19 +111,32 @@ typedef struct guidance_word{
     } guidance_word;
 
 /*Deffing an instruction word*/
-typedef struct instruction_word{
+typedef struct instruction_op_word{
     unsigned int ARE:2;
     unsigned int dest_add:3;
     unsigned int op_code:4;
     unsigned int source_add:3;
+    } instruction_op_word;
+
+/*Deffing an instruction word*/
+typedef struct instruction_word{
+     union *inst_word{
+        instruction_op_word *instruction_op_word;
+        immediate_direct_word *immediate_direct_word;
+        register_word *register_word;
+        } inst_word;    
     } instruction_word;
 
+
 typedef struct word{
+    char *label;
+    int *word_type;
     union *word_type{
         data_word *data_word;
         register_word *register_word;
         immediate_direct_word *immediate_direct_word;
         instruction_word *instruction_word;
+        instruction_op_word *instruction_op_word;
         guidance_word *guidance_word;
         } word_type;
     char *error;
@@ -180,3 +199,9 @@ bool is_guidance_of_label(char *frase);
 void set_ligal_params(int *ins_code, int *ligal_add_source, int *ligal_add_dest, int *word_limit);
 
 
+int parse_single_oprand(char *args, int *ligal_add_dest,char *error_msg);
+
+
+void get_args(char *args,char *args_array[])
+
+bool valid_addressing(int *given_addressing, int *ligal_addressing)

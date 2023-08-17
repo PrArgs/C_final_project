@@ -38,3 +38,16 @@ char *toLowerCase(char *str){
     }
     return result;
 }
+
+int complement_2(int *num){
+    signed int result = 0;
+    signed int mask = 1;
+    while (mask)
+    {
+        result += *num ^ mask;/*Flip evry bit one by one*/
+        mask <<= 1;
+    }
+    return result+1;
+    
+    
+}
