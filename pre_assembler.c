@@ -125,7 +125,6 @@ bool can_ignore(char *line){
 bool unfold_macros(char *line, macro_table *table, int *line_counter)
 {
     bool result = TRUE;
-    
     return result;
 }
 

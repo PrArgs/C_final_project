@@ -39,7 +39,7 @@ include CMakeFiles/rules.ninja
 #############################################
 # Logical path to working directory; prefix for absolute paths.
 
-cmake_ninja_workdir = G$:/My$ Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/cmake-build-debug/
+cmake_ninja_workdir = C$:/Users/argam/Desktop/C_final_project/cmake-build-debug/
 # =============================================================================
 # Object build statements for EXECUTABLE target C_final_project
 
@@ -49,66 +49,66 @@ cmake_ninja_workdir = G$:/My$ Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignme
 
 build cmake_object_order_depends_target_C_final_project: phony || CMakeFiles/C_final_project.dir
 
-build CMakeFiles/C_final_project.dir/assembler.c.obj: C_COMPILER__C_final_project_Debug G$:/My$ Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/assembler.c || cmake_object_order_depends_target_C_final_project
+build CMakeFiles/C_final_project.dir/assembler.c.obj: C_COMPILER__C_final_project_Debug C$:/Users/argam/Desktop/C_final_project/assembler.c || cmake_object_order_depends_target_C_final_project
   DEP_FILE = CMakeFiles\C_final_project.dir\assembler.c.obj.d
   FLAGS = -g -std=gnu11
-  INCLUDES = -I"G:/My Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/."
+  INCLUDES = -IC:/Users/argam/Desktop/C_final_project/.
   OBJECT_DIR = CMakeFiles\C_final_project.dir
   OBJECT_FILE_DIR = CMakeFiles\C_final_project.dir
 
-build CMakeFiles/C_final_project.dir/ast.c.obj: C_COMPILER__C_final_project_Debug G$:/My$ Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/ast.c || cmake_object_order_depends_target_C_final_project
+build CMakeFiles/C_final_project.dir/ast.c.obj: C_COMPILER__C_final_project_Debug C$:/Users/argam/Desktop/C_final_project/ast.c || cmake_object_order_depends_target_C_final_project
   DEP_FILE = CMakeFiles\C_final_project.dir\ast.c.obj.d
   FLAGS = -g -std=gnu11
-  INCLUDES = -I"G:/My Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/."
+  INCLUDES = -IC:/Users/argam/Desktop/C_final_project/.
   OBJECT_DIR = CMakeFiles\C_final_project.dir
   OBJECT_FILE_DIR = CMakeFiles\C_final_project.dir
 
-build CMakeFiles/C_final_project.dir/data_structures.c.obj: C_COMPILER__C_final_project_Debug G$:/My$ Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/data_structures.c || cmake_object_order_depends_target_C_final_project
+build CMakeFiles/C_final_project.dir/data_structures.c.obj: C_COMPILER__C_final_project_Debug C$:/Users/argam/Desktop/C_final_project/data_structures.c || cmake_object_order_depends_target_C_final_project
   DEP_FILE = CMakeFiles\C_final_project.dir\data_structures.c.obj.d
   FLAGS = -g -std=gnu11
-  INCLUDES = -I"G:/My Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/."
+  INCLUDES = -IC:/Users/argam/Desktop/C_final_project/.
   OBJECT_DIR = CMakeFiles\C_final_project.dir
   OBJECT_FILE_DIR = CMakeFiles\C_final_project.dir
 
-build CMakeFiles/C_final_project.dir/file_generator.c.obj: C_COMPILER__C_final_project_Debug G$:/My$ Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/file_generator.c || cmake_object_order_depends_target_C_final_project
+build CMakeFiles/C_final_project.dir/file_generator.c.obj: C_COMPILER__C_final_project_Debug C$:/Users/argam/Desktop/C_final_project/file_generator.c || cmake_object_order_depends_target_C_final_project
   DEP_FILE = CMakeFiles\C_final_project.dir\file_generator.c.obj.d
   FLAGS = -g -std=gnu11
-  INCLUDES = -I"G:/My Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/."
+  INCLUDES = -IC:/Users/argam/Desktop/C_final_project/.
   OBJECT_DIR = CMakeFiles\C_final_project.dir
   OBJECT_FILE_DIR = CMakeFiles\C_final_project.dir
 
-build CMakeFiles/C_final_project.dir/machine_code.c.obj: C_COMPILER__C_final_project_Debug G$:/My$ Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/machine_code.c || cmake_object_order_depends_target_C_final_project
+build CMakeFiles/C_final_project.dir/machine_code.c.obj: C_COMPILER__C_final_project_Debug C$:/Users/argam/Desktop/C_final_project/machine_code.c || cmake_object_order_depends_target_C_final_project
   DEP_FILE = CMakeFiles\C_final_project.dir\machine_code.c.obj.d
   FLAGS = -g -std=gnu11
-  INCLUDES = -I"G:/My Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/."
+  INCLUDES = -IC:/Users/argam/Desktop/C_final_project/.
   OBJECT_DIR = CMakeFiles\C_final_project.dir
   OBJECT_FILE_DIR = CMakeFiles\C_final_project.dir
 
-build CMakeFiles/C_final_project.dir/parser.c.obj: C_COMPILER__C_final_project_Debug G$:/My$ Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/parser.c || cmake_object_order_depends_target_C_final_project
+build CMakeFiles/C_final_project.dir/parser.c.obj: C_COMPILER__C_final_project_Debug C$:/Users/argam/Desktop/C_final_project/parser.c || cmake_object_order_depends_target_C_final_project
   DEP_FILE = CMakeFiles\C_final_project.dir\parser.c.obj.d
   FLAGS = -g -std=gnu11
-  INCLUDES = -I"G:/My Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/."
+  INCLUDES = -IC:/Users/argam/Desktop/C_final_project/.
   OBJECT_DIR = CMakeFiles\C_final_project.dir
   OBJECT_FILE_DIR = CMakeFiles\C_final_project.dir
 
-build CMakeFiles/C_final_project.dir/pre_assembler.c.obj: C_COMPILER__C_final_project_Debug G$:/My$ Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/pre_assembler.c || cmake_object_order_depends_target_C_final_project
+build CMakeFiles/C_final_project.dir/pre_assembler.c.obj: C_COMPILER__C_final_project_Debug C$:/Users/argam/Desktop/C_final_project/pre_assembler.c || cmake_object_order_depends_target_C_final_project
   DEP_FILE = CMakeFiles\C_final_project.dir\pre_assembler.c.obj.d
   FLAGS = -g -std=gnu11
-  INCLUDES = -I"G:/My Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/."
+  INCLUDES = -IC:/Users/argam/Desktop/C_final_project/.
   OBJECT_DIR = CMakeFiles\C_final_project.dir
   OBJECT_FILE_DIR = CMakeFiles\C_final_project.dir
 
-build CMakeFiles/C_final_project.dir/table_generator.c.obj: C_COMPILER__C_final_project_Debug G$:/My$ Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/table_generator.c || cmake_object_order_depends_target_C_final_project
+build CMakeFiles/C_final_project.dir/table_generator.c.obj: C_COMPILER__C_final_project_Debug C$:/Users/argam/Desktop/C_final_project/table_generator.c || cmake_object_order_depends_target_C_final_project
   DEP_FILE = CMakeFiles\C_final_project.dir\table_generator.c.obj.d
   FLAGS = -g -std=gnu11
-  INCLUDES = -I"G:/My Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/."
+  INCLUDES = -IC:/Users/argam/Desktop/C_final_project/.
   OBJECT_DIR = CMakeFiles\C_final_project.dir
   OBJECT_FILE_DIR = CMakeFiles\C_final_project.dir
 
-build CMakeFiles/C_final_project.dir/util.c.obj: C_COMPILER__C_final_project_Debug G$:/My$ Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/util.c || cmake_object_order_depends_target_C_final_project
+build CMakeFiles/C_final_project.dir/util.c.obj: C_COMPILER__C_final_project_Debug C$:/Users/argam/Desktop/C_final_project/util.c || cmake_object_order_depends_target_C_final_project
   DEP_FILE = CMakeFiles\C_final_project.dir\util.c.obj.d
   FLAGS = -g -std=gnu11
-  INCLUDES = -I"G:/My Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/."
+  INCLUDES = -IC:/Users/argam/Desktop/C_final_project/.
   OBJECT_DIR = CMakeFiles\C_final_project.dir
   OBJECT_FILE_DIR = CMakeFiles\C_final_project.dir
 
@@ -135,7 +135,7 @@ build C_final_project.exe: C_EXECUTABLE_LINKER__C_final_project_Debug CMakeFiles
 # Utility command for edit_cache
 
 build CMakeFiles/edit_cache.util: CUSTOM_COMMAND
-  COMMAND = cmd.exe /C "cd /D "G:\My Drive\Documents\Uni\OPU\2023b\C_LAB\C_LAB_assignments\openU_c_lab\C_final_project\cmake-build-debug" && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\bin\cmake.exe" -E echo "No interactive CMake dialog available.""
+  COMMAND = cmd.exe /C "cd /D C:\Users\argam\Desktop\C_final_project\cmake-build-debug && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\bin\cmake.exe" -E echo "No interactive CMake dialog available.""
   DESC = No interactive CMake dialog available...
   restat = 1
 
@@ -146,7 +146,7 @@ build edit_cache: phony CMakeFiles/edit_cache.util
 # Utility command for rebuild_cache
 
 build CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
-  COMMAND = cmd.exe /C "cd /D "G:\My Drive\Documents\Uni\OPU\2023b\C_LAB\C_LAB_assignments\openU_c_lab\C_final_project\cmake-build-debug" && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\bin\cmake.exe" --regenerate-during-build -S"G:\My Drive\Documents\Uni\OPU\2023b\C_LAB\C_LAB_assignments\openU_c_lab\C_final_project" -B"G:\My Drive\Documents\Uni\OPU\2023b\C_LAB\C_LAB_assignments\openU_c_lab\C_final_project\cmake-build-debug""
+  COMMAND = cmd.exe /C "cd /D C:\Users\argam\Desktop\C_final_project\cmake-build-debug && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\bin\cmake.exe" --regenerate-during-build -SC:\Users\argam\Desktop\C_final_project -BC:\Users\argam\Desktop\C_final_project\cmake-build-debug"
   DESC = Running CMake to regenerate build system...
   pool = console
   restat = 1
@@ -164,7 +164,7 @@ build C_final_project: phony C_final_project.exe
 # =============================================================================
 
 #############################################
-# Folder: G:/My Drive/Documents/Uni/OPU/2023b/C_LAB/C_LAB_assignments/openU_c_lab/C_final_project/cmake-build-debug
+# Folder: C:/Users/argam/Desktop/C_final_project/cmake-build-debug
 
 build all: phony C_final_project.exe
 
