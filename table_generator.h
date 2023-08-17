@@ -6,6 +6,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <ctype.h>
 #include <string.h>
 #include "globals.h"
 #include "data_structures.h"
@@ -44,7 +45,6 @@ typedef struct macro_table
 @returns: a pointer to the new macro
 */
 macro *macro_init(char *name);
-
 
 /*This is the decleration of function wiil init a new hash table
 @params size: size of the array
@@ -119,10 +119,8 @@ typedef enum symbol_type
 {
     EXTERNAL=0,
     ENTRY=1,
-    NONE=2
+    
 } symbol_type;
-
-
 
 /*Define a symbols in our assembler
 @params:
@@ -130,16 +128,19 @@ typedef enum symbol_type
     value: the value of the symbol (the address in the memory)
     is_external: a boolean that is true if the symbol is external and false otherwise
     is_entry: a boolean that is true if the symbol is entry and false otherwise
+    is_data: a boolean that is true if the symbol is data and false otherwise
     next: a pointer to the next symbol in the list (for the symbol table)
 the sybol list will in time be split into two lists, one for external symbols and one for internal symbols in the second pass
 */
 typedef struct symbol
 {
     char *name;
-    long value;
-    bool is_external;
-    bool is_entry;
-    struct symbol_list *next;
+    int *value;
+    bool *is_external;
+    bool *is_entry;
+    bool *is_data;
+    char *error; 
+    struct symbol *next;
     
 } symbol;
 
@@ -149,7 +150,6 @@ typedef struct symbol_list
     symbol  *tail; 
 } symbol_list;
 
-
 /*
 ___OPTIONAL IF WE DISIDE TO USE HASH TABLES FOR THE SYMBOL TABLE___
 
@@ -158,67 +158,53 @@ typedef struct symbol_list
     symbol **symbols_array;    
 } symbol_list;
 */
-
 symbol *symbol_init(char *name);
 
-void set_symbol_type(symbol *symbol, symbol_type type);
+char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type *type);
 
-void set_symbol_value(symbol *symbol, long value);
+char *set_symbol_value(symbol_list *table,char *symbol_name, int *value);
+
+bool *set_symbol_is_data(symbol_list *table,char *symbol_name, bool *is_data);
 
 char *print_symbol(symbol *symbol);
 
-
 /* A function that will create a new symbol table
 returns a pointer to the new table*/
-
 symbol_list *init_symbol_list();
-
 
 /* A function that will add a new symbol to the symbol table
 returns TRUE if the symbol was added successfully
 returns FALSE if the symbol was not added successfully or the symbol already exists in the table*/
-
 bool add_symbol(symbol_list *table, char *key, long value);
-
 
 /* A function that will remove a symbol from the symbol table and free the memory
 returns TRUE if the symbol was removed successfully
 returns FALSE if the symbol was not removed successfully or the symbol does not exist in the table*/
-
 bool remove_symbol(symbol_list *table, char *key);
 
-
 /* A function that will search for a symbol in the symbol table and return a pionter to the symbol's address*/
-
-
 symbol_list *search_symbol(symbol_list *table, char *name);
 
-
 /* A function that will free the memory of all the symbols in the symbol table*/
-
 void free_symbol_list(symbol_list *table);
 
 /* A function that will print the symbol table (for debugging)*/
-
 void print_symbol_list(symbol_list *table);
 
-
-/* Hash function that returns the sum of 
+/* Hash function that returns the sum of
 the multiplication of (the index of the character in the string) and (the ascii value of the character)
 modulo the size of the map
 
 @params data: the data to hash
 
 */
-int default_hash_function(char *data,int arry_size)
+int default_hash_function(char *data)
 {
-
-    if (!arry_size)
-    {
-        arry_size=MEMORY_SIZE;
-    }
-    int sum = 0, i=0,u=0;
-    for (; i < strlen(data); i++)
+    int arry_size;
+    arry_size = MEMORY_SIZE;
+    int sum, i;
+    sum = 0;
+    for (i = 0; i < strlen(data); i++)
     {
         sum += i*data[i];
     }

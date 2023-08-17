@@ -10,21 +10,32 @@
 #include "parser.h"
 #include "util.h"
 
+#define char *DEFAULT_FILE_EXTENSION = ".as";
 
 
-int main(int args, char *argv[]){
+
+int main (int args, char *argv[])
+{
     bool generate_files = TRUE;
-    int i = 1;
+    int file_index = 1;
     macro_table *macro_table = macro_table_init();
-    symbol_list *symbol_table = symbol_list_init();
+    char *file_name
     int *IC = INITIAL_INSTRUCTION_COUNTER;
     int *DC = 0;
 
-    while(i < args){
-        char *file_name = strcat(argv[i], ".as");
-        if(!pre_assembler((argv[i]), macro_table)){
+while(file_index < args){
+
+        strcpy(file_name, argv[i])
+        file_name = strcat(file_name, DEFAULT_FILE_EXTENSION);
+        if(!pre_assembler(file_name, macro_table)){
             generate_files = FALSE;
         }
+
+        /*First pass of the assembler*/
+
+        symbol_list *symbol_table = init_symbol_list();
+
+
         if(!first_parse(file_name, symbol_table, DC, IC)){
             generate_files = FALSE;
         }
@@ -32,5 +43,5 @@ int main(int args, char *argv[]){
     
         i++;
     }
-
+    return 0;
 }

@@ -5,7 +5,8 @@ bool pre_assembler(char *file_name, macro_table *table){
     bool result = TRUE;
     bool read_macro = FALSE; /*a flag that will be true if the line is a macro definition*/
     int line_counter = 0;
-    char *macro_name[MAX_LINE_LENGTH+1] = "";/*the name of potential macro*/
+    char *macro_name[MAX_LINE_LENGTH+1];/*the name of potential macro*/
+    strcpy(macro_name, "");
     list *macro_lines; /*a pionte that will be used to print the macro*/
     char line[MAX_LINE_LENGTH+1] = "";
 
@@ -78,12 +79,13 @@ bool pre_assembler(char *file_name, macro_table *table){
     /*free all alocaed memory*/
     fclose(file);
     fclose(file_as);
-    macro_table_free(macro_table);
+    free_macro_table(macro_table);
     return result;
 }
 
 char *remove_spaces(char *line){
-    char *result[MAX_LINE_LENGTH+1] = "";
+    char *result[MAX_LINE_LENGTH+1];
+    strcpy(result, "");
     int final_length;
     char *current = strtok(line, " ");
     while(current){/*remve exase spaces*/
@@ -123,7 +125,6 @@ bool can_ignore(char *line){
 bool unfold_macros(char *line, macro_table *table, int *line_counter)
 {
     bool result = TRUE;
-    
     return result;
 }
 
