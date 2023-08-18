@@ -2,7 +2,8 @@
 
 
 
-char *INPUT_FILE_TYPE = ".as"; /* The type of the input file. */
+#ifndef GLOBALS_H
+#define GLOBALS_H
 
 #define WORD_SIZE 12 /* The size of a word in the memory. */
 #define MAX_FILE_NAME_LENGTH 30 /* The maximum length of a file name. */
@@ -19,3 +20,4 @@ typedef enum booleans{
     } bool;
 
 
+#endif

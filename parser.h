@@ -11,6 +11,8 @@
 
 or an .as file with all the errors that were found in the pre assembling and parsering procceses
 */
+#ifndef PARSER_H
+#define PARSER_H
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -66,3 +68,4 @@ ast_line *line_to_ast(char *line, long line_number);
                 ***---------IMPLEMET AFTER THE DATA STRUCTURES ARE DONE----------***              
                 */
 
+#endif

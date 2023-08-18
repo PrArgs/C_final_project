@@ -1,11 +1,15 @@
 /*
 This file diclares the functions that will be used to generate the files in the case of a valid assembly code.
 */
+#ifndef FILE_GENERATOR_H
+#define FILE_GENERATOR_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "util.h"
 #include "globals.h"
 #include "table_generator.h"
+#include "ast.h"
 
 /* This function generates the .ob file 
 @ param file_name - the name of the file to be generated
@@ -40,4 +44,4 @@ void generate_ent_file(char *file_name, symbol_list *symbol_list);
 
 void generate_ext_file(char *file_name, symbol_list *symbol_list, word code_image[], long instruction_counter);
 
-
+#endif

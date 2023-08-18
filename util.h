@@ -3,6 +3,8 @@ the fuctions are base converters
 printers
 distructors (freeing memory by type)
 */
+#ifndef UTIL_H
+#define UTIL_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,3 +40,4 @@ int complement_2(int *num);
 
 
 
+#endif

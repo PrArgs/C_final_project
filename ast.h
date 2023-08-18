@@ -2,6 +2,8 @@
 */
 
 /*This function will get a line from the parser and brakes it to the basic componantes.*/
+#ifndef AST_H
+#define AST_H
 
 #include <stdlib.h>
 #include <string.h>
@@ -205,3 +207,5 @@ int parse_single_oprand(char *args, int *ligal_add_dest,char *error_msg);
 void get_args(char *args,char *args_array[])
 
 bool valid_addressing(int *given_addressing, int *ligal_addressing)
+
+#endif

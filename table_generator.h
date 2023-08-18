@@ -2,6 +2,8 @@
 1. symbol table
 2. macro table
 */
+#ifndef TABLE_GENERATOR_H
+#define TABLE_GENERATOR_H
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -117,7 +119,7 @@ NONE: a symbol that is not defined in any file value 2
 
 typedef enum symbol_type
 {
-    EXTERNAL=0,
+    EXT=0,
     ENTRY=1,
     
 } symbol_type;
@@ -236,6 +238,8 @@ bool default_compare_function(char *data1, char *data2)
 {
     return strcmp(data1, data2) == 0;
 }
+
+#endif
 
 
 
