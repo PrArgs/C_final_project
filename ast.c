@@ -71,13 +71,12 @@ word *init_data_in_data(int num,char *error_msg)
         printf("Error: unable to allocate memory\n");
         exit(1);
     }
-    data_word *data_word = (data_word *)malloc(sizeof(data_word));
-    if (result == NULL){
+    data_word *d_word = (data_word *)malloc(sizeof(data_word));
+    if (d_word == NULL){
         printf("Error: unable to allocate memory\n");
         exit(1);
     }
-    result.
-    data_word->data = num;
+    d_word->data = num;
     result->data = data_word;
     result->error = error_msg;
     return result;
@@ -86,6 +85,7 @@ word *init_data_in_data(int num,char *error_msg)
 bool loop_over_num(char *args,data_word *data_image[],long *data_counter,char *error_msg){
     bool result = (strcmp(error_msg,"") == 0)? TRUE : FALSE;
     int i = 0;
+    int num = 0;
     int len = strlen(args);
     char *buffer = "";        
     bool dubble_comma = TRUE;/*first arg can't be a comma*/
@@ -103,13 +103,13 @@ bool loop_over_num(char *args,data_word *data_image[],long *data_counter,char *e
             else if(args[i] == ',')
             {
                 if(dubble_comma){
-                    *result = FALSE;
+                    result = FALSE;
                     strcpy(error_msg,"Error: dubble comma\n");
                     i++;
                 }
                 else{
                     if(args[i+1] == "\n"){
-                        restult = FALSE;
+                        result = FALSE;
                         strcpy(error_msg,"Error: can't end with a comma\n");
                     }                
                     num = atoi(buffer);
@@ -123,7 +123,7 @@ bool loop_over_num(char *args,data_word *data_image[],long *data_counter,char *e
             /*Checks if char is a digit*/
             else if(args[i] >= '0' && args[i] <= '9'){
                 if(no_delimiter){
-                    *result = FALSE;
+                    result = FALSE;
                     strcpy(error_msg,"Error: missing delimiter\n");
                     num = atoi(buffer);
                     strcpy(buffer,"");
@@ -146,7 +146,7 @@ bool loop_over_num(char *args,data_word *data_image[],long *data_counter,char *e
                 }
             }
             else{
-                *result = FALSE;
+                result = FALSE;
                 strcpy(error_msg,"Error: illegal char\n");
                 if(strcmp(buffer,"") != 0){
                     num = atoi(buffer);
@@ -188,7 +188,7 @@ bool loop_over_string(char *rest,data_word *data_image[],long *data_counter,char
         }
         strcpy(error_msg,"");
         if (rest = strtok(rest,",") != NULL){
-            *result = FALSE;
+            result = FALSE;
             strcpy(error_msg,"Error: illegal string\n");
         }
         word *tmp_word = init_data_in_data(0,error_msg);
@@ -369,7 +369,7 @@ bool is_guidnace_of_data(char *frase){
 void get_args(char *args,char *array[]){
     int i = 0;
     int j = 0;
-    boll reading_arg = FALSE;
+    bool reading_arg = FALSE;
     bool no_delimiter = FALSE;
     array[0] = "";
     array[1] = "";
@@ -377,11 +377,11 @@ void get_args(char *args,char *array[]){
     while(args[i] !='\n'){
         if(args[i] == ','){
             if(j > 0){/*Only the first arg can be followed by a comma*/
-                strcat(arry[2],sprintf("Error: the %s part harms the ligal format\n",args[i]));
+                strcat(array[2],sprintf("Error: the %s part harms the ligal format\n",args[i]));
                 break;
             }            
             else if(array[0] == ""){
-                strcat(arry[2],"Error: expected argument before comma\n");
+                strcat(array[2],"Error: expected argument before comma\n");
                 break;
             }
             else{
@@ -394,8 +394,8 @@ void get_args(char *args,char *array[]){
         else if(args[i] == ' ' || args[i] == '\t'){/*Handle white spaces*/
             if(reading_arg)
             {
-                if(arry[j] == '-' || arry[j] == '+'){/*if sign is not followed by a number*/
-                    strcat(arry[2],sprintf("Error: %s must be followed by a number\n"),arry[j]);                    
+                if(array[j] == '-' || array[j] == '+'){/*if sign is not followed by a number*/
+                    strcat(array[2],sprintf("Error: %s must be followed by a number\n",array[j]));                    
                 }
                 no_delimiter = TRUE;/*We risk having a number without a delimiter*/
             }
@@ -404,26 +404,26 @@ void get_args(char *args,char *array[]){
         else if(args[i] == '-' || args[i] == '+'){
                 if(no_delimiter){
                     if(j == 0){
-                        strcat(arry[2],sprintf("Error: expected delimiter between arguments\n"));
+                        strcat(array[2],"Error: expected delimiter between arguments\n");
                         j++;
                         reading_arg = TRUE;
                         no_delimiter = FALSE;
                     }
                     else{/*We allready have 2 args*/
-                        strcat(arry[2],sprintf("Error: remove %s\n"),args[i]);
+                        strcat(array[2],sprintf("Error: remove %s\n",args[i]));
                         break;
                     }
                 }
                 else if(reading_arg){/*We are reading a number*/
                     if(j == 0){
-                        strcat(arry[2],"Error: expected delimiter between arguments \n");
+                        strcat(array[2],"Error: expected delimiter between arguments \n");
                         j++;
                         reading_arg = TRUE;
                         no_delimiter = FALSE;
                         strcat(array[j],args[i]);
                     }
                     else{/*We allready have 2 args*/
-                        strcat(arry[2],sprintf("Error: remove %s\n"),args[i]);
+                        strcat(array[2],sprintf("Error: remove %s\n",args[i]));
                         break;
                     }
                 }                
@@ -437,19 +437,19 @@ void get_args(char *args,char *array[]){
         else{/*We have a valid char*/                    
             if(no_delimiter){                
                 if(j == 0){/*No delimiter between first and second arg*/
-                    strcat(arry[2],"Error: expected delimiter between arguments\n");
+                    strcat(array[2],"Error: expected delimiter between arguments\n");
                     j++;
                     strcat(array[j],args[i]);
                     no_delimiter = FALSE;
                 }
                 else{/*Too many arguments*/
-                    strcat(arry[2],sprintf("Error: too many argumants remove %s\n"),args[i]);
+                    strcat(array[2],sprintf("Error: too many argumants remove %s\n",args[i]));
                     break;
                 }
             }
             else{
-                if(arry[j] == '+'){/*if sign is positive remove it*/ 
-                    strcpy(arry[j],args[i]);
+                if(array[j] == '+'){/*if sign is positive remove it*/ 
+                    strcpy(array[j],args[i]);
                 }
                 else{
                 reading_arg = TRUE;
@@ -469,7 +469,7 @@ word *parse_single_oprand(char *args,char *error_msg){
         strcat(error_msg,"Error: unable to allocate memory\n");
         exit(1);
     }
-    if (arg == NULL){
+    if (args == NULL){
         strcat(error_msg,"Error: missing argument\n");
         free(tmp_word);
         return -1;
@@ -501,11 +501,11 @@ word *parse_single_oprand(char *args,char *error_msg){
         }
     }
     else if(isalpha(args[0])){/*Arg is a label*/
-            immediate_word *rand_word = malloc(sizeof(immediate_word));
+            immediate_direct_word *rand_word = malloc(sizeof(immediate_word));
             if(rand_word == NULL){
                 strcat(error_msg,"Error: unable to allocate memory\n");
                 free(tmp_word);
-                return null;
+                return NULL;
             }
 
             rand_word->ARE = 0;

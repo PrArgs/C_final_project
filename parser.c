@@ -13,21 +13,21 @@ bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter,
     char *second_frase;
     char *tmp_lable;
     char *error_msg;
-    ast_line *ast_line = NULL;
-    data_word *data_image= malloc(sizeof(data_word) * MEMORY_SIZE) = {NULL}};
-    instruction_word *instruction_image = malloc(sizeof(instruction_word) * MEMORY_SIZE) = {NULL};
+    word *ast_line = NULL;
+    data_word *data_image= malloc(sizeof(data_word) * MEMORY_SIZE);
+    instruction_word *instruction_image = malloc(sizeof(instruction_word) * MEMORY_SIZE);
 
     
-    ast_line *ast_line = NULL;
+    word *ast_line = NULL;
     int num_of_words;
     symbol *tmp_symbol;
     char *rest;
-    word *tmp_word
+    word *tmp_word;
 
     
 
     /*Iterating over the lines of the file*/
-    while (fgets(current_line, MAX_LINE_LENGTH+1, file) ){
+    while (fgets(current_line, MAX_LINE_LENGTH+1, file) != NULL){
         tmp_lable = NULL;
         strcpy(error_msg,"");
         first_frase = strtok(current_line, " ");
@@ -46,8 +46,9 @@ bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter,
                 toLowerCase(second_frase); /*make sure the second word is lower case so we will be able to compare it*/
                 tmp_lable = strtok(first_frase, ":");
                 if(tmp_lable == NULL)
-                { strcpy(error_msg,"Error: labla is enoty")
-                strcpy(tmp_lable,"Default_lable");
+                { 
+                    strcpy(error_msg,"Error: labla is enoty");
+                    strcpy(tmp_lable,"Default_lable");
                 }
 
                 if ((strcmp(second_frase,".extern") == 0) || (strcmp(second_frase,".entry") == 0))
@@ -92,9 +93,9 @@ bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter,
         }
         
         int instruction = find_instructio(first_frase , error_msg);
-        if (*instruction > -1)
+        if (instruction > -1)
             strcpy(error_msg,"");
-            parse_instruction(instrction,rest,symbol_table,instruction_counter,error_msg);
+            parse_instruction(instruction,rest,symbol_table,instruction_counter,error_msg);
     }
     
     }
@@ -127,7 +128,7 @@ bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter,
         return parse_extern(rest,symbol_table,error_msg);
     }
     int *instruction = find_instructio(frase , error_msg);
-    if (*instruction > -1){
+    if (instruction > -1){
         if(label_flag)
         {
             if(set_symbol_value(symbol_table,lable,instruction_counter) != ""){                

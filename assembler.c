@@ -10,13 +10,16 @@
 #include "parser.h"
 #include "util.h"
 
+#define INITIAL_INSTRUCTION_COUNTER 100 /* The piont in memory where the code begins. */
+
+
 int main(int argc,char *argv[]) { 
     bool generate_files = TRUE; 
     int file_index = 1;
     macro_table *m_table = macro_table_init();
     char *file_name = malloc(sizeof(char) * 100); // allocate memory for file_name
-    int IC = INITIAL_INSTRUCTION_COUNTER; // remove pointer
-    int DC = 0;
+    long *IC = INITIAL_INSTRUCTION_COUNTER; // remove pointer
+    long *DC = 0;
 
     while(file_index < argc){
 
@@ -30,8 +33,8 @@ int main(int argc,char *argv[]) {
 
         symbol_list *symbol_table = init_symbol_list();
 
-
-        if(!first_parse(file_name, symbol_table, &DC, &IC)){ // pass pointers to DC and IC
+        
+        if(!first_parse(file_name, symbol_table, DC, IC)){ // pass pointers to DC and IC
             // handle error
         }
 

@@ -11,7 +11,7 @@
 #define MAX_LABEL_LENGTH 30 /* The maximum length of a label. */
 #define MEMORY_SIZE 1023 /* The size of the memory. */
 
-#define INITIAL_INSTRUCTION_COUNTER 100 /* The piont in memory where the code begins. */
+
 
 /* Deffing bool type */
 typedef enum booleans{ 
