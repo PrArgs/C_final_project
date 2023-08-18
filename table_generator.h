@@ -118,7 +118,7 @@ NONE: a symbol that is not defined in any file value 2
 typedef enum symbol_type
 {
     EXTERNAL=0,
-    ENTRY=1,
+    ENTRY=1
     
 } symbol_type;
 
@@ -175,7 +175,7 @@ symbol_list *init_symbol_list();
 /* A function that will add a new symbol to the symbol table
 returns TRUE if the symbol was added successfully
 returns FALSE if the symbol was not added successfully or the symbol already exists in the table*/
-bool add_symbol(symbol_list *table, char *key, long value);
+bool add_symbol(symbol_list *table, char *key,bool *is_data, int *val, char *error_msg);
 
 /* A function that will remove a symbol from the symbol table and free the memory
 returns TRUE if the symbol was removed successfully
@@ -200,9 +200,9 @@ modulo the size of the map
 */
 int default_hash_function(char *data)
 {
-    int arry_size;
+    int arry_size, sum, i;
     arry_size = MEMORY_SIZE;
-    int sum, i;
+   
     sum = 0;
     for (i = 0; i < strlen(data); i++)
     {

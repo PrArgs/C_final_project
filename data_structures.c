@@ -5,7 +5,7 @@ node *node_init(char *data){
     if (!node){
         exit(1);/*exit if malloc fails*/
     }    
-    strcpy(node->data, data);
+    strcpy(*node->data, data);
     node->next = NULL;
     return node;
 }
@@ -17,6 +17,7 @@ list *list_init()
        exit(1);/*exit if malloc fails*/
     }
     list->head = NULL;
+return list; /*TODO the function needs to be void? i added return.*/
 }
 
 bool add_to_list(list *list, node *new_node){
@@ -41,7 +42,7 @@ bool list_remove(list *list, node *r_node){
     node *current = list->head;
     node *previous = NULL;
     while(current){
-        if (strcmp(current->data, r_node->data) == 0){
+        if (strcmp(*current->data, *r_node->data) == 0){
             if (previous){/*if the node is not the first node in the list*/
                 previous->next = current->next;
             }
@@ -54,12 +55,13 @@ bool list_remove(list *list, node *r_node){
         previous = current;
         current = current->next;
     }
+	return FALSE;
 }
 
 bool list_contains(list *list,  node *node_to_search){
     node *current = list->head;
     while(current){
-        if (strcmp(current->data, node_to_search->data) == 0){
+        if (strcmp(*current->data, *node_to_search->data) == 0){
             return TRUE;
         }
         current = current->next;
@@ -82,7 +84,7 @@ bool list_free(list *list){
 void print_list(list *list){
     node *current = list->head;
     while(current){
-        printf("%s\n", current->data);
+        printf("%s\n", *current->data);
         current = current->next;
     }
 }
