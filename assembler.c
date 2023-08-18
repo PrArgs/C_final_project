@@ -10,25 +10,20 @@
 #include "parser.h"
 #include "util.h"
 
-#define char *DEFAULT_FILE_EXTENSION = ".as";
-
-
-
-int main (int args, char *argv[])
-{
-    bool generate_files = TRUE;
+int main(int argc,char *argv[]) { 
+    bool generate_files = TRUE; 
     int file_index = 1;
     macro_table *macro_table = macro_table_init();
-    char *file_name
-    int *IC = INITIAL_INSTRUCTION_COUNTER;
-    int *DC = 0;
+    char *file_name = malloc(sizeof(char) * 100); // allocate memory for file_name
+    int IC = INITIAL_INSTRUCTION_COUNTER; // remove pointer
+    int DC = 0;
 
-while(file_index < args){
+    while(file_index < argc){
 
-        strcpy(file_name, argv[i])
-        file_name = strcat(file_name, DEFAULT_FILE_EXTENSION);
+        strcpy(file_name, argv[file_index]);
+        file_name = strcat(file_name, ".as");
         if(!pre_assembler(file_name, macro_table)){
-            generate_files = FALSE;
+            generate_files = FALSE; // change FALSE to false
         }
 
         /*First pass of the assembler*/
@@ -36,12 +31,48 @@ while(file_index < args){
         symbol_list *symbol_table = init_symbol_list();
 
 
-        if(!first_parse(file_name, symbol_table, DC, IC)){
-            generate_files = FALSE;
+        if(!first_parse(file_name, symbol_table, &DC, &IC)){ // pass pointers to DC and IC
+            // handle error
         }
-        
-    
-        i++;
+
+        file_index++;
     }
     return 0;
 }
+// }
+//     bool generate_files = TRUE;
+//     int file_index = 1;
+//     macro_table *macro_table = macro_table_init();
+//     char *file_name = malloc(sizeof(char) * 100); // allocate memory for file_name
+//     int IC = INITIAL_INSTRUCTION_COUNTER; // remove pointer
+//     int DC = 0;
+
+//     while(file_index < argc){
+
+//         strcpy(file_name, argv[file_index]);
+//         file_name = strcat(file_name, DEFAULT_FILE_EXTENSION);
+//         if(!pre_assembler(file_name, macro_table)){
+//             generate_files = FALSE;
+//         }
+
+//         /*First pass of the assembler*/
+
+//         symbol_list *symbol_table = init_symbol_list();
+
+
+//         if(!first_parse(file_name, symbol_table, &DC, &IC)){ // pass pointers to DC and IC
+//             // handle error
+//         }
+
+//         file_index++;
+//     }
+//     return 0;
+// }
+//             generate_files = FALSE;
+//         }
+        
+    
+//         file_index++;
+//     }
+//     return 0;
+// }

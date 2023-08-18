@@ -12,8 +12,8 @@
 #include "machine_code.h"
 #include "data_structures.h"
 
-#define MAX_REGISTER_VALUE 2047
-#define MIN_REGISTER_VALUE -2048
+#define MAX_DATA_VALUE 2047
+#define MIN_DATA_VALUE -2048
 #define MAX_IMMEDIATE_VALUE 511
 #define MIN_IMMEDIATE_VALUE -512
 

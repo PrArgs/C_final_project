@@ -1,20 +1,5 @@
 #include "util.h"
 
-void free_theme_all(int num_of_pointers, ...)
-{
-    int i = num_of_pointers;
-    va_list valist;
-    va_start(valist, num_of_pointers);
-    while (i > 0)
-    {
-        free(va_arg(valist, void *));/*FIX MEEEEEEEEE*/
-        i--;
-    }
-
-    
-    
-}
-
 char *remove_first_word(char *current_line){
     char *result;
     int i;

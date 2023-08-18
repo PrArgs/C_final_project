@@ -3,7 +3,6 @@ implementing the following data structures:
 3. List
 4. Map (Hash Table)
 */
-#ifndef DATA_STRUCTURES_H
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -20,6 +19,7 @@ typedef struct node
 typedef struct list
 {
     node *head;    
+    
 } list;
 
 /*This function will init a new node
@@ -69,4 +69,3 @@ void print_list(list *list);
 
 
 
-#endif

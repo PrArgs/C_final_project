@@ -30,7 +30,7 @@ bool ligal_label(char *first_frase){
 }
 
 bool legal_indirect_num(int num){
-    if (num > MAX_NUM || num < MIN_NUM){
+    if (num > MAX_IMMEDIATE_VALUE || num < MIN_IMMEDIATE_VALUE){
         return FALSE;
     }
     return TRUE;
@@ -44,7 +44,7 @@ bool legal_reg(char *reg){
 }
 
 bool legal_data_num(int num){
-    if (num > MAX_NUM || num < MIN_NUM){
+    if (num > MAX_DATA_VALUE || num < MIN_DATA_VALUE){
         return FALSE;
     }
     return TRUE;
@@ -76,6 +76,7 @@ word *init_data_in_data(int num,char *error_msg)
         printf("Error: unable to allocate memory\n");
         exit(1);
     }
+    result.
     data_word->data = num;
     result->data = data_word;
     result->error = error_msg;
@@ -195,8 +196,6 @@ bool loop_over_string(char *rest,data_word *data_image[],long *data_counter,char
         *data_counter++;
     }
 }
-
-
 
 bool parse_data(char *data_op,char *args,data_word *data_image[],long *data_counter,char *error_msg){    
     if(strcmp(data_op,".data") == 0){
@@ -354,7 +353,6 @@ bool *build_ast(char *current_line,symbol_list *symbol_table,long *data_counter,
     return result;   
  }
  */
-
 
 bool is_guidance_of_label(char *frase){
     printf("Not implemented yet\n");
@@ -675,7 +673,6 @@ bool valid_addressing(int *given_addressing, int *ligal_addressing)
         break;
     }
 }
-
 
 bool parse_instruction(int ins_code,char *args,instruction_word *instruction_image[],long *instruction_counter,char *error_msg){
     word *rapping_word = malloc(sizeof(word));

@@ -1,7 +1,6 @@
 /* A file storing all the global variables used in the program. */
 
-#ifndef GLOBALS_H /* Preventing multiple inclusions of the file. */
-#define GLOBALS_H
+
 
 char *INPUT_FILE_TYPE = ".as"; /* The type of the input file. */
 
@@ -20,4 +19,3 @@ typedef enum booleans{
     } bool;
 
 
-#endif 

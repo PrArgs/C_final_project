@@ -2,7 +2,6 @@
 1. symbol table
 2. macro table
 */
-#ifndef TABLE_GENERATOR_H
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -14,6 +13,7 @@
 
 /*Max size of a ligal table as a derectives of the memory size*/
 #define MAX_TABLE_SIZE 1023
+#define MAX_LABEL_LEN 31
 
 /*Define a macro in our assembler
 @params:
@@ -239,6 +239,6 @@ bool default_compare_function(char *data1, char *data2)
 
 
 
-#endif
+
 
 

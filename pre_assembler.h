@@ -4,13 +4,11 @@
 3. Empty lines
 4. spread macros
 */
-#ifndef PRE_ASSEMBLER_H
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include "globals.h"
-#include "ast.h"
 #include "table_generator.h"
 #include "util.h"
 
@@ -66,4 +64,3 @@ bool is_macro_end(char *line);
 
 
 
-#endif

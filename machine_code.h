@@ -6,7 +6,6 @@ and one for each type of directives.
 #include <stdlib.h>
 #include "globals.h"
 #include "table_generator.h"
-#include "ast.h"
 
 
 /*This function incode the instruction into binary code.

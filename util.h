@@ -3,7 +3,7 @@ the fuctions are base converters
 printers
 distructors (freeing memory by type)
 */
-#ifndef UTIL_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,7 +16,7 @@ takes arbitrary number of pionters and free the momory they point to
 @ ...: pointers
 */
 
-void free_theme_all(int num_of_pointers, ...);
+
 
 /*in the assembller the names are often are the second word in the line so this function returns the second word in the line for this purpose
 @line: the line to get the second word from
@@ -33,9 +33,8 @@ char *remove_first_word(char *current_line);
 
 char *toLowerCase(char *str);
 
-int *complement_2(int *num);
+int complement_2(int *num);
 
 
-#endif
 
 
