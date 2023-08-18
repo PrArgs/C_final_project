@@ -120,27 +120,29 @@ typedef struct instruction_op_word{
     unsigned int source_add:3;
     } instruction_op_word;
 
-/*Deffing an instruction word*/
-typedef struct instruction_word{
-     union *inst_word{
-        instruction_op_word *instruction_op_word;
-        immediate_direct_word *immediate_direct_word;
-        register_word *register_word;
-        } inst_word;    
-    } instruction_word;
 
+typedef union {
+    instruction_op_word *instruction_op_word;
+    immediate_direct_word *immediate_direct_word;
+    register_word *register_word;
+} inst_word;
+
+/*Deffing an instruction word*/
+typedef struct instruction_word {
+     inst_word *inst_word;
+} instruction_word;
 
 typedef struct word{
     char *label;
     int *word_type;
-    union *word_type{
+    union *w_word{
         data_word *data_word;
         register_word *register_word;
         immediate_direct_word *immediate_direct_word;
         instruction_word *instruction_word;
         instruction_op_word *instruction_op_word;
         guidance_word *guidance_word;
-        } word_type;
+        } w_word;
     char *error;
     } word;
 
@@ -200,12 +202,9 @@ bool is_guidance_of_label(char *frase);
 
 void set_ligal_params(int *ins_code, int *ligal_add_source, int *ligal_add_dest, int *word_limit);
 
+word *parse_single_oprand(char *args,char *error_msg);
 
-int parse_single_oprand(char *args, int *ligal_add_dest,char *error_msg);
+void get_args(char *args,char *array[]);
 
-
-void get_args(char *args,char *args_array[])
-
-bool valid_addressing(int *given_addressing, int *ligal_addressing)
-
+bool *valid_addressing(int *given_addressing, int *ligal_addressing);
 #endif
