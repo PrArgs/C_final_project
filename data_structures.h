@@ -5,7 +5,6 @@ implementing the following data structures:
 */
 #ifndef DATA_STRUCTURES_H
 #define DATA_STRUCTURES_H
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -22,7 +21,6 @@ typedef struct node
 typedef struct list
 {
     node *head;    
-    
 } list;
 
 /*This function will init a new node
@@ -69,6 +67,7 @@ bool list_free(list *list);
 void print_list(list *list);
 
 
+
+
+
 #endif
-
-
