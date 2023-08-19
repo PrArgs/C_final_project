@@ -20,7 +20,7 @@ bool is_label(char *first_frase){
 
 bool ligal_label(char *first_frase){
     /*too long*/
-    if (strlen(first_frase) > MAX_LABEL_LEN){
+    if (strlen(first_frase) > MAX_LABEL_LENGTH){
         return FALSE;
     }
     /*Statrts with a ligal char*/
@@ -82,8 +82,9 @@ word *init_data_in_data(int num,char *error_msg)
     return result;
 }
 
-bool loop_over_num(char *args,data_word *data_image[],long *data_counter,char *error_msg){
-    bool result = (strcmp(error_msg,"") == 0)? TRUE : FALSE;
+bool parse_data_guid(char *args,data_word *data_image[],long *data_counter,int *line_counter)/*TODO go over this function*/
+{
+    bool result = TRUE;
     int i = 0;
     int num = 0;
     int len = strlen(args);
@@ -165,8 +166,8 @@ bool loop_over_num(char *args,data_word *data_image[],long *data_counter,char *e
     return result;
 }
 
-bool loop_over_string(char *rest,data_word *data_image[],long *data_counter,char *error_msg){
-    bool result = (strcmp(error_msg,"") == 0)? TRUE : FALSE;
+bool parse_string_guid(char *args,data_word *data_image[],long *data_counter,int *line_counter){/*TODO go over this function*/
+    bool result = TRUE;
     int i = 0;
     int *val = 0;
     while(strcmp(rest,"\n") != 0){
@@ -207,7 +208,7 @@ bool parse_data(char *data_op,char *args,data_word *data_image[],long *data_coun
     }
 }
 
-bool parse_extern(char *args, symbol_list *symbol_table,char *error_msg){
+bool parse_extern(char *args, symbol_list *symbol_table,int *line_counter){/*TODO go over this function*/
     bool *result = TRUE;
     char *error;
     char *frase = strtok(args," ");
@@ -228,16 +229,10 @@ bool parse_extern(char *args, symbol_list *symbol_table,char *error_msg){
     return *result;
 }
 
-int find_instructio(char *op_code char *error_msg){
+int find_op_code(char *op_code){
     int result = 1;/*Helping determine if the instruction is legal / ligal but not all lower case */
     char *error;
-    char *lower_op_code = toLowerCase(op_code);
-    if(strcmp(op_code,lower_op_code) != 0){
-        sprintf(error,"Error: any instruction should be in lower case you wrote %s\n",op_code);
-        strcat(error_msg,error);
-        result = -1; /*might be ligal but not all lower case*/
-    }
-    switch (*lower_op_code){
+    switch (strcmp(lower_op_code,case)){
         case "mov":
             if(result == -1){
                 return -16;
@@ -274,9 +269,7 @@ int find_instructio(char *op_code char *error_msg){
         case "stop":
             return STOP*result;
     }
-    sprintf(error,"Error: %s is not a legal instruction\n",op_code);
-    strcpy(error_msg,error);   
-    return -30;
+    return -1;
 }
 
 bool parse_entry(char *args, symbol_list *symbol_table,char *error_msg){
@@ -366,7 +359,7 @@ bool is_guidnace_of_data(char *frase){
     return FALSE;
 }
 
-void get_args(char *args,char *array[]){
+void get_args(char *args,char **array[]){
     int i = 0;
     int j = 0;
     bool reading_arg = FALSE;
@@ -674,7 +667,7 @@ bool valid_addressing(int *given_addressing, int *ligal_addressing)
     }
 }
 
-bool parse_instruction(int ins_code,char *args,instruction_word *instruction_image[],long *instruction_counter,char *error_msg){
+bool parse_instruction(int *op_code, char **args[], instruction_word **instruction_image[],long *instruction_counter,int *line_counter){
     word *rapping_word = malloc(sizeof(word));
     if(rapping_word == NULL){
         strcat(error_msg,"Error: unable to allocate memory\n");

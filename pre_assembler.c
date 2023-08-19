@@ -7,7 +7,7 @@ bool pre_assembler(char *file_name, macro_table *table){
     int line_counter = 0;
     char *macro_name[MAX_LINE_LENGTH+1];/*the name of potential macro*/
     strcpy(macro_name, "");
-    list *macro_lines; /*a pionte that will be used to print the macro*/
+    list *macro_lines = NULL; /*a pionte that will be used to print the macro*/
     char line[MAX_LINE_LENGTH+1] = "";
 
     /*Setting the macro table and files*/
@@ -31,7 +31,7 @@ bool pre_assembler(char *file_name, macro_table *table){
 
     
     /*iterate over the file*/
-    while(fgets(line, MAX_LINE_LENGTH, file)){
+    while(fgets(line, MAX_LINE_LENGTH+1, file)){
         if(!can_ignore(line)){
             strcpy(line, remove_spaces(line));
             if(is_macro_definition(line))
@@ -110,7 +110,7 @@ char *remove_spaces(char *line){
 
 bool can_ignore(char *line){
     char *empty_line= "\n";
-    char *first_char = strcat(line, " ");/* Remove spaces from the beginning of the line*/   
+    char *first_char = strtok(line, " ");/* Remove spaces from the beginning of the line*/   
     if (first_char[0] == ';' || strcmp(line, empty_line) == 0)
     {
         return TRUE;
@@ -134,7 +134,6 @@ bool is_macro_definition(char *line)
     if (strcmp(first_word, "macro") == 0)
     {
         char *macro_name = get_second_word(line);
-        
     }
 }
 

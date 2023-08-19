@@ -68,23 +68,12 @@ typedef enum addressing_methods{
 
 /*Deffing the incoding methods)*/
 typedef enum incoding_methods{
-    ABSOLUTE=0,
-    EXTERNAL=1,
-    RELOCATABLE=2
+    A=0,
+    E=1,
+    R=2
     } incoding_method;
 
-/*
-**************************************************
----------DEFINING THE 12 BIT WORDS TYPES----------
-FOR COMMANDS 
-|   11-9   |   8-5  |   4-2 |   1-0     |
-|   DEST   |    OP  |   SRC |   A,R,E   |
 
-FOR DATA
-|   11-7   |    6-2      |   1-0     |
-|   DEST   |    SRC     |   A,R,E   |
-**************************************************
-*/
 /*Define data word*/
 typedef struct data_word{
     unsigned int data:12;
@@ -207,4 +196,13 @@ word *parse_single_oprand(char *args,char *error_msg);
 void get_args(char *args,char *array[]);
 
 bool *valid_addressing(int *given_addressing, int *ligal_addressing);
+
+bool parse_data_guid(char *args,data_word *data_image[],long *data_counter,int *line_counter);
+
+bool parse_string_guid(char *args,data_word *data_image[],long *data_counter,int *line_counter);
+
+bool parse_extern(char *args, symbol_list *symbol_table,int *line_counter);
+
+bool parse_instruction(int *op_code, char **args[], instruction_word *instruction_image[],long *instruction_counter,int *line_counter);
+
 #endif

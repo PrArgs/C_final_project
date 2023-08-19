@@ -142,6 +142,17 @@ char *print_macro_table(macro_table *table){
     }
 }
 
+void update_data_symbols(symbol_list *table, int *update_value){
+    bool result = TRUE;
+    symbol *current_symbol = table->head;
+    while(current_symbol != NULL){
+        if(current_symbol->is_data){
+            current_symbol->value += *update_value;
+        }
+        current_symbol = current_symbol->next;
+    }
+}
+
 bool ligal_label(char *label, char *error_massage){
     if(label == NULL){
         return FALSE;

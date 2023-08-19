@@ -28,14 +28,25 @@ int main(int argc,char *argv[]) {
         if(!pre_assembler(file_name, m_table)){
             generate_files = FALSE; // change FALSE to false
         }
+        if (m_table != NULL) {
+            printf("Somthing went wrong with the pre-assembler\n");
+            free_macro_table(m_table);
+        }
 
         /*First pass of the assembler*/
 
         symbol_list *symbol_table = init_symbol_list();
+        /*Init the instruction image (an arry of pionters to inst_word)*/
+        instruction_word **instruction_image[] = malloc(sizeof(instruction_word*) * MEMORY_SIZE);
+        /*Init data image (an arry of pionters to data_word)*/
+        data_word **data_image[] = malloc(sizeof(data_word*) * MEMORY_SIZE);
+
+        generate_files = first_parse(file_name, symbol_table, DC, IC,data_image,data_image); // pass pointers to DC and IC
 
         
-        if(!first_parse(file_name, symbol_table, DC, IC)){ // pass pointers to DC and IC
-            // handle error
+        if(generate_files){
+            /*Second pass of the assembler*/
+            generate_files = second_parse(file_name, symbol_table, IC);
         }
 
         file_index++;

@@ -15,7 +15,6 @@
 
 /*Max size of a ligal table as a derectives of the memory size*/
 #define MAX_TABLE_SIZE 1023
-#define MAX_LABEL_LEN 31
 
 /*Define a macro in our assembler
 @params:
@@ -167,6 +166,8 @@ char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type *type);
 char *set_symbol_value(symbol_list *table,char *symbol_name, int *value);
 
 bool *set_symbol_is_data(symbol_list *table,char *symbol_name, bool *is_data);
+
+void update_data_symbols(symbol_list *table, int *update_value);
 
 char *print_symbol(symbol *symbol);
 
