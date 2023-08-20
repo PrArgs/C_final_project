@@ -19,7 +19,7 @@ This file diclares the functions that will be used to generate the files in the 
 @ param data_image - the array of data words that represent the data
 */
 
-void generate_ob_file(char *file_name, long instruction_counter, long data_counter, word code_image[], data_word data_image[]);
+void generate_ob_file(char *file_name, long instruction_counter, long data_counter, instruction_word code_image[], data_word data_image[]);
 
 
 
@@ -40,8 +40,10 @@ void generate_ent_file(char *file_name, symbol_list *symbol_list);
 @ param code_image - the array of words that represent the instructions
 @ param instruction_counter - the number of instructions in the code
 */
+void generate_ext_file(char *file_name, symbol_list *symbol_list, instruction_word code_image[], long instruction_counter);
 
+/* This function generates the files in the case of a valid assembly code.*/
 
-void generate_ext_file(char *file_name, symbol_list *symbol_list, word code_image[], long instruction_counter);
+void generate_files(char *file_name, symbol_list *symbol_table,instruction_word  code_image[], data_word data_image[], long instruction_counter, long data_counter);
 
 #endif

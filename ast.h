@@ -111,14 +111,14 @@ typedef struct instruction_op_word{
 
 
 typedef union {
-    instruction_op_word *instruction_op_word;
-    immediate_direct_word *immediate_direct_word;
-    register_word *register_word;
+    instruction_op_word instruction_op_word;
+    immediate_direct_word immediate_direct_word;
+    register_word register_word;
 } inst_word;
 
 /*Deffing an instruction word*/
 typedef struct instruction_word {
-     inst_word *inst_word;
+     inst_word *i_word;
 } instruction_word;
 
 typedef struct word{
@@ -204,5 +204,10 @@ bool parse_string_guid(char *args,data_word *data_image[],long *data_counter,int
 bool parse_extern(char *args, symbol_list *symbol_table,int *line_counter);
 
 bool parse_instruction(int *op_code, char **args[], instruction_word *instruction_image[],long *instruction_counter,int *line_counter);
+
+void free_ins_array(instruction_word instruction_image[], long *ic);
+
+void free_data_array(data_word *data_image[], long *dc);
+
 
 #endif

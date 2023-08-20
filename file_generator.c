@@ -1,114 +1,115 @@
-/*
-This file diclares the functions that will be used to generate the files in the case of a valid assembly code.
-*/
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include "util.h"
-#include "globals.h"
-#include "table_generator.h"
+#include "file_generator.h"
 
-/* This function generates the .ob file 
-@ param file_name - the name of the file to be generated
-@ param instruction_counter - the number of instructions in the code
-@ param data_counter - the number of data words in the code
-@ param code_image - the array of words that represent the instructions
-@ param data_image - the array of data words that represent the data
-*/
-void generate_ob_file(char *file_name, long instruction_counter, long data_counter);
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+void generate_ob_file(char *file_name, long instruction_counter, long data_counter, ins_word code_image[], data_word data_image[]){
 
-char* convert_binary_to_base64(const char* binary_string) {
-    int decimal_value = strtol(binary_string, NULL, 2);
-    char decimal_string[20]; // Assuming the decimal value won't exceed this
-    sprintf(decimal_string, "%d", decimal_value);
-
-    size_t decimal_length = strlen(decimal_string);
-    char* base64_encoded = (char*)malloc(decimal_length * 2); // Base64 might take roughly twice the space
-    if (base64_encoded == NULL) {
-        fprintf(stderr, "Memory allocation error.\n");
+    char *output_file_name;
+    strcpy(output_file_name, file_name);
+    strcat(output_file_name, ".ob");
+    FILE *output_file = open_file(output_file_name, "w");
+    if(output_file == NULL){
+        printf("Error: could not open file %s\n", output_file_name);
         exit(1);
     }
+    fprintf(output_file, "%ld %ld\n", instruction_counter, data_counter);
+    int i = 0;
+    char *base64_encoded[3]="";
+    int *bin_filed = 0;
 
-    strcpy(base64_encoded, decimal_string);
-    return base64_encoded;
-}
-
-void process_file(const char* file_name, int instruction_counter, int data_counter) {
-    FILE* file = fopen(file_name, "r");
-    if (file == NULL) {
-        fprintf(stderr, "File not found.\n");
-        exit(1);
+    for (i = 0; i < instruction_counter; i++){
+        encode_instruction(code_image[i], base64_encoded);
+        fprintf(output_file, "%s\n", base64_encoded);
     }
 
-    char output_file_name[MAX_FILE_NAME_LENGTH];
-    snprintf(output_file_name, sizeof(output_file_name), "converted_%s", file_name);
-    FILE* output_file = fopen(output_file_name, "w");
-    if (output_file == NULL) {
-        fprintf(stderr, "Error creating output file.\n");
-        exit(1);
+    for (i = 0; i < data_counter; i++){
+        *bin_filed = data_image[i];
+        strcpy(encode_to_sixf(bin_filed), base64_encoded);
+        fprintf(output_file, "%s\n", base64_encoded);
     }
 
-    fprintf(output_file, "%d %d\n", instruction_counter, data_counter);
-
-    char line[13];
-    while (fgets(line, sizeof(line), file)) {
-        line[12] = '\0'; // Ensure null-termination
-        char* binary_word = line;
-
-        int decimal_value = strtol(binary_word, NULL, 2);
-        char* base64_encoded = convert_binary_to_base64(binary_word);
-        
-        fprintf(output_file, "%d %s\n", decimal_value, base64_encoded);
-        free(base64_encoded);
-    }
-
-    fclose(file);
-    fclose(output_file);
-
-    printf("Conversion successful. Output written to %s\n", output_file_name);
+    fclose(output_file);    
 }
-
-int main() {
-    char file_name[MAX_FILE_NAME_LENGTH];
-    int instruction_counter, data_counter;
-
-    printf("Enter the file name: ");
-    scanf("%s", file_name);
-    printf("Enter instruction_counter: ");
-    scanf("%d", &instruction_counter);
-    printf("Enter data_counter: ");
-    scanf("%d", &data_counter);
-
-    process_file(file_name, instruction_counter, data_counter);
-
-    return 0;
-}
-
-
-
-
-
-
-
 
 /* This function generates the .ent file a file that contains the names of the labels that are used as entry points
 @ param file_name - the name of the file to be generated
 @ param symbol_table - the symbol table
-
-void generate_ent_file(char *file_name, symbol_table *symbol_table);
+@ return void
 
 */
+
+void generate_ent_file(char *file_name, symbol_list *symbol_list){
+    
+    bool have_entry = FALSE;
+    char *output_file_name;
+    strcpy(output_file_name, file_name);
+    strcat(output_file_name, ".ent");
+    FILE *output_file = open_file(output_file_name, "w");
+    if(output_file == NULL){
+        printf("Error: could not open file %s\n", output_file_name);
+        exit(1);
+    }
+    symbol *current_symbol = get_head(symbol_list);
+    char *symbol_line = NULL;
+    while (current_symbol != NULL){
+        if(is_entry(current_symbol)){
+            have_entry = TRUE;
+            symbol_line = print_symbol(current_symbol);
+            fprintf(output_file, "%s", symbol_line);
+        }
+        current_symbol = get_next(current_symbol);
+    }
+
+    fclose(output_file);
+
+    if(!have_entry){/*If no symbol is entry delete the file*/
+        remove(output_file_name);
+    } 
+}
+
 
 /* This function generates the .ext file a file that contains the names of the labels that are used as external labels
 @ param file_name - the name of the file to be generated
 @ param symbol_table - the symbol table
 @ param code_image - the array of words that represent the instructions
 @ param instruction_counter - the number of instructions in the code
-
-void generate_ext_file(char *file_name, symbol_table *symbol_table, word code_image[], long instruction_counter);
-
 */
+void generate_ext_file(char *file_name, symbol_list *symbol_list, instruction_word code_image[], long instruction_counter){
+    {
+    bool have_external = FALSE;
+    char *output_file_name;
+    strcpy(output_file_name, file_name);
+    strcat(output_file_name, ".ext");
+    FILE *output_file = open_file(output_file_name, "w");
+    if(output_file == NULL){
+        printf("Error: could not open file %s\n", output_file_name);
+        exit(1);
+    }
+    int i = 0;
+    char *symbol_line = NULL;
+    symbol *current_symbol = get_head(symbol_list);
+    while (current_symbol != NULL){
+        if(is_extern(current_symbol)){
+            have_external = TRUE;
+            symbol_line = print_symbol(current_symbol);
+            fprintf(output_file, "%s", symbol_line);
+        }
+        current_symbol = get_next(current_symbol);
+    }
+
+    fclose(output_file);
+
+    if(!have_external){/*If no symbol is external delete the file*/
+        remove(output_file_name);
+    } 
+    
+
+}
+}
+
+/* This function generates the files in the case of a valid assembly code.*/
+
+void generate_files(char *file_name, symbol_list *symbol_table,instruction_word  code_image[], data_word data_image[], long instruction_counter, long data_counter){
+    generate_ob_file(file_name, instruction_counter, data_counter, code_image, data_image);
+    generate_ent_file(file_name, symbol_table);
+    generate_ext_file(file_name, symbol_table, code_image, instruction_counter);
+}
+

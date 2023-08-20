@@ -12,6 +12,8 @@
 
 #define INITIAL_INSTRUCTION_COUNTER 100 /* The piont in memory where the code begins. */
 
+void reset_args(symbol_list *symbol_table, instruction_word **instruction_image, data_word **data_image, long *IC, long *DC)
+
 
 int main(int argc,char *argv[]) { 
     bool generate_files = TRUE; 
@@ -41,15 +43,21 @@ int main(int argc,char *argv[]) {
         /*Init data image (an arry of pionters to data_word)*/
         data_word **data_image[] = malloc(sizeof(data_word*) * MEMORY_SIZE);
 
-        generate_files = first_parse(file_name, symbol_table, DC, IC,data_image,data_image); // pass pointers to DC and IC
+        generate_files = first_parse(file_name, symbol_table, DC, IC,data_image,data_image); 
 
-        
         if(generate_files){
-            /*Second pass of the assembler*/
-            generate_files = second_parse(file_name, symbol_table, IC);
+            generate_files(file_name, symbol_table, instruction_image, data_image, IC, DC);
         }
-
+        reset_args(symbol_table, instruction_image, data_image, IC, DC);
         file_index++;
     }
     return 0;
+}
+
+void reset_args(symbol_list *symbol_table, instruction_word **instruction_image, data_word **data_image, long *IC, long *DC){
+    free_symbol_list(symbol_table);
+    free_ins_array(instruction_image, *IC);
+    free_data_array(data_image, *DC);
+    *IC = INITIAL_INSTRUCTION_COUNTER;
+    *DC = 0;
 }
