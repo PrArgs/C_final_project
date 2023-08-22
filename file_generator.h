@@ -44,6 +44,6 @@ void generate_ext_file(char *file_name, symbol_list *symbol_list, instruction_wo
 
 /* This function generates the files in the case of a valid assembly code.*/
 
-void generate_files(char *file_name, symbol_list *symbol_table,instruction_word  code_image[], data_word data_image[], long instruction_counter, long data_counter);
+void generate_all_files(char *file_name, symbol_list *symbol_table,instruction_word  code_image[], data_word data_image[], long instruction_counter, long data_counter);
 
 #endif

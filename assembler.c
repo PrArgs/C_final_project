@@ -12,41 +12,51 @@
 
 #define INITIAL_INSTRUCTION_COUNTER 100 /* The piont in memory where the code begins. */
 
-void reset_args(symbol_list *symbol_table, instruction_word **instruction_image, data_word **data_image, long *IC, long *DC)
+void reset_args(symbol_list *symbol_table, instruction_word **instruction_image, data_word **data_image, long *IC, long *DC);
 
 
 int main(int argc,char *argv[]) { 
     bool generate_files = TRUE; 
     int file_index = 1;
+    int file_name_len = 0;
     macro_table *m_table = macro_table_init();
-    char *file_name = malloc(sizeof(char) * 100); // allocate memory for file_name
+    char *file_name= NULL; 
     long *IC = INITIAL_INSTRUCTION_COUNTER; // remove pointer
     long *DC = 0;
+    instruction_word **instruction_image[] = NULL;
+    data_word **data_image[]= NULL;
 
     while(file_index < argc){
+        file_name_len = strlen(argv[file_index]);
+
+        if (file_name_len > MAX_FILE_NAME_LENGTH) {
+            printf("File name is too long\n");
+            continue;
+        }
 
         strcpy(file_name, argv[file_index]);
         file_name = strcat(file_name, ".as");
         if(!pre_assembler(file_name, m_table)){
             generate_files = FALSE; // change FALSE to false
         }
-        if (m_table != NULL) {
-            printf("Somthing went wrong with the pre-assembler\n");
-            free_macro_table(m_table);
+        free_macro_table(m_table);
+        
+        if (!generate_files) {
+            file_index++;
+            continue;
         }
-
         /*First pass of the assembler*/
 
         symbol_list *symbol_table = init_symbol_list();
         /*Init the instruction image (an arry of pionters to inst_word)*/
-        instruction_word **instruction_image[] = malloc(sizeof(instruction_word*) * MEMORY_SIZE);
+        **instruction_image = malloc(sizeof(instruction_word*));
         /*Init data image (an arry of pionters to data_word)*/
-        data_word **data_image[] = malloc(sizeof(data_word*) * MEMORY_SIZE);
+        **data_image = malloc(sizeof(data_word*));
 
         generate_files = first_parse(file_name, symbol_table, DC, IC,data_image,data_image); 
 
         if(generate_files){
-            generate_files(file_name, symbol_table, instruction_image, data_image, IC, DC);
+            generate_all_files(file_name, symbol_table, instruction_image, data_image, IC, DC);
         }
         reset_args(symbol_table, instruction_image, data_image, IC, DC);
         file_index++;

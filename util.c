@@ -32,7 +32,5 @@ int complement_2(int *num){
         result += *num ^ mask;/*Flip evry bit one by one*/
         mask <<= 1;
     }
-    return result+1;
-    
-    
+    return result+1;    
 }

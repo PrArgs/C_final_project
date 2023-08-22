@@ -32,15 +32,15 @@ macro_table *macro_table_init(){
     return table; 
 }
 
-bool add_new_macro(macro_table *macro_table, char *name){
+bool add_new_macro(macro_table *macro_table, char *name, char *error_msg){
     if (table_contains(macro_table, name)){
-        printf("Error: macro %s already exists\n", name);
+        strcpy(error_msg,sprintf("Error: macro %s already exists\n", name));
         return FALSE;
     }
     int index = default_hash_function(name);
     macro *new_macro = macro_init(name);
     if(new_macro == NULL){
-        printf("Error: memory allocation failed\n");
+        strcpy(error_msg,"Error: memory allocation failed\n");
         return FALSE;
     }
 
@@ -57,11 +57,7 @@ bool add_new_macro(macro_table *macro_table, char *name){
     }
 }
 
-bool add_to_macro(macro_table *macro_table, char *data, char *macro_name){
-    if (!table_contains(macro_table, macro_name)){
-        printf("Error: macro %s does not exists\n", macro_name);
-        return FALSE;
-    }
+bool add_to_macro(macro_table *macro_table, char *data, char *macro_name, char *error_msg){
     int index = default_hash_function(macro_name);
     macro *current_macro = macro_table->macros_array[index];
     while(current_macro != NULL){

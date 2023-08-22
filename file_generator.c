@@ -107,7 +107,7 @@ void generate_ext_file(char *file_name, symbol_list *symbol_list, instruction_wo
 
 /* This function generates the files in the case of a valid assembly code.*/
 
-void generate_files(char *file_name, symbol_list *symbol_table,instruction_word  code_image[], data_word data_image[], long instruction_counter, long data_counter){
+void generate_all_files(char *file_name, symbol_list *symbol_table,instruction_word  code_image[], data_word data_image[], long instruction_counter, long data_counter){
     generate_ob_file(file_name, instruction_counter, data_counter, code_image, data_image);
     generate_ent_file(file_name, symbol_table);
     generate_ext_file(file_name, symbol_table, code_image, instruction_counter);

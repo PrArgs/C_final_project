@@ -32,7 +32,7 @@ bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter,
     
 
     /*Iterating over the lines of the file*/
-    while (fgets(current_line, MAX_LINE_LENGTH+1, file) != NULL){        
+    while (fgets(current_line,MAX_POSIBLE_LENGTH, file) != NULL){        
         strcpy(tmp_lable,"");
         strcpy(error_msg,"");
         label_flag = FALSE;     
@@ -59,7 +59,7 @@ bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter,
             }
         }
 
-        /*First word mend for parsing*/
+        /*First since all instructions comands are in lower case, if the first word is not in lower case it is not legal*/
         if(strcmp(first_frase,(toLowerCase(first_frase)))){
             result = FALSE;
             printf("ERROR at line %d: %s must be in lower case and might not be ligal \n",line_counter, first_frase);

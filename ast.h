@@ -135,6 +135,36 @@ typedef struct word{
     char *error;
     } word;
 
+tpdedef struct data_node{
+    data_word *data;
+    struct data_node *next;
+}data_node;
+
+typedef struct data_list{
+    data_node *head;
+    data_node *tail;
+}data_list;
+
+bool add_to_data_list(data_list *list, data_word *data);
+
+typedef struct inst_node{
+    instruction_word *inst;
+    struct inst_node *next;
+}inst_node;
+
+typedef struct inst_list{
+    inst_node *head;
+    inst_node *tail;
+}inst_list;
+
+bool add_to_inst_list(inst_list *list, instruction_word *inst);
+
+void free_data_list(data_list *list);
+void free_inst_list(inst_list *list);
+
+
+
+
 /*Deffing a word*/
 typedef struct ast_line{
     char *label;
@@ -208,6 +238,10 @@ bool parse_instruction(int *op_code, char **args[], instruction_word *instructio
 void free_ins_array(instruction_word instruction_image[], long *ic);
 
 void free_data_array(data_word *data_image[], long *dc);
+
+bool add_data(data_word **data_image[], long *data_counter, data_word *data);
+
+bool add_instruction(instruction_word **instruction_image[], long *instruction_counter, instruction_word *instruction);
 
 
 #endif

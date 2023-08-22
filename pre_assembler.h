@@ -13,6 +13,7 @@
 #include "globals.h"
 #include "table_generator.h"
 #include "util.h"
+#include <ctype.h>
 
 /*This is the main function of the pre assembler
 @param file_name - the name of the file to pre assemble

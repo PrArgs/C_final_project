@@ -82,87 +82,115 @@ word *init_data_in_data(int num,char *error_msg)
     return result;
 }
 
-bool parse_data_guid(char *args,data_word *data_image[],long *data_counter,int *line_counter)/*TODO go over this function*/
+bool parse_data_guid(char *args,data_list data_image,long *data_counter,int *line_counter)/*TODO go over this function*/
 {
     bool result = TRUE;
+    data_node *tmp_node = NULL;
     int i = 0;
-    int num = 0;
-    int len = strlen(args);
-    char *buffer = "";        
+    int *num = 0;
+    char *buffer[MAX_LINE_LENGTH]="";/*buffer for the number*/       
     bool dubble_comma = TRUE;/*first arg can't be a comma*/
     bool no_delimiter = FALSE; /*Flag that locates 2 diffrent numbers without a delimiter*/ 
+    bool reading_arg = FALSE;
 
-    while(i<len){
-        while(args[i] != '/n'){
-            strcpy(buffer,"");
-            if(args[i] == ' '){
-                if (strcmp(buffer,"") != 0){/*ignors befor comma or indicat 2 diffrent numbers without a delimiter*/
-                    no_delimiter = TRUE;
-                }
-                i++;
-            }
-            else if(args[i] == ',')
-            {
-                if(dubble_comma){
+
+    while(args != '/n'){
+        if(isspace((unsigned char)*args)){
+            if (reading_arg){/*ignors befor comma or indicat 2 diffrent numbers without a delimiter*/
+                no_delimiter = TRUE;
+                if(strcmp(buffer,"+") == 0 || strcmp(buffer,"-") == 0){
                     result = FALSE;
-                    strcpy(error_msg,"Error: dubble comma\n");
-                    i++;
+                    printf("Error at line %d: %c must be followed by a number\n",*line_counter,buffer);
+                }
+            }                
+        }
+        else if(args == ',')
+        {
+            reading_arg = FALSE;                
+            if(dubble_comma){                    
+                result = FALSE;
+                if(!reading_arg){
+                    printf("Error at line %d: comma can't come after .data\n",*line_counter);
                 }
                 else{
-                    if(args[i+1] == "\n"){
-                        result = FALSE;
-                        strcpy(error_msg,"Error: can't end with a comma\n");
-                    }                
-                    num = atoi(buffer);
-                    strcpy(buffer,"");
-                    dubble_comma = TRUE;
-                    no_delimiter = FALSE;
-                    i++;
-                    break;
-                }
-            }
-            /*Checks if char is a digit*/
-            else if(args[i] >= '0' && args[i] <= '9'){
-                if(no_delimiter){
-                    result = FALSE;
-                    strcpy(error_msg,"Error: missing delimiter\n");
-                    num = atoi(buffer);
-                    strcpy(buffer,"");
-                    dubble_comma = FALSE;
-                    no_delimiter = FALSE;                    
-                    break;
-                }
-                strcat(buffer,args[i]);
-                dubble_comma = FALSE;
-            }
-            else if(args[i+1] == "\n"){
-                if(dubble_comma){
-                    printf("Error: can't end with a comma\n");
-                    return FALSE;
-                }
-                else{
-                    num = atoi(buffer);
-                    i++;
-                    break;
+                    printf("Error at line %d: can't have 2 commas in a row\n",*line_counter);
                 }
             }
             else{
-                result = FALSE;
-                strcpy(error_msg,"Error: illegal char\n");
-                if(strcmp(buffer,"") != 0){
-                    num = atoi(buffer);
-                    strcpy(buffer,"");
-                    dubble_comma = FALSE;
-                    no_delimiter = FALSE;
-                    i++;
-                    break;
-                }                
+                if(strcmp(buffer,"+") == 0 || strcmp(buffer,"-") == 0){
+                    result = FALSE;
+                    printf("Error at line %d: %c must be followed by a number\n",*line_counter,buffer);
+                }
+                else{                                                     
+                    *num = atoi(buffer);
+                    tmp_node = init_data_in_data(data_image,data_counter,num,line_counter);/*TODO check if this is the right way to do it*/                    
+                    strcpy(buffer,"");                        
+                }                    
             }
+            dubble_comma = TRUE;
+            no_delimiter = FALSE;
         }
-        word *tmp_word = init_data_in_data(num,error_msg);
-        data_image[*data_counter] = tmp_word;
-        *data_counter++;
-    }    
+        else if(args == '+' || args == '-'){
+            if(reading_arg){
+                result = FALSE;
+                printf("Error at line %d: %c can't come after %s\n",*line_counter,args,buffer);
+                if(!(strcmp(buffer,"+") == 0 || strcmp(buffer,"-") == 0)){
+                    *num = atoi(buffer);
+                    tmp_node = init_data_in_data(data_image,data_counter,num,line_counter);/*TODO check if this is the right way to do it*/                    
+                    strcpy(buffer,"");    
+                }
+            }
+            reading_arg = TRUE;
+            dubble_comma = FALSE;
+            no_delimiter = TRUE;
+            strcat(buffer,args);
+        }
+        /*Checks if char is a digit*/
+        else if(args >= '0' && args <= '9'){
+            if(no_delimiter){
+                result = FALSE;                                      
+                *num = atoi(buffer);
+                tmp_node = init_data_in_data(data_image,data_counter,num,line_counter);/*TODO check if this is the right way to do it*/
+            }
+            reading_arg = TRUE;
+            no_delimiter = FALSE;
+            dubble_comma = FALSE;
+            strcat(buffer,args);
+        }
+        else{
+            result = FALSE;
+            printf("Error at line %d: %c is not a ligal cahr at at .data line\n",line_counter,args);
+            if(reading_arg){
+                result = FALSE;
+                if(strcmp(buffer,"+") == 0 || strcmp(buffer,"-") == 0){
+                    printf("Error at line %d: +/- must be followed by a number %c is not a ligal cahr at at .data line\n",line_counter,args);
+                }
+                else{
+                    *num = atoi(buffer);
+                    tmp_node = init_data_in_data(data_image,data_counter,num,line_counter);/*TODO check if this is the right way to do it*/
+                }
+            reading_arg = FALSE;
+            no_delimiter = FALSE;
+            dubble_comma = FALSE;
+            }                
+        }
+        args++;
+    }
+
+    if(reading_arg){
+        if(strcmp(buffer,"+") == 0 || strcmp(buffer,"-") == 0){
+            result = FALSE;
+            printf("Error at line %d: line can't end with %s\n",*line_counter,buffer);
+        }
+        else{
+            *num = atoi(buffer);
+            init_data_in_data(data_image,data_counter,num,line_counter);
+        }
+    }
+    else{
+        result = FALSE;
+        printf("Error at line %d: line can't end with a comma\n",*line_counter);
+    }  
     return result;
 }
 
@@ -821,5 +849,52 @@ bool parse_instruction(int *op_code, char **args[], instruction_word **instructi
             return FALSE;
     }
 }
-    
 
+bool add_to_data_list(data_list *list, data_word *data){
+    if (list->head == NULL){
+        list->head = data;
+        list->tail = data;
+        return TRUE;
+    }
+    else{
+        list->tail->next = data;
+        list->tail = data;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+bool add_to_inst_list(inst_list *list, instruction_word *inst){
+    if (list->head == NULL){
+        list->head = inst;
+        list->tail = inst;
+        return TRUE;
+    }
+    else{
+        list->tail->next = inst;
+        list->tail = inst;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+
+void free_data_list(data_list *list){
+    data_word *tmp = list->head;
+    while(tmp != NULL){
+        list->head = list->head->next;
+        free(tmp->data);
+        free(tmp);
+        tmp = list->head;
+    }
+}
+
+void free_inst_list(inst_list *list){
+    instruction_word *tmp = list->head;
+    while(tmp != NULL){
+        list->head = list->head->next;
+        free(tmp->inst);
+        free(tmp);
+        tmp = list->head;
+    }
+}

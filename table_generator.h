@@ -60,7 +60,7 @@ macro_table *macro_table_init();
 @params name: the name of the macro to add
 @returns: 1 if the data was added successfully and 0 otherwise
 */
-bool add_new_macro(macro_table *macro_table, char *name);
+bool add_new_macro(macro_table *macro_table, char *name, char *error_msg);
 
 /*This function will add new line to a macro in the macro table
 @params:
@@ -69,7 +69,7 @@ bool add_new_macro(macro_table *macro_table, char *name);
     macro_name: the name of the macro to add the data to
 @returns: true if the data was added successfully and false otherwise
 */
-bool add_to_macro(macro_table *macro_table, char *data, char *macro_name);
+bool add_to_macro(macro_table *macro_table, char *data, char *macro_name, char *error_msg);
 
 /*This is the decleration of function wiil remove a data from the hash table
 @params macro_table: a pointer to the hash table
