@@ -61,6 +61,7 @@ bool pre_assembler(char *file_name, macro_table *table){
             }
             line_counter++;
         }/*end of can't be ignored*/
+        
         if (line_counter > MEMORY_SIZE){
             fprintf(file_as, "Error: file is too long\n");
             result = FALSE;

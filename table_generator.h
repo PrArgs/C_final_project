@@ -161,9 +161,9 @@ typedef struct symbol_list
 */
 symbol *symbol_init(char *name);
 
-char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type *type);
+char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type *type, char *error_massage);
 
-char *set_symbol_value(symbol_list *table,char *symbol_name, int *value);
+char *set_symbol_value(symbol_list *table,char *symbol_name, int *value, char *error_massage);
 
 bool *set_symbol_is_data(symbol_list *table,char *symbol_name, bool *is_data);
 
@@ -178,7 +178,7 @@ symbol_list *init_symbol_list();
 /* A function that will add a new symbol to the symbol table
 returns TRUE if the symbol was added successfully
 returns FALSE if the symbol was not added successfully or the symbol already exists in the table*/
-bool add_symbol(symbol_list *table, char *key, long value);
+bool add_symbol(symbol_list *table, char *key, int value);
 
 /* A function that will remove a symbol from the symbol table and free the memory
 returns TRUE if the symbol was removed successfully

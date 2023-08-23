@@ -21,7 +21,7 @@ or an .as file with all the errors that were found in the pre assembling and par
 #include "ast.h"
 #include "table_generator.h"
 #include "util.h"
-#include "machine_code.h"
+#include "data_structures.h"
 
 
 /*This function will iterate over the lines of the .as file for the first time in order to build the following:

@@ -11,7 +11,6 @@
 #include "globals.h"
 #include "table_generator.h"
 #include "util.h"
-#include "machine_code.h"
 #include "data_structures.h"
 
 #define MAX_DATA_VALUE 2047
@@ -135,7 +134,7 @@ typedef struct word{
     char *error;
     } word;
 
-tpdedef struct data_node{
+typedef struct data_node{
     data_word *data;
     struct data_node *next;
 }data_node;
@@ -223,7 +222,7 @@ void set_ligal_params(int *ins_code, int *ligal_add_source, int *ligal_add_dest,
 
 word *parse_single_oprand(char *args,char *error_msg);
 
-void get_args(char *args,char *array[]);
+bool get_args(char *args, list *arg_array, int *line_counter);
 
 bool *valid_addressing(int *given_addressing, int *ligal_addressing);
 

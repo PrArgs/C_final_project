@@ -10,6 +10,22 @@ node *node_init(char *data){
     return node;
 }
 
+char *get_data(node *node){
+    return node->data;
+}
+
+bool set_data(node *node, char *data){
+    if (node == NULL || data == NULL){
+        return FALSE;
+    }
+    strcpy(node->data, data);
+    return TRUE;
+}
+
+node *get_next(node *node){
+    return node->next;
+}
+
 list *list_init()
 {  
     list *list = malloc(sizeof(list));
@@ -17,6 +33,11 @@ list *list_init()
        exit(1);/*exit if malloc fails*/
     }
     list->head = NULL;
+}
+
+node *get_list_head(list *list)
+{
+    return list->head;
 }
 
 bool add_to_list(list *list, node *new_node){

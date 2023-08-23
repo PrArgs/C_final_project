@@ -7,12 +7,95 @@ Macro struct
 */
 #include "ast.h"
 
+bool get_args(char *args, list *arg_array, int *line_counter){
+     
+    bool reading_arg = FALSE;
+    bool no_delimiter = FALSE;
+    bool last_comma = FALSE;
+    node *tmp_node = NULL;
+    char *buffer[MAX_LABEL_LENGTH+1];/*Too long arguments will be checked by context*/
+    bool result = TRUE;
+    strcpy(buffer,"");
+
+    while(args != '\n'){
+        if(args == ','){
+            if(reading_arg){
+                reading_arg = FALSE;/*End of reading arg*/
+                no_delimiter = FALSE;
+                tmp_node = node_init(buffer);
+                if(tmp_node == NULL){
+                    printf("Error at line %d: unable to allocate memory\n",*line_counter);
+                    result = FALSE;
+                }
+                add_to_list(arg_array,tmp_node);
+                strcpy(buffer,"");
+                tmp_node = NULL;
+            }
+            else
+            {
+                printf("Error at line %d: comma must come after an argument\n",*line_counter);
+                result = FALSE;
+            }
+            last_comma = TRUE;
+        }
+
+        else if (isspace((unsigned char)*args)){/*Handle white spaces*/
+            if(reading_arg)
+            {
+                if(strcmp(buffer,"-") == 0 || strcmp(buffer,"+") == 0){/*if sign is not followed by a number*/
+                    printf("Error at line %d: %s must be followed by a number\n",*line_counter,buffer);                   
+                }                
+                no_delimiter = TRUE;
+            }
+        }/*End of white space*/
+
+        else{/*We have a char*/                    
+            if(no_delimiter){
+                printf("Error at line %d: %s must be followed by a delimiter\n",*line_counter,buffer);
+                result = FALSE;
+                tmp_node = node_init(buffer);
+                if(tmp_node == NULL){
+                    printf("Error at line %d: unable to allocate memory\n",*line_counter);
+                    result = FALSE;
+                }
+                add_to_list(arg_array,tmp_node);
+                strcpy(buffer,"");
+                tmp_node = NULL;
+                strcat(buffer,args);
+            }
+
+            else{
+                last_comma = FALSE;
+                reading_arg = TRUE;
+                strcpy(buffer,args);
+            } 
+        }
+        args++;        
+    }
+
+    if (reading_arg){
+        tmp_node = node_init(buffer);
+        if(tmp_node == NULL){
+            printf("Error at line %d: unable to allocate memory\n",*line_counter);
+            result = FALSE;
+        }
+        add_to_list(arg_array,tmp_node);
+        strcpy(buffer,"");
+        tmp_node = NULL;
+    }
+    else (last_comma){
+        printf("Error at line %d: line can't end with a comma\n",*line_counter);
+        result = FALSE;
+    }
+    return result;
+}
+
 
 bool is_label(char *first_frase){
-    char lable_char[] = ":";
+    char lable_char = ':';
     /*Checks the word end with ':'*/
     int lable_len = strlen(first_frase);
-    if (first_frase[lable_len-1] != lable_char[0]){
+    if (first_frase[lable_len-1] != lable_char){
         return FALSE;
     }    
     return TRUE;
@@ -57,32 +140,34 @@ bool legal_char(char c){
     return TRUE;
 }
 
-word *init_data_in_data(int num,char *error_msg)
-{
-    char *error;
+
+bool init_data_in_data(data_list *data_image,long *data_counter,int *num,int *line_counter){
+    bool error = TRUE;
     int defualt_val = 0;
     if(!legal_data_num(num)){
-        sprintf(error,"Error: %d is illegal number\n" , num);
-        strcat(error_msg,error);
+        printf("Error at line %d: %d is not a legal number\n",*line_counter,num);
         num = defualt_val;
     }
-    word *result = (word *)malloc(sizeof(word));
-    if (result == NULL){
-        printf("Error: unable to allocate memory\n");
-        exit(1);
-    }
-    data_word *d_word = (data_word *)malloc(sizeof(data_word));
+    data_word *d_word =  (data_word *)malloc(sizeof(data_word));
     if (d_word == NULL){
         printf("Error: unable to allocate memory\n");
-        exit(1);
+        return FALSE;
+    }
+    data_node *result = (data_node *)malloc(sizeof(data_node));
+    if (result == NULL){
+        printf("Error: unable to allocate memory\n");
+        free(d_word);
+        return FALSE;
     }
     d_word->data = num;
-    result->data = data_word;
-    result->error = error_msg;
-    return result;
+    result->data = d_word;
+    error = add_to_data_list(data_image,result);
+    (*data_counter)++;
+    return error;
+
 }
 
-bool parse_data_guid(char *args,data_list data_image,long *data_counter,int *line_counter)/*TODO go over this function*/
+bool parse_data_guid(list *args,data_list *data_image,long *data_counter,int *line_counter)/*TODO go over this function*/
 {
     bool result = TRUE;
     data_node *tmp_node = NULL;
@@ -92,169 +177,123 @@ bool parse_data_guid(char *args,data_list data_image,long *data_counter,int *lin
     bool dubble_comma = TRUE;/*first arg can't be a comma*/
     bool no_delimiter = FALSE; /*Flag that locates 2 diffrent numbers without a delimiter*/ 
     bool reading_arg = FALSE;
-
-
-    while(args != '/n'){
-        if(isspace((unsigned char)*args)){
-            if (reading_arg){/*ignors befor comma or indicat 2 diffrent numbers without a delimiter*/
-                no_delimiter = TRUE;
-                if(strcmp(buffer,"+") == 0 || strcmp(buffer,"-") == 0){
-                    result = FALSE;
-                    printf("Error at line %d: %c must be followed by a number\n",*line_counter,buffer);
-                }
-            }                
-        }
-        else if(args == ',')
-        {
-            reading_arg = FALSE;                
-            if(dubble_comma){                    
-                result = FALSE;
-                if(!reading_arg){
-                    printf("Error at line %d: comma can't come after .data\n",*line_counter);
-                }
-                else{
-                    printf("Error at line %d: can't have 2 commas in a row\n",*line_counter);
-                }
-            }
-            else{
-                if(strcmp(buffer,"+") == 0 || strcmp(buffer,"-") == 0){
-                    result = FALSE;
-                    printf("Error at line %d: %c must be followed by a number\n",*line_counter,buffer);
-                }
-                else{                                                     
-                    *num = atoi(buffer);
-                    tmp_node = init_data_in_data(data_image,data_counter,num,line_counter);/*TODO check if this is the right way to do it*/                    
-                    strcpy(buffer,"");                        
-                }                    
-            }
-            dubble_comma = TRUE;
-            no_delimiter = FALSE;
-        }
-        else if(args == '+' || args == '-'){
-            if(reading_arg){
-                result = FALSE;
-                printf("Error at line %d: %c can't come after %s\n",*line_counter,args,buffer);
-                if(!(strcmp(buffer,"+") == 0 || strcmp(buffer,"-") == 0)){
-                    *num = atoi(buffer);
-                    tmp_node = init_data_in_data(data_image,data_counter,num,line_counter);/*TODO check if this is the right way to do it*/                    
-                    strcpy(buffer,"");    
-                }
-            }
-            reading_arg = TRUE;
-            dubble_comma = FALSE;
-            no_delimiter = TRUE;
-            strcat(buffer,args);
-        }
-        /*Checks if char is a digit*/
-        else if(args >= '0' && args <= '9'){
-            if(no_delimiter){
-                result = FALSE;                                      
-                *num = atoi(buffer);
-                tmp_node = init_data_in_data(data_image,data_counter,num,line_counter);/*TODO check if this is the right way to do it*/
-            }
-            reading_arg = TRUE;
-            no_delimiter = FALSE;
-            dubble_comma = FALSE;
-            strcat(buffer,args);
-        }
-        else{
-            result = FALSE;
-            printf("Error at line %d: %c is not a ligal cahr at at .data line\n",line_counter,args);
-            if(reading_arg){
-                result = FALSE;
-                if(strcmp(buffer,"+") == 0 || strcmp(buffer,"-") == 0){
-                    printf("Error at line %d: +/- must be followed by a number %c is not a ligal cahr at at .data line\n",line_counter,args);
-                }
-                else{
-                    *num = atoi(buffer);
-                    tmp_node = init_data_in_data(data_image,data_counter,num,line_counter);/*TODO check if this is the right way to do it*/
-                }
-            reading_arg = FALSE;
-            no_delimiter = FALSE;
-            dubble_comma = FALSE;
-            }                
-        }
-        args++;
+    node *tmp_node = get_list_head(args);
+    if(tmp_node == NULL){
+        printf("Error at line %d: .data command must have at least one argument\n",*line_counter);
+        return FALSE;
     }
 
-    if(reading_arg){
-        if(strcmp(buffer,"+") == 0 || strcmp(buffer,"-") == 0){
+    while(tmp_node != NULL){
+        strcpy(buffer,get_data(tmp_node));                                     
+        (*num) = atoi(buffer);
+        if(!(init_data_in_data(data_image,data_counter,num,line_counter))){
             result = FALSE;
-            printf("Error at line %d: line can't end with %s\n",*line_counter,buffer);
         }
-        else{
-            *num = atoi(buffer);
-            init_data_in_data(data_image,data_counter,num,line_counter);
-        }
+        tmp_node = get_next(tmp_node);         
     }
-    else{
-        result = FALSE;
-        printf("Error at line %d: line can't end with a comma\n",*line_counter);
-    }  
+
     return result;
 }
 
-bool parse_string_guid(char *args,data_word *data_image[],long *data_counter,int *line_counter){/*TODO go over this function*/
-    bool result = TRUE;
+bool parse_string_guid(char *args,data_list *data_image,long *data_counter,int *line_counter){/*TODO go over this function*/
+    bool insert = FALSE;
+    int quote_counter = 0;
     int i = 0;
     int *val = 0;
-    while(strcmp(rest,"\n") != 0){
-        while(rest[i] != '\0'){
-            *val = rest[i]; /*Get the ascii value of the char*/
-            if(legal_char(rest[i])){
-                strcpy(error_msg,"");                                                    
+    while(args != '/n'){
+        if(args == '"'){
+            if(quote_counter > 1){
+                printf("Error at line %d: string can't have more than 1 argument %s will not be added to data image\n",*line_counter,args);
+            }
+            else if (insert){/*closing quote*/
+                insert = FALSE;
+                val = 0;
+                if(!(init_data_in_data(data_image,data_counter,val,line_counter))){
+                    return FALSE;
+                }
+                (*data_counter)++;
+                quote_counter++;
+            } 
+            else{/*opening quote*/
+                quote_counter++;
+                insert = TRUE;
+            }
+        }        
+        else if(insert){
+            val = (int)args;
+            if(!(init_data_in_data(data_image,data_counter,val,line_counter))){
+                return FALSE;
+            }
+            (*data_counter)++;
+        } 
+        else if(!(isspace((unsigned char)*args))){            
+            if(quote_counter){
+                printf("Error at line %d: only one argument is allowed in a .string %s will not be added to data image\n",*line_counter,args); 
+                return FALSE;
             }
             else{
-                result = FALSE;
-                strcpy(error_msg,"Error: illegal char\n");
-                *val = 0;
+                printf("Error at line %d: .string command must start with a \" %s will not be added to data image\n",*line_counter,args);
+                return FALSE;
             }
-
-            word *tmp_word = init_data_in_data(val,error_msg);
-            data_image[*data_counter] = tmp_word;
-            *data_counter++;
-            i++;
         }
-        strcpy(error_msg,"");
-        if (rest = strtok(rest,",") != NULL){
-            result = FALSE;
-            strcpy(error_msg,"Error: illegal string\n");
-        }
-        word *tmp_word = init_data_in_data(0,error_msg);
-        data_image[*data_counter] = tmp_word;
-        *data_counter++;
-    }
-}
-
-bool parse_data(char *data_op,char *args,data_word *data_image[],long *data_counter,char *error_msg){    
-    if(strcmp(data_op,".data") == 0){
-        return loop_over_num(args,data_image,data_counter,error_msg);
-    }
-    else
-    {
-        return loop_over_string(args,data_image,data_counter,error_msg);        
+        args++;            
     }
 }
 
 bool parse_extern(char *args, symbol_list *symbol_table,int *line_counter){/*TODO go over this function*/
-    bool *result = TRUE;
-    char *error;
-    char *frase = strtok(args," ");
-    if (rest != NULL){
-        *result = FALSE;
-        printf("Error: .extern should have at least one argument\n");
+    bool result = TRUE;
+    char *error = "";
+    char *buuffer[MAX_LABEL_LENGTH+1] = args;
+    if (args == NULL){
+        printf("Error at line %d: .extern command must have at least one argument\n",*line_counter);
+        return FALSE;
     }
-    while(frase != NULL){
-        add_symbol(symbol_table,frase);
-        *error = set_symbol_type(symbol_table,frase,EXTERN);
-        if(*error != "")
-        {
-            *result = FALSE;
-            printf("Error: unable to add symbol\n");
+    bool reading = FALSE;
+    bool last_comma = TRUE; 
+
+    while (args != '\n'){
+        if(args == ','){
+            if(reading){                
+                add_symbol(symbol_table,buuffer,-1);
+                if(strcmp(error,"") == 0){
+                    result = FALSE;
+                    printf("Error at line %d: %s",*line_counter,error);
+                }
+            }
+            else{
+                result = FALSE;
+                printf("Error at line %d: .extern command must start with a label\n",*line_counter);
+            }            
+            reading = FALSE;
+            last_comma = TRUE;
         }
-        frase = strtok(NULL,",");
-    }
-    return *result;
+
+        else if(isspace((unsigned char)*args)){
+            if(reading){
+                if(last_comma){
+                    result = FALSE;
+                    printf("Error at line %d: .extern command must start with a label\n",*line_counter);
+                }
+                else{
+                    add_symbol(symbol_table,buuffer,-1);
+                    if(strcmp(error,"") == 0){
+                        result = FALSE;
+                        printf("Error at line %d: %s",*line_counter,error);
+                    }
+                }
+            }
+        }
+
+        else if(isalpha((unsigned char)*args)){
+            if(reading){
+                strcat(buuffer,args);
+            }
+            else{
+                reading = TRUE;
+                strcpy(buuffer,args);
+            }
+        }
+    return result;
 }
 
 int find_op_code(char *op_code){
@@ -385,101 +424,6 @@ bool is_guidnace_of_data(char *frase){
         return TRUE;
     }
     return FALSE;
-}
-
-void get_args(char *args,char **array[]){
-    int i = 0;
-    int j = 0;
-    bool reading_arg = FALSE;
-    bool no_delimiter = FALSE;
-    array[0] = "";
-    array[1] = "";
-    array[2] = "";
-    while(args[i] !='\n'){
-        if(args[i] == ','){
-            if(j > 0){/*Only the first arg can be followed by a comma*/
-                strcat(array[2],sprintf("Error: the %s part harms the ligal format\n",args[i]));
-                break;
-            }            
-            else if(array[0] == ""){
-                strcat(array[2],"Error: expected argument before comma\n");
-                break;
-            }
-            else{
-                reading_arg = FALSE;/*End of reading arg*/
-                no_delimiter = FALSE;
-                j++;
-            }
-        }/*End of comma*/
-        
-        else if(args[i] == ' ' || args[i] == '\t'){/*Handle white spaces*/
-            if(reading_arg)
-            {
-                if(array[j] == '-' || array[j] == '+'){/*if sign is not followed by a number*/
-                    strcat(array[2],sprintf("Error: %s must be followed by a number\n",array[j]));                    
-                }
-                no_delimiter = TRUE;/*We risk having a number without a delimiter*/
-            }
-        }/*End of white space*/
-
-        else if(args[i] == '-' || args[i] == '+'){
-                if(no_delimiter){
-                    if(j == 0){
-                        strcat(array[2],"Error: expected delimiter between arguments\n");
-                        j++;
-                        reading_arg = TRUE;
-                        no_delimiter = FALSE;
-                    }
-                    else{/*We allready have 2 args*/
-                        strcat(array[2],sprintf("Error: remove %s\n",args[i]));
-                        break;
-                    }
-                }
-                else if(reading_arg){/*We are reading a number*/
-                    if(j == 0){
-                        strcat(array[2],"Error: expected delimiter between arguments \n");
-                        j++;
-                        reading_arg = TRUE;
-                        no_delimiter = FALSE;
-                        strcat(array[j],args[i]);
-                    }
-                    else{/*We allready have 2 args*/
-                        strcat(array[2],sprintf("Error: remove %s\n",args[i]));
-                        break;
-                    }
-                }                
-                else{/*We are not reading a number*/
-                    reading_arg = TRUE;
-                    no_delimiter = FALSE;
-                    strcat(array[j],args[i]);
-                }
-            }/*End of sign*/
-
-        else{/*We have a valid char*/                    
-            if(no_delimiter){                
-                if(j == 0){/*No delimiter between first and second arg*/
-                    strcat(array[2],"Error: expected delimiter between arguments\n");
-                    j++;
-                    strcat(array[j],args[i]);
-                    no_delimiter = FALSE;
-                }
-                else{/*Too many arguments*/
-                    strcat(array[2],sprintf("Error: too many argumants remove %s\n",args[i]));
-                    break;
-                }
-            }
-            else{
-                if(array[j] == '+'){/*if sign is positive remove it*/ 
-                    strcpy(array[j],args[i]);
-                }
-                else{
-                reading_arg = TRUE;
-                strcat(array[j],args[i]);
-                }
-            }/*End of Ligal char*/
-        }
-        i++;        
-    }
 }
 
 word *parse_single_oprand(char *args,char *error_msg){

@@ -14,6 +14,8 @@ macro *macro_init(char *name){
     return macro;
 }
 
+
+
 macro_table *macro_table_init(){
     macro_table *table = (macro_table *)malloc(sizeof(macro_table));
     if(table == NULL){
@@ -180,7 +182,7 @@ symbol *symbol_init(char *name, int *value, bool *is_data, char *error_massage){
     return symbol;
 }
 
-char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type *type){
+char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type *type, char *error_massage){
     symbol *tmp_symbol = get_symbol(table, symbol_name);
     char *result = "";
     if(search_symbol(table, symbol_name) == NULL){
@@ -189,20 +191,26 @@ char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type *type){
     }
     int symbol_type = type;
     switch (symbol_type)
-    {   case EXTERNAL:
+    {   case EXT:
             tmp_symbol->is_external = TRUE;
+            if(tmp_symbol->is_entry == TRUE){
+                sprintf(result, " %s symbol is both external and entry", symbol_name);
+            }
             break;
         case ENTRY:
             tmp_symbol->is_entry = TRUE;
+            if(tmp_symbol->is_external == TRUE){
+                sprintf(result, " %s symbol is both external and entry", symbol_name);
+            }
             break;
         default:
-            sprintf(result, "Error: %d is an invalid symbol type", type);
+            sprintf(result, " %d is an invalid symbol type", type);
             break;
     }
     return result;
 }
 
-char *set_symbol_value(symbol_list *table,char *symbol_name, int *value){
+char *set_symbol_value(symbol_list *table,char *symbol_name, int *value, char *error_massage){
     symbol *tmp_symbol = get_symbol(table, symbol_name);
     char *result = "";
     if(tmp_symbol){
@@ -267,7 +275,7 @@ symbol_list *init_symbol_list(void){
     return table;    
 }
 
-bool add_symbol(symbol_list *table, char *key,bool *is_data, int *val, char *error_msg){
+bool add_symbol(symbol_list *table, char *key, int value){
     bool result = TRUE;
     symbol *new_symbol = symbol_init(key, val, is_data, error_msg);
     if(!new_symbol){

@@ -9,6 +9,7 @@
 #include "ast.h"
 #include "parser.h"
 #include "util.h"
+#include "machine_code.h"
 
 #define INITIAL_INSTRUCTION_COUNTER 100 /* The piont in memory where the code begins. */
 
@@ -23,8 +24,8 @@ int main(int argc,char *argv[]) {
     char *file_name= NULL; 
     long *IC = INITIAL_INSTRUCTION_COUNTER; // remove pointer
     long *DC = 0;
-    instruction_word **instruction_image[] = NULL;
-    data_word **data_image[]= NULL;
+    inst_list *instruction_image = NULL;
+    data_list *data_image = NULL;
 
     while(file_index < argc){
         file_name_len = strlen(argv[file_index]);
@@ -49,9 +50,7 @@ int main(int argc,char *argv[]) {
 
         symbol_list *symbol_table = init_symbol_list();
         /*Init the instruction image (an arry of pionters to inst_word)*/
-        **instruction_image = malloc(sizeof(instruction_word*));
-        /*Init data image (an arry of pionters to data_word)*/
-        **data_image = malloc(sizeof(data_word*));
+        ]
 
         generate_files = first_parse(file_name, symbol_table, DC, IC,data_image,data_image); 
 

@@ -27,7 +27,8 @@ bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter,
     char *second[MAX_LABEL_LENGTH+2] = "";
     char *remainder[MAX_LABEL_LENGTH+2] = "";
     char **operands[3] = {first, second, remainder};
-    bool *second_pass = FALSE;    
+    bool *second_pass = FALSE;
+    list *arg_list;    
 
     
 
@@ -38,6 +39,7 @@ bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter,
         label_flag = FALSE;     
         first_frase = strtok(current_line, " ");
         strcpy(rest,remove_first_word(current_line));
+        arg_list = list_init();
         
         
 
@@ -68,6 +70,11 @@ bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter,
         /*First word turns to lower case*/
         strcpy(first_frase,toLowerCase(first_frase));
 
+        /*Get all the posible arguments*/
+        if(!get_args(rest,arg_list, line_counter)){
+            result = FALSE;
+        }
+
         if(strcmp(first_frase,".data") == 0 || strcmp(first_frase,".string") == 0){/*if inserting data*/
             if(label_flag){
                 if(!(add_symbol(symbol_table, tmp_lable, *data_counter,error_msg))){
@@ -78,31 +85,34 @@ bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter,
             }
 
             if(strcmp(first_frase,".data") == 0){
-                if(!parse_data_guid(rest, data_image, data_counter, line_counter)){
+                if(!parse_data_guid(arg_list, data_image, data_counter, line_counter)){
                     result = FALSE;
                 }
             }
+
             else {
-                if(!parse_string_guid(rest, data_image, data_counter, line_counter)){
+                if(!parse_string_guid(arg_list, data_image, data_counter, line_counter)){
                     result = FALSE;
                 }
             }            
             *line_counter++;
             continue;
         }
+
         else if (strcmp(first_frase,".extern") == 0 || strcmp(first_frase,".entry") == 0){/*if extern or entry*/
 
             if(label_flag){
                 printf("WARNING at line %d: lable %s is not needed for %s guid and will not show in the symbol table\n",line_counter, tmp_lable, first_frase);
             }
 
+            
+            /*.entry will be handled in the second pass*/
             if (strcmp(first_frase,".extern"))
             {
-                if(!(parse_extern(rest,symbol_table,line_counter))){
+                if(!(parse_extern(arg_list,symbol_table,line_counter))){
                     result = FALSE;
                 }
             }
-            /*.entry will be handled in the second pass*/
             *line_counter++;
             continue;
         }        
@@ -122,14 +132,13 @@ bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter,
                 *line_counter++;
                 continue;
             }/*add the lable to the symbol table or print an error message*/
-        }
+        }        
 
-        void get_args(rest, operands);/*gets the oprands from the line*/
-
-        if(!parse_instruction(op_code, operands, instruction_image, instruction_counter, line_counter,second_pass)){
+        if(!parse_instruction(op_code, arg_list, instruction_image, instruction_counter, line_counter,second_pass)){
             result = FALSE;
         }
-        *line_counter++;    
+        *line_counter++;
+        list_free(arg_list);   
     }
 
     if(result){ /*start the second pass*/

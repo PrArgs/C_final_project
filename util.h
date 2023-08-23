@@ -37,9 +37,4 @@ char *toLowerCase(char *str);
 
 int complement_2(int *num);
 
-void write_error(char *error_message, char *file_name, int line_number);
-
-
-
-
 #endif
