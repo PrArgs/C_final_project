@@ -11,7 +11,8 @@
 #define MAX_LINE_LENGTH 80 /* The maximum length of a line in the assembly file. */
 #define MAX_LABEL_LENGTH 31 /* The maximum length of a label. */
 #define MEMORY_SIZE 1023 /* The size of the memory. */
-
+#define INITIAL_INSTRUCTION_COUNTER 100 /* The piont in memory where the code begins. */
+#define INITIAL_DATA_COUNTER 0 /* The piont in memory where the data begins. */
 
 
 

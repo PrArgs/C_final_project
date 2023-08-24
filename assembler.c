@@ -10,8 +10,6 @@
 #include "parser.h"
 #include "util.h"
 
-#define INITIAL_INSTRUCTION_COUNTER 100 /* The piont in memory where the code begins. */
-#define INITIAL_DATA_COUNTER 0 /* The piont in memory where the data begins. */
 
 void reset_args(symbol_list *symbol_table, inst_list *instruction_image, data_list *data_image, long *instruction_counter, long *data_counter);
 
