@@ -13,7 +13,7 @@ implementing the following data structures:
 
 typedef struct node
 {
-    char *data[MAX_LINE_LENGTH];
+    char data[MAX_LINE_LENGTH];
     struct node *next;
     
 } node;
