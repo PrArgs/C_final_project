@@ -173,7 +173,7 @@ bool legal_reg(char *reg);
 bool legal_data_num(int num);
 bool legal_char(char c);
 bool init_data_in_data(data_list *data_image, long *data_counter, int num, int line_counter);
-void set_ligal_params(int ins_code, int ligal_add_source, int ligal_add_dest, int word_limit);
+void set_ligal_params(int ins_code, int *ligal_add_source, int *ligal_add_dest, int *word_limit);
 bool valid_addressing(int given_addressing, int ligal_addressing);
 void combine_register(instruction_word *first_rand, instruction_word *second_rand);
 
