@@ -205,7 +205,8 @@ int default_hash_function(char *data)
 {
     int arry_size;
     arry_size = MEMORY_SIZE;
-    int sum=0;
+    int sum;
+    sum = 0;
     int i;
     for (i = 0; i < strlen(data); i++)
     {
