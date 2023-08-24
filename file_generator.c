@@ -8,6 +8,7 @@ void generate_ob_file(char *file_name, long instruction_counter, long data_count
     char *base64_encoded;
     inst_node *current_inst;
     data_node *current_data;
+    FILE *file;
 
     output_file_name = (char *)malloc(strlen(file_name) + strlen(".ob") + 1);
     if (output_file_name == NULL) {
@@ -18,7 +19,7 @@ void generate_ob_file(char *file_name, long instruction_counter, long data_count
 
     strcpy(output_file_name, file_name);
     strcat(output_file_name, ".ob");
-    FILE *file = open_file(output_file_name, "w");
+    file = open_file(output_file_name, "w");
     if(file == NULL){
         printf("Error: could not open file %s\n", output_file_name);
         free(output_file_name);
@@ -26,7 +27,7 @@ void generate_ob_file(char *file_name, long instruction_counter, long data_count
     }
 
     fprintf(file, "%ld %ld\n", instruction_counter, data_counter);
-    current_inst = get_head(code_image);
+    current_inst = get_head_inst(code_image);
 
     while (i < instruction_counter && current_inst != NULL){
         bin_filed = get_inst_val(current_inst);
@@ -38,7 +39,7 @@ void generate_ob_file(char *file_name, long instruction_counter, long data_count
         exit(1);
     }
 
-    current_data = get_head(data_image);
+    current_data = get_head_data(data_image);
 
     while (i < data_counter && current_data != NULL){
         bin_filed = get_data_val(current_data);
@@ -66,25 +67,26 @@ void generate_ent_file(char *file_name, symbol_list *symbol_list){
     symbol *current_symbol;
     char *symbol_line = NULL;
     char *output_file_name;
+    FILE *file;
 
     output_file_name = (char *)malloc(strlen(file_name) + strlen(".ent") + 1);
     strcpy(output_file_name, file_name);
     strcat(output_file_name, ".ent");
-    FILE *file = open_file(output_file_name, "w");
+    file = open_file(output_file_name, "w");
     if(file == NULL){
         printf("Error: could not open file %s\n", output_file_name);
         free(output_file_name);
         exit(1);
     }
     
-    current_symbol = get_head(symbol_list);
+    current_symbol = get_list_head(symbol_list);
     while (current_symbol != NULL){
         if(is_entry_s(current_symbol)){
             have_entry = TRUE;
             symbol_line = print_symbol(current_symbol);
             fprintf(file, "%s", symbol_line);
         }
-        current_symbol = get_next(current_symbol);
+        current_symbol = get_next_symbol(current_symbol);
     }
 
     fclose(file);
@@ -109,11 +111,12 @@ void generate_ext_file(char *file_name, symbol_list *symbol_list){
     symbol *current_symbol;
     bool have_external = FALSE;
     char *output_file_name;
+    FILE *file;
 
     output_file_name = (char *)malloc(strlen(file_name) + strlen(".ext") + 1);
     strcpy(output_file_name, file_name);
     strcat(output_file_name, ".ext");
-    FILE *file = open_file(output_file_name, "w");
+    file = open_file(output_file_name, "w");
     if(file == NULL){
         printf("Error: could not open file %s\n", output_file_name);
         free(output_file_name);

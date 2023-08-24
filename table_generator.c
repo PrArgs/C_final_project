@@ -182,6 +182,10 @@ symbol *symbol_init(char *name, int *value, bool is_data, char *error_massage){
     return symbol;
 }
 
+symbol *get_next_symbol(symbol *symbol){
+    return symbol->next;
+}
+
 
 char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type type){
     symbol *tmp_symbol = get_symbol(table, symbol_name);

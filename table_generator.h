@@ -161,6 +161,8 @@ typedef struct symbol_list
 */
 symbol *symbol_init(char *name);
 
+symbol *get_next_symbol(symbol *symbol);
+
 char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type type);
 
 char *set_symbol_value(symbol_list *table,char *symbol_name, int value, char *error_massage);
