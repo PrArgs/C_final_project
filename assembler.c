@@ -34,20 +34,24 @@ int main(int argc,char *argv[]) {
         new_argv[5] = "test4_err";
     }
     
-    bool generate_files = TRUE; 
+    
     int file_index, file_name_len;
-    long ic, dc;
     file_index = 1;
     file_name_len = 0;
-    macro_table *m_table = NULL;
-    char *file_name= NULL;
+
+    long ic, dc;
     ic = INITIAL_INSTRUCTION_COUNTER; /*Since INITIAL_INSTRUCTION_COUNTER is an int we want to avoid garbage values*/
-    long *IC = &ic;
     dc = INITIAL_DATA_COUNTER;
+
+    long *IC = &ic;
     long *DC = &dc;
-    inst_list *instruction_image = NULL;
-    data_list *data_image = NULL;
-    symbol_list *symbol_table = NULL;
+
+    inst_list *instruction_image;
+    data_list *data_image;
+    symbol_list *symbol_table;
+    bool generate_files;     
+    macro_table *m_table;
+    char file_name[MAX_LINE_LENGTH];
 
     if(test){
         argc = 6;
@@ -64,7 +68,7 @@ int main(int argc,char *argv[]) {
         }
 
         strcpy(file_name, argv[file_index]);
-        file_name = strcat(file_name, ".as");
+        strcat(file_name, ".as");
         m_table = macro_table_init();
         if(!pre_assembler(file_name, m_table)){
             generate_files = FALSE; 
