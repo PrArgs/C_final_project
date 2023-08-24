@@ -10,15 +10,14 @@
 #include "parser.h"
 #include "util.h"
 
-#define INITIAL_INSTRUCTION_COUNTER 100. /* The piont in memory where the code begins. */
+#define INITIAL_INSTRUCTION_COUNTER 100 /* The piont in memory where the code begins. */
 #define INITIAL_DATA_COUNTER 0 /* The piont in memory where the data begins. */
 
 void reset_args(symbol_list *symbol_table, inst_list *instruction_image, data_list *data_image, long *IC, long *DC);
 
 
 int main(int argc,char *argv[]) {
-    char *new_argv[6];
-    char file_name[MAX_LINE_LENGTH];
+    
     inst_list *instruction_image = NULL;
     data_list *data_image = NULL;
     symbol_list *symbol_table = NULL;   
@@ -30,10 +29,15 @@ int main(int argc,char *argv[]) {
     long dc;
     ic = INITIAL_INSTRUCTION_COUNTER;
     dc = INITIAL_DATA_COUNTER;
-    long *IC = &ic; /*Since INITIAL_INSTRUCTION_COUNTER is an int we want to avoid garbage values*/
-    long *DC = &dc;
+    long *IC; /*Since INITIAL_INSTRUCTION_COUNTER is an int we want to avoid garbage values*/
+    long *DC;
+    IC = &ic;
+    DC = &dc;
     bool test = FALSE;
     bool generate_files = TRUE;
+
+    char *new_argv[6];
+    char file_name[MAX_LINE_LENGTH];
 
 
     if(argc < 2){
