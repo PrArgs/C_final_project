@@ -10,13 +10,29 @@
 #include "parser.h"
 #include "util.h"
 
-#define INITIAL_INSTRUCTION_COUNTER 100 /* The piont in memory where the code begins. */
+#define INITIAL_INSTRUCTION_COUNTER 100. /* The piont in memory where the code begins. */
 #define INITIAL_DATA_COUNTER 0 /* The piont in memory where the data begins. */
 
 void reset_args(symbol_list *symbol_table, inst_list *instruction_image, data_list *data_image, long *IC, long *DC);
 
 
-int main(int argc,char *argv[]) { 
+int main(int argc,char *argv[]) {
+    char *new_argv[6];
+    bool test = FALSE;
+    if(argc < 2){
+        /*
+        printf("No files were given\n");
+        return 0;
+        */
+        test = TRUE;
+        printf("Running tests\n");
+        new_argv[1] = "test_from_maman";
+        new_argv[2] = "test1";
+        new_argv[3] = "test2_warning";
+        new_argv[4] = "test3_warning";
+        new_argv[5] = "test4_err";
+    }
+    
     bool generate_files = TRUE; 
     int file_index = 1;
     int file_name_len = 0;
@@ -29,6 +45,12 @@ int main(int argc,char *argv[]) {
     inst_list *instruction_image = NULL;
     data_list *data_image = NULL;
     symbol_list *symbol_table;
+
+    if(test){
+        argc = 6;
+        argv = new_argv;
+    }
+    
 
     while(file_index < argc){
         file_name_len = strlen(argv[file_index]);
@@ -53,28 +75,29 @@ int main(int argc,char *argv[]) {
         /*First pass of the assembler*/
 
         symbol_table = init_symbol_list();
-        /*Init the instruction image (an arry of pionters to inst_word)*/
-        
+        /*Init the instruction image (an arry of pionters to inst_word)*/        
         data_image = init_data_list();        
         instruction_image = init_inst_list();
 
         generate_files = parse(file_name, symbol_table,DC,IC,data_image,instruction_image); 
 
         if(generate_files){
-            generate_all_files(file_name, symbol_table, instruction_image, data_image, IC, DC);
+            generate_all_files(file_name, symbol_table, instruction_image, data_image, *IC, *DC);
         }
-        reset_args(symbol_table, instruction_image, data_image, IC, DC);
+        reset_args(symbol_table, instruction_image, data_image, IC, DC);/*Free all the memory*/
         file_index++;
     }
-    /*Free all the memory*/
     
-    return 0;
+    
+    return 1;
 }
 
 void reset_args(symbol_list *symbol_table, inst_list *instruction_image, data_list *data_image, long *IC, long *DC){
     free_symbol_list(symbol_table);
     free_inst_list(instruction_image);
     free_data_list(data_image);
-    *IC = INITIAL_INSTRUCTION_COUNTER;
-    *DC = 0;
+    long ic = INITIAL_INSTRUCTION_COUNTER; 
+    IC = &ic;
+    long dc = INITIAL_DATA_COUNTER;
+    DC = &dc;
 }
