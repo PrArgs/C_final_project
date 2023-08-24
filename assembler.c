@@ -18,24 +18,21 @@ void reset_args(symbol_list *symbol_table, inst_list *instruction_image, data_li
 
 int main(int argc,char *argv[]) {
     char *new_argv[6];
-    bool test;
-    test = FALSE;
-
-    int file_index = 1;
-    int file_name_len = 0;
-    
-    long ic = INITIAL_INSTRUCTION_COUNTER; /*Since INITIAL_INSTRUCTION_COUNTER is an int we want to avoid garbage values*/
-    long dc = INITIAL_DATA_COUNTER;
-
-    long *IC = &ic;
-    long *DC = &dc;
-
-    inst_list *instruction_image;
-    data_list *data_image;
-    symbol_list *symbol_table;
-    bool generate_files;     
-    macro_table *m_table;
     char file_name[MAX_LINE_LENGTH];
+    inst_list *instruction_image = NULL;
+    data_list *data_image = NULL;
+    symbol_list *symbol_table = NULL;   
+    macro_table *m_table = NULL;    
+    
+    int file_index = 1;
+    int file_name_len=0;
+    long ic =INITIAL_INSTRUCTION_COUNTER;
+    long dc = INITIAL_DATA_COUNTER;
+    long *IC = &ic; /*Since INITIAL_INSTRUCTION_COUNTER is an int we want to avoid garbage values*/
+    long *DC = &dc;
+    bool test = FALSE;
+    bool generate_files = TRUE;
+
 
     if(argc < 2){
         /*
@@ -49,8 +46,7 @@ int main(int argc,char *argv[]) {
         new_argv[3] = "test2_warning";
         new_argv[4] = "test3_warning";
         new_argv[5] = "test4_err";
-    }   
-    
+    }
 
     if(test){
         argc = 6;
@@ -87,10 +83,11 @@ int main(int argc,char *argv[]) {
 
         generate_files = parse(file_name, symbol_table,DC,IC,data_image,instruction_image); 
 
-        if(generate_files){
+        if(generate_files == TRUE){
             generate_all_files(file_name, symbol_table, instruction_image, data_image, *IC, *DC);
         }
         reset_args(symbol_table, instruction_image, data_image, IC, DC);/*Free all the memory*/
+        generate_files = TRUE;
         file_index++;
     }
     
