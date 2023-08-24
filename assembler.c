@@ -18,7 +18,8 @@ void reset_args(symbol_list *symbol_table, inst_list *instruction_image, data_li
 
 int main(int argc,char *argv[]) {
     char *new_argv[6];
-    bool test = FALSE;
+    bool test;
+    test = FALSE;
     if(argc < 2){
         /*
         printf("No files were given\n");
@@ -34,17 +35,19 @@ int main(int argc,char *argv[]) {
     }
     
     bool generate_files = TRUE; 
-    int file_index = 1;
-    int file_name_len = 0;
+    int file_index, file_name_len;
+    long ic, dc;
+    file_index = 1;
+    file_name_len = 0;
     macro_table *m_table = NULL;
     char *file_name= NULL;
-    long ic = INITIAL_INSTRUCTION_COUNTER; /*Since INITIAL_INSTRUCTION_COUNTER is an int we want to avoid garbage values*/
+    ic = INITIAL_INSTRUCTION_COUNTER; /*Since INITIAL_INSTRUCTION_COUNTER is an int we want to avoid garbage values*/
     long *IC = &ic;
-    long dc = INITIAL_DATA_COUNTER;
+    dc = INITIAL_DATA_COUNTER;
     long *DC = &dc;
     inst_list *instruction_image = NULL;
     data_list *data_image = NULL;
-    symbol_list *symbol_table;
+    symbol_list *symbol_table = NULL;
 
     if(test){
         argc = 6;
