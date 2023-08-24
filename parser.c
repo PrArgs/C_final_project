@@ -55,7 +55,7 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
                 
                     printf("ERROR at line %d: lable %s is the only word in the line\n",line_counter, tmp_lable);
                     result = FALSE;
-                    *line_counter++;
+                    (*line_counter)++;
                     continue;
             }
         }
@@ -78,7 +78,7 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
             if(label_flag){
                 if(!(add_symbol(symbol_table, tmp_lable, data_counter))){
                     result = FALSE;                    
-                    *line_counter++;
+                    (*line_counter)++;
                     continue;
                 }/*add the lable to the symbol table or print an error message*/
             }
@@ -94,7 +94,7 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
                     result = FALSE;
                 }
             }            
-            *line_counter++;
+            (*line_counter)++;
             continue;
         }
 
@@ -112,23 +112,23 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
                     result = FALSE;
                 }
             }
-            *line_counter++;
+            (*line_counter)++;
             continue;
         }        
         
         /*Either an instruction or line or an error*/
-        *op_code = find_instructio(first_frase , error_msg);
+        (*op_code) = find_op_code(first_frase);
         if (op_code < 0){
             printf("ERROR at line %d: %s is not a valid instruction\n",line_counter, first_frase);
             result = FALSE;
-            *line_counter++;
+            (*line_counter)++;
             continue;
         }
 
         if(label_flag){
             if(!(add_symbol(symbol_table, tmp_lable, instruction_counter))){
                 result = FALSE;                    
-                *line_counter++;
+                (*line_counter)++;
                 continue;
             }/*add the lable to the symbol table or print an error message*/
         }        
@@ -136,16 +136,16 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
         if(!parse_instruction(op_code, arg_list, instruction_image, instruction_counter, line_counter,second_pass)){
             result = FALSE;
         }
-        *line_counter++;
+        (*line_counter)++;
         list_free(arg_list);   
     }
 
     if(result){ /*start the second pass*/
         update_data_symbols(symbol_table, data_counter);/*updates the data symbols*/
         rewind(file);
-        *line_counter = 0;
-        *instruction_counter = 0;
-        *second_pass = TRUE;
+        (*line_counter) = 0;
+        (*instruction_counter) = 0;
+        (*second_pass) = TRUE;
 
         while (fgets(current_line, MAX_LINE_LENGTH+1, file) != NULL){        
             strcpy(tmp_lable,"");
@@ -174,20 +174,21 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
                 }
             }
             else if(strcmp(first_frase,".data") == 0 || strcmp(first_frase,".string") == 0 || strcmp(first_frase,".extern") == 0){/*if inserting data*/
-                *line_counter++;
+                (*line_counter)++;
                 continue;
             }
 
             else{/*instruction*/
-                *op_code = find_instructio(first_frase , error_msg);
-                void get_args(rest, operands);/*gets the oprands from the line*/
+                (*op_code) = find_op_code(first_frase);
+                
+                get_args(rest,arg_list, line_counter);
                 if(!parse_instruction(op_code, operands, instruction_image, instruction_counter, line_counter,second_pass)){
                     result = FALSE;
                 }
             }
-            *line_counter++;
+            (*line_counter)++;
         }
-    }       
+    }      
     fclose(file);
     return result;    
 }

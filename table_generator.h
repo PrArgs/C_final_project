@@ -203,16 +203,16 @@ modulo the size of the map
 */
 int default_hash_function(char *data)
 {
-    int arry_size;
-    arry_size = MEMORY_SIZE;
-    int sum;
-    sum = 0;
+    int arry_size = MEMORY_SIZE;
+    int sum = 0;
     int i;
+    
     for (i = 0; i < strlen(data); i++)
     {
-        sum += i*data[i];
+        sum += (i * (data[i]- '0'));
     }
-    return sum%arry_size;
+    
+    return sum % arry_size;
 }
 
 
