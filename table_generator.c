@@ -182,6 +182,7 @@ symbol *symbol_init(char *name, int *value, bool is_data, char *error_massage){
     return symbol;
 }
 
+
 char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type type){
     symbol *tmp_symbol = get_symbol(table, symbol_name);
     char *result;
@@ -356,6 +357,14 @@ void print_symbol_list(symbol_list *table){
         printf("%s\n", print_symbol(current_symbol));
         current_symbol = current_symbol->next;
     }
+}
+
+bool is_entry_s(symbol *symbol){
+    return (symbol->is_entry)? TRUE:FALSE;
+}
+
+bool is_external_s(symbol *symbol){
+    return (symbol->is_external)? TRUE:FALSE;
 }
 
 

@@ -167,6 +167,10 @@ char *set_symbol_value(symbol_list *table,char *symbol_name, int value, char *er
 
 bool *set_symbol_is_data(symbol_list *table,char *symbol_name, bool is_data);
 
+bool is_entry_s(symbol *symbol);
+
+bool is_external_s(symbol *symbol);
+
 void update_data_symbols(symbol_list *table, int update_value);
 
 char *print_symbol(symbol *symbol);
@@ -213,11 +217,6 @@ int default_hash_function(char *data)
     }    
     return sum % arry_size;
 }
-
-
-
-
-
 /*Our "special" map is a hasj table the data is stored in an array of lists
 @params:
     size: size of the array
