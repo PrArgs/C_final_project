@@ -1,32 +1,27 @@
 #include "parser.h"
 
 bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long *instruction_counter, data_list *data_image, inst_list *instruction_image){
-    FILE *file = fopen(file_name, "r");
-    if (file == NULL){
-        printf("Error: file %s does not exist\n", file_name);
-        return FALSE;
-    }
     int zero = 0;
     int line_counter = 0;
     bool label_flag;
     char *current_line;
-    bool *result = TRUE;
+    bool result = TRUE;
     char *first_frase;
     char *second_frase;
     char tmp_lable[MAX_LABEL_LENGTH+1];
     char *error_msg;
-
-
-    
-    
     int num_of_words;
     symbol tmp_symbol[MAX_LABEL_LENGTH+1];
     char *rest;
     int op_code = -1;
     bool second_pass = FALSE;
-    list *arg_list;    
+    list *arg_list;  
 
-    
+    FILE *file = fopen(file_name, "r");
+    if (file == NULL){
+        printf("Error: file %s does not exist\n", file_name);
+        return FALSE;
+    }
 
     /*Iterating over the lines of the file*/
     while (fgets(current_line,MAX_POSIBLE_LENGTH, file) != NULL){        
