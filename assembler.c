@@ -35,16 +35,20 @@ int main(int argc,char *argv[]) {
     }
     
     
-    int file_index, file_name_len;
+    int file_index;
+    int file_name_len;
     file_index = 1;
     file_name_len = 0;
 
-    long ic, dc;
+    long ic; 
+    long dc;
     ic = INITIAL_INSTRUCTION_COUNTER; /*Since INITIAL_INSTRUCTION_COUNTER is an int we want to avoid garbage values*/
     dc = INITIAL_DATA_COUNTER;
 
-    long *IC = &ic;
-    long *DC = &dc;
+    long *IC;
+    long *DC;
+    IC = &ic;
+    DC = &dc;
 
     inst_list *instruction_image;
     data_list *data_image;
