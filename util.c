@@ -8,14 +8,14 @@ char *encode_to_sixf(unsigned int bin_filed){
     unsigned right = 0;
     unsigned left = 0;
     unsigned mask = ALL_RIGHT_BIT_ON;
-    char *result[3]="12\n";
+    char result[3]="ER\n";
     
     right = i & mask;
     mask = mask << 6;
     left = i & mask;
     left = left >> 6;
-    *result[0] = int_to_sixf(left);
-    *result[1] = int_to_sixf(right);
+    result[0] = (char)int_to_sixf(left);
+    result[1] = (char)int_to_sixf(right);
     return result;    
 }
 
@@ -72,12 +72,12 @@ char *toLowerCase(char *str){
     return result;
 }
 
-int complement_2(int *num){
+int complement_2(int num){
     signed int result = 0;
     signed int mask = 1;
     while (mask)
     {
-        result += *num ^ mask;/*Flip evry bit one by one*/
+        result += num ^ mask;/*Flip evry bit one by one*/
         mask <<= 1;
     }
     return result+1;    

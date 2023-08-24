@@ -164,28 +164,28 @@ typedef struct inst_list{
     inst_node *tail;
 }inst_list;
 
-bool valid_addressing(int *given_addressing, int *ligal_addressing);
-int *parse_single_oprand(char *args, char *error_msg, instruction_word *tmp_word);
+bool valid_addressing(int given_addressing, int ligal_addressing);
+int parse_single_oprand(char *args, char *error_msg, instruction_word *tmp_word);
 void combine_register(instruction_word *first_rand, instruction_word *second_rand);
 bool ligal_label(char *first_frase);
-bool legal_indirect_num(int *num);
+bool legal_indirect_num(int num);
 bool legal_reg(char *reg);
 bool legal_data_num(int num);
 bool legal_char(char c);
-bool init_data_in_data(data_list *data_image, long *data_counter, int *num, int *line_counter);
-void set_ligal_params(int *ins_code, int *ligal_add_source, int *ligal_add_dest, int *word_limit);
-bool valid_addressing(int *given_addressing, int *ligal_addressing);
+bool init_data_in_data(data_list *data_image, long *data_counter, int num, int line_counter);
+void set_ligal_params(int ins_code, int ligal_add_source, int ligal_add_dest, int word_limit);
+bool valid_addressing(int given_addressing, int ligal_addressing);
 void combine_register(instruction_word *first_rand, instruction_word *second_rand);
 
-bool get_args(char *args, list *arg_array, int *line_counter);
+bool get_args(char *args, list *arg_array, int line_counter);
 bool is_label(char *first_frase);
-bool parse_data_guid(list *args, data_list *data_image, long *data_counter, int *line_counter);
-bool parse_string_guid(list *args, data_list *data_image, long *data_counter, int *line_counter);
-bool parse_extern(list *args, symbol_list *symbol_table, int *line_counter);
+bool parse_data_guid(list *args, data_list *data_image, long *data_counter, int line_counter);
+bool parse_string_guid(list *args, data_list *data_image, long *data_counter, int line_counter);
+bool parse_extern(list *args, symbol_list *symbol_table, int line_counter);
 int find_op_code(char *op_code);
-bool parse_entry(list *args, symbol_list *symbol_table, char *error_msg, int *line_counter);
-int *parse_single_oprand(char *args, char *error_msg, instruction_word *tmp_word);
-bool parse_instruction(int *ins_code, list *args, inst_list *instruction_image, long *instruction_counter, int *line_counter, bool second_pass);
+bool parse_entry(list *args, symbol_list *symbol_table, char *error_msg, int line_counter);
+int parse_single_oprand(char *args, char *error_msg, instruction_word *tmp_word);
+bool parse_instruction(int ins_code, list *args, inst_list *instruction_image, long *instruction_counter, int line_counter, bool second_pass);
 bool add_to_data_list(data_list *list, data_word *data);
 bool add_to_inst_list(inst_list *list, instruction_word *inst);
 

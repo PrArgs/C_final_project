@@ -116,12 +116,13 @@ bool can_ignore(const char *line) {
 /*###########################
 #### Might be useless  ######
 #############################
-*/
-bool unfold_macros(char *line, macro_table *table, int *line_counter)
+
+bool unfold_macros(char *line, macro_table *table, int line_counter)
 {
     bool result = TRUE;
     return result;
 }
+*/
 
 bool is_macro_definition(char *line)
 {

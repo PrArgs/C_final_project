@@ -11,6 +11,7 @@
 #include "util.h"
 
 #define INITIAL_INSTRUCTION_COUNTER 100 /* The piont in memory where the code begins. */
+#define INITIAL_DATA_COUNTER 0 /* The piont in memory where the data begins. */
 
 void reset_args(symbol_list *symbol_table, inst_list *instruction_image, data_list *data_image, long *IC, long *DC);
 
@@ -20,9 +21,11 @@ int main(int argc,char *argv[]) {
     int file_index = 1;
     int file_name_len = 0;
     macro_table *m_table = NULL;
-    char *file_name= NULL; 
-    long *IC = (long *)INITIAL_INSTRUCTION_COUNTER;
-    long *DC = 0;
+    char *file_name= NULL;
+    long ic = INITIAL_INSTRUCTION_COUNTER; /*Since INITIAL_INSTRUCTION_COUNTER is an int we want to avoid garbage values*/
+    long *IC = &ic;
+    long dc = INITIAL_DATA_COUNTER;
+    long *DC = &dc;
     inst_list *instruction_image = NULL;
     data_list *data_image = NULL;
     symbol_list *symbol_table;

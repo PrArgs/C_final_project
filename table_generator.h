@@ -136,10 +136,10 @@ the sybol list will in time be split into two lists, one for external symbols an
 typedef struct symbol
 {
     char *name;
-    int *value;
-    bool *is_external;
-    bool *is_entry;
-    bool *is_data;
+    int value;
+    bool is_external;
+    bool is_entry;
+    bool is_data;
     char *error; 
     struct symbol *next;
     
@@ -163,9 +163,9 @@ symbol *symbol_init(char *name);
 
 char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type *type);
 
-char *set_symbol_value(symbol_list *table,char *symbol_name, int *value, char *error_massage);
+char *set_symbol_value(symbol_list *table,char *symbol_name, int value, char *error_massage);
 
-bool *set_symbol_is_data(symbol_list *table,char *symbol_name, bool *is_data);
+bool *set_symbol_is_data(symbol_list *table,char *symbol_name, bool is_data);
 
 void update_data_symbols(symbol_list *table, int *update_value);
 
@@ -229,7 +229,7 @@ int default_hash_function(char *data)
 */
 
 typedef struct map {
-    int *size;
+    int size;
     list **array;
     int (*hash_function)(char *,int arry_size);
 } map;
@@ -238,7 +238,7 @@ typedef struct map {
 
 bool default_compare_function(char *data1, char *data2)
 {
-    return strcmp(data1, data2) == 0;
+    return (strcmp(data1, data2) == 0)? TRUE : FALSE;
 }
 
 #endif

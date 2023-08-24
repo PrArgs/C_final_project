@@ -40,5 +40,5 @@ void generate_ent_file(char *file_name, symbol_list *symbol_list);
 void generate_ext_file(char *file_name, symbol_list *symbol_list);
 
 /* This function generates the files in the case of a valid assembly code.*/
-void generate_all_files(char *file_name, symbol_list *symbol_table,inst_list *code_image,data_list *data_image, long *instruction_counter, long *data_counter);
+void generate_all_files(char *file_name, symbol_list *symbol_table,inst_list *code_image,data_list *data_image, long instruction_counter, long data_counter);
 #endif

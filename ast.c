@@ -7,8 +7,8 @@ Macro struct
 */
 #include "ast.h"
 
-bool valid_addressing(int *given_addressing, int *ligal_addressing);
-int *parse_single_oprand(char *args,char *error_msg,instruction_word *tmp_word );
+bool valid_addressing(int given_addressing, int ligal_addressing);
+int parse_single_oprand(char *args,char *error_msg,instruction_word *tmp_word );
 void remove_last_inst(instruction_image);
 void combine_register(instruction_word *first_rand, instruction_word *second_rand);
 bool ligal_label(char *first_frase){
@@ -22,7 +22,7 @@ bool ligal_label(char *first_frase){
     }
 }
 
-bool legal_indirect_num(int *num){
+bool legal_indirect_num(int num){
     if (num > MAX_IMMEDIATE_VALUE || num < MIN_IMMEDIATE_VALUE){
         return FALSE;
     }
@@ -50,7 +50,7 @@ bool legal_char(char c){
     return TRUE;
 }
 
-bool init_data_in_data(data_list *data_image,long *data_counter,int *num,int *line_counter){
+bool init_data_in_data(data_list *data_image,long *data_counter,int num,int line_counter){
     bool error = TRUE;
     int defualt_val = 0;
     if(!legal_data_num(num)){
@@ -80,7 +80,7 @@ bool init_data_in_data(data_list *data_image,long *data_counter,int *num,int *li
 
 }
 
-void set_ligal_params(int *ins_code, int *ligal_add_source, int *ligal_add_dest, int *word_limit){
+void set_ligal_params(int ins_code, int ligal_add_source, int ligal_add_dest, int word_limit){
     switch ((*ins_code)){
         case MOV:
             *word_limit = 2;
@@ -173,7 +173,7 @@ void set_ligal_params(int *ins_code, int *ligal_add_source, int *ligal_add_dest,
     }   
 }
 
-bool valid_addressing(int *given_addressing, int *ligal_addressing)
+bool valid_addressing(int given_addressing, int ligal_addressing)
 {
     switch (*ligal_addressing)
     {/*Since the ligal addresings are 1,3,5 || 3,5 || 3, we and the sum of each is unique, we can didacte the ligal addressing by the sum of the ligal addressing*/
@@ -222,7 +222,7 @@ Non encapsulated functions
 ##########################
 */
 
-bool get_args(char *args, list *arg_array, int *line_counter){/*TODO add \"\ "*/
+bool get_args(char *args, list *arg_array, int line_counter){/*TODO add \"\ "*/
      
     bool reading_arg = FALSE;    
     bool no_delimiter = FALSE;
@@ -362,7 +362,7 @@ bool is_label(char *first_frase){
     return TRUE;
 }
 
-bool parse_data_guid(list *args,data_list *data_image,long *data_counter,int *line_counter)
+bool parse_data_guid(list *args,data_list *data_image,long *data_counter,int line_counter)
 {
     bool result = TRUE;
     int *num = 0;
@@ -386,7 +386,7 @@ bool parse_data_guid(list *args,data_list *data_image,long *data_counter,int *li
     return result;
 }
 
-bool parse_string_guid(list *args,data_list *data_image,long *data_counter,int *line_counter){
+bool parse_string_guid(list *args,data_list *data_image,long *data_counter,int line_counter){
 
     bool result = TRUE;
     int *num = 0;
@@ -422,7 +422,7 @@ bool parse_string_guid(list *args,data_list *data_image,long *data_counter,int *
     return result;
 }
 
-bool parse_extern(list *args, symbol_list *symbol_table,int *line_counter){
+bool parse_extern(list *args, symbol_list *symbol_table,int line_counter){
     bool result = TRUE;
     char *error;
     strcpy(error,"");
@@ -496,7 +496,7 @@ int find_op_code(char *op_code) {
     return -1;
 }
 
-bool parse_entry(list *args, symbol_list *symbol_table,char *error_msg,int *line_counter){
+bool parse_entry(list *args, symbol_list *symbol_table,char *error_msg,int line_counter){
     bool result = TRUE;
     char *error;
     strcpy(error,"");    
@@ -517,7 +517,7 @@ bool parse_entry(list *args, symbol_list *symbol_table,char *error_msg,int *line
     return result;
 }
 
-int *parse_single_oprand(char *args,char *error_msg,instruction_word *tmp_word ){
+int parse_single_oprand(char *args,char *error_msg,instruction_word *tmp_word ){
     int result = 0;
     char *error_format ="";
 
@@ -591,7 +591,7 @@ int *parse_single_oprand(char *args,char *error_msg,instruction_word *tmp_word )
     }
 }
 
-bool parse_instruction(int *ins_code, list *args, inst_list *instruction_image,long *instruction_counter,int *line_counter,bool second_pass){
+bool parse_instruction(int ins_code, list *args, inst_list *instruction_image,long *instruction_counter,int line_counter,bool second_pass){
     
     instruction_word *rapping_word=NULL;
     bool result = TRUE;

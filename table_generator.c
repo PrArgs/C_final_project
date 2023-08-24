@@ -140,12 +140,12 @@ char *print_macro_table(macro_table *table){
     }
 }
 
-void update_data_symbols(symbol_list *table, int *update_value){
+void update_data_symbols(symbol_list *table, int update_value){
     bool result = TRUE;
     symbol *current_symbol = table->head;
     while(current_symbol != NULL){
         if(current_symbol->is_data){
-            current_symbol->value += *update_value;
+            current_symbol->value = update_value;
         }
         current_symbol = current_symbol->next;
     }
@@ -166,7 +166,7 @@ bool ligal_label(char *label, char *error_massage){
     return TRUE;
 }
 
-symbol *symbol_init(char *name, int *value, bool *is_data, char *error_massage){
+symbol *symbol_init(char *name, int *value, bool is_data, char *error_massage){
     symbol *symbol = malloc(sizeof(symbol));
     ligal_label(name, error_massage);
     if(symbol == NULL){
@@ -211,7 +211,7 @@ char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type *type){
     return result;
 }
 
-char *set_symbol_value(symbol_list *table,char *symbol_name, int *value, char *error_massage){
+char *set_symbol_value(symbol_list *table,char *symbol_name, int value, char *error_massage){
     symbol *tmp_symbol = get_symbol(table, symbol_name);
     char *result = "";
     if(tmp_symbol){
