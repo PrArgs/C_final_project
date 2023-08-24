@@ -113,11 +113,12 @@ int main(int argc,char *argv[]) {
 }
 
 void reset_args(symbol_list *symbol_table, inst_list *instruction_image, data_list *data_image, long *instruction_counter, long *data_counter){
+    long ic, dc;
     free_symbol_list(symbol_table);
     free_inst_list(instruction_image);
     free_data_list(data_image);
-    long ic = INITIAL_INSTRUCTION_COUNTER; 
+    ic = INITIAL_INSTRUCTION_COUNTER;     
+    dc = INITIAL_DATA_COUNTER;
     instruction_counter = &ic;
-    long dc = INITIAL_DATA_COUNTER;
     data_counter = &dc;
 }
