@@ -12,7 +12,8 @@ void generate_ob_file(char *file_name, long instruction_counter, long data_count
     }
     fprintf(output_file, "%ld %ld\n", instruction_counter, data_counter);
     int i = 0;
-    char *base64_encoded[3]="";
+    char *base64_encoded[3];
+    strcpy(base64_encoded, "");
     unsigned int *bin_filed = 0;
 
     inst_node *current_inst = get_head(code_image);
@@ -121,6 +122,6 @@ void generate_ext_file(char *file_name, symbol_list *symbol_list){
 void generate_all_files(char *file_name, symbol_list *symbol_table,inst_list *code_image,data_list *data_image, long instruction_counter, long data_counter){
     generate_ob_file(file_name, instruction_counter, data_counter, code_image, data_image);
     generate_ent_file(file_name, symbol_table);
-    generate_ext_file(file_name, symbol_table, code_image, instruction_counter);
+    generate_ext_file(file_name, symbol_table);
 }
 
