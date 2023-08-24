@@ -76,7 +76,7 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
 
         if(strcmp(first_frase,".data") == 0 || strcmp(first_frase,".string") == 0){/*if inserting data*/
             if(label_flag){
-                if(!(add_symbol(symbol_table, tmp_lable, *data_counter,error_msg))){
+                if(!(add_symbol(symbol_table, tmp_lable, data_counter))){
                     result = FALSE;                    
                     *line_counter++;
                     continue;
@@ -126,7 +126,7 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
         }
 
         if(label_flag){
-            if(!(add_symbol(symbol_table, tmp_lable, *instruction_counter,error_msg))){
+            if(!(add_symbol(symbol_table, tmp_lable, instruction_counter))){
                 result = FALSE;                    
                 *line_counter++;
                 continue;

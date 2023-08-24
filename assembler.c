@@ -21,10 +21,11 @@ int main(int argc,char *argv[]) {
     int file_name_len = 0;
     macro_table *m_table = NULL;
     char *file_name= NULL; 
-    long *IC = (long *)INITIAL_INSTRUCTION_COUNTER;// remove pointer
+    long *IC = (long *)INITIAL_INSTRUCTION_COUNTER;
     long *DC = 0;
     inst_list *instruction_image = NULL;
     data_list *data_image = NULL;
+    symbol_list *symbol_table;
 
     while(file_index < argc){
         file_name_len = strlen(argv[file_index]);
@@ -38,7 +39,7 @@ int main(int argc,char *argv[]) {
         file_name = strcat(file_name, ".as");
         m_table = macro_table_init();
         if(!pre_assembler(file_name, m_table)){
-            generate_files = FALSE; // change FALSE to false
+            generate_files = FALSE; 
         }
         free_macro_table(m_table);
         
@@ -48,7 +49,7 @@ int main(int argc,char *argv[]) {
         }
         /*First pass of the assembler*/
 
-        symbol_list *symbol_table = init_symbol_list();
+        symbol_table = init_symbol_list();
         /*Init the instruction image (an arry of pionters to inst_word)*/
         
         data_image = init_data_list();        

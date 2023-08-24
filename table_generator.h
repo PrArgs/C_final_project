@@ -119,7 +119,7 @@ NONE: a symbol that is not defined in any file value 2
 typedef enum symbol_type
 {
     EXT=0,
-    ENTRY=1,
+    ENTRY=1
     
 } symbol_type;
 
@@ -205,8 +205,8 @@ int default_hash_function(char *data)
 {
     int arry_size;
     arry_size = MEMORY_SIZE;
-    int sum, i;
-    sum = 0;
+    int sum=0;
+    int i;
     for (i = 0; i < strlen(data); i++)
     {
         sum += i*data[i];
