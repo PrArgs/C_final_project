@@ -624,6 +624,9 @@ bool parse_instruction(int *ins_code, list *args, inst_list *instruction_image,l
     strcpy(error,"");
     int *ligal_add_source = 0;
     int *ligal_add_dest = 0;
+
+    instruction_word *first_rand= NULL;
+    instruction_word *second_rand= NULL;
     
     
     set_ligal_params(ins_code,ligal_add_source,ligal_add_dest,word_limit);
@@ -655,7 +658,7 @@ bool parse_instruction(int *ins_code, list *args, inst_list *instruction_image,l
                 free(tmp_instruction);
                 return FALSE;                
             }
-            instruction_word *first_rand= NULL;
+            
             int *rand_add = parse_single_oprand(args_array[0],error,first_rand);
             if((rand_add < 1) || !(valid_addressing(rand_add,ligal_add_source))){
                 printf("Error at line %d: %s\n",*line_counter,error);
@@ -695,7 +698,7 @@ bool parse_instruction(int *ins_code, list *args, inst_list *instruction_image,l
                 return FALSE;   
             }
 
-            instruction_word *first_rand= NULL;
+            
             int *f_rand_add = parse_single_oprand(args_array[0],error,first_rand);
             if(f_rand_add < 1 || !(valid_addressing(f_rand_add,ligal_add_source))){
                 printf("Error at line %d: %s\n",*line_counter,error);
@@ -704,7 +707,7 @@ bool parse_instruction(int *ins_code, list *args, inst_list *instruction_image,l
                 return FALSE;
             }
 
-            instruction_word *second_rand= NULL;
+            
             int *s_rand_add = parse_single_oprand(args_array[1],error,second_rand);
             if(s_rand_add < 1 || !(valid_addressing(s_rand_add,ligal_add_dest))){
                 printf("Error at line %d: %s\n",*line_counter,error);
