@@ -20,6 +20,23 @@ int main(int argc,char *argv[]) {
     char *new_argv[6];
     bool test;
     test = FALSE;
+
+    int file_index = 1;
+    int file_name_len = 0;
+    
+    long ic = INITIAL_INSTRUCTION_COUNTER; /*Since INITIAL_INSTRUCTION_COUNTER is an int we want to avoid garbage values*/
+    long dc = INITIAL_DATA_COUNTER;
+
+    long *IC = &ic;
+    long *DC = &dc;
+
+    inst_list *instruction_image;
+    data_list *data_image;
+    symbol_list *symbol_table;
+    bool generate_files;     
+    macro_table *m_table;
+    char file_name[MAX_LINE_LENGTH];
+
     if(argc < 2){
         /*
         printf("No files were given\n");
@@ -32,30 +49,8 @@ int main(int argc,char *argv[]) {
         new_argv[3] = "test2_warning";
         new_argv[4] = "test3_warning";
         new_argv[5] = "test4_err";
-    }
+    }   
     
-    
-    int file_index;
-    int file_name_len;
-    file_index = 1;
-    file_name_len = 0;
-
-    long ic; 
-    long dc;
-    ic = INITIAL_INSTRUCTION_COUNTER; /*Since INITIAL_INSTRUCTION_COUNTER is an int we want to avoid garbage values*/
-    dc = INITIAL_DATA_COUNTER;
-
-    long *IC;
-    long *DC;
-    IC = &ic;
-    DC = &dc;
-
-    inst_list *instruction_image;
-    data_list *data_image;
-    symbol_list *symbol_table;
-    bool generate_files;     
-    macro_table *m_table;
-    char file_name[MAX_LINE_LENGTH];
 
     if(test){
         argc = 6;
