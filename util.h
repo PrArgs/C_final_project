@@ -37,4 +37,8 @@ char *toLowerCase(char *str);
 
 int complement_2(int *num);
 
+char *encode_to_sixf(unsigned int bin_filed);
+
+char int_to_sixf(const int num);
+
 #endif

@@ -182,11 +182,12 @@ symbol *symbol_init(char *name, int *value, bool *is_data, char *error_massage){
     return symbol;
 }
 
-char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type *type, char *error_massage){
+char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type *type){
     symbol *tmp_symbol = get_symbol(table, symbol_name);
-    char *result = "";
+    char *result;
+    strcpy(result, "");
     if(search_symbol(table, symbol_name) == NULL){
-        sprintf(result, "Error: %s symbol does not exist", symbol_name);
+        sprintf("Error: %s symbol does not exist", symbol_name);
         return result;
     }
     int symbol_type = type;
@@ -277,7 +278,7 @@ symbol_list *init_symbol_list(void){
 
 bool add_symbol(symbol_list *table, char *key, int value){
     bool result = TRUE;
-    symbol *new_symbol = symbol_init(key, val, is_data, error_msg);
+    symbol *new_symbol = symbol_init(key, value, FALSE, "");
     if(!new_symbol){
         printf("Error: failed to create new symbol\n");
         exit(1);

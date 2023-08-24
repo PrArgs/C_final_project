@@ -1,6 +1,6 @@
 #include "parser.h"
 
-bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter, long *instruction_counter, data_word **data_image[], instruction_word **instruction_image[]){
+bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long *instruction_counter, data_list *data_image, inst_list *instruction_image){
     FILE *file = fopen(file_name, "r");
     if (file == NULL){
         printf("Error: file %s does not exist\n", file_name);
@@ -17,11 +17,10 @@ bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter,
 
 
     
-    word *ast_line = NULL;
+    
     int num_of_words;
     symbol *tmp_symbol;
     char *rest;
-    word *tmp_word;
     int *op_code;
     char *first[MAX_LABEL_LENGTH+2] ="";
     char *second[MAX_LABEL_LENGTH+2] = "";

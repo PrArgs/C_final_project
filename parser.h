@@ -41,10 +41,9 @@ in addition it will check for errors in the .as file and print them to the same 
 @return - true if the line is valid, false otherwise
 
 */
+bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long *instruction_counter, data_list *data_image, inst_list *instruction_image);
 
-bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter, long *instruction_counter);
 
-ast_line *line_to_ast(char *line, long line_number);
 
 /*This function will iterate over the lines of the .as file for the second time in order to:
 1. inset missing data to instruction image
@@ -59,10 +58,5 @@ ast_line *line_to_ast(char *line, long line_number);
 @return - true if the line is valid, false otherwise
 
 */
-
-/*bool second_parse(char *line, symbol_table *symbol_table, AST *AST, code_image *code_image, int *code_counter); 
-
-                ***---------IMPLEMET AFTER THE DATA STRUCTURES ARE DONE----------***              
-                */
 
 #endif

@@ -1,6 +1,6 @@
 #include "file_generator.h"
 
-void generate_ob_file(char *file_name, long instruction_counter, long data_counter, ins_word code_image[], data_word data_image[]){
+void generate_ob_file(char *file_name, long instruction_counter, long data_counter,inst_list *code_image,data_list *data_image){
 
     char *output_file_name;
     strcpy(output_file_name, file_name);
@@ -13,17 +13,30 @@ void generate_ob_file(char *file_name, long instruction_counter, long data_count
     fprintf(output_file, "%ld %ld\n", instruction_counter, data_counter);
     int i = 0;
     char *base64_encoded[3]="";
-    int *bin_filed = 0;
+    unsigned int *bin_filed = 0;
 
-    for (i = 0; i < instruction_counter; i++){
-        encode_instruction(code_image[i], base64_encoded);
-        fprintf(output_file, "%s\n", base64_encoded);
+    inst_node *current_inst = get_head(code_image);
+
+    while (i < instruction_counter && current_inst != NULL){
+        bin_filed = extract_bits(get_inst_val(current_inst));
+        fprintf(output_file, "%s", encode_to_sixf(bin_filed));
+        current_inst = get_next(current_inst);
+    }
+    if(current_inst != NULL){
+        printf("Error: there are more instructions than the instruction counter\n");
+        exit(1);
     }
 
-    for (i = 0; i < data_counter; i++){
-        *bin_filed = data_image[i];
-        strcpy(encode_to_sixf(bin_filed), base64_encoded);
-        fprintf(output_file, "%s\n", base64_encoded);
+    data_node *current_data = get_head(data_image);
+
+    while (i < data_counter && current_data != NULL){
+        bin_filed = extract_bits(get_data_val(current_data));
+        fprintf(output_file, "%s", encode_to_sixf(bin_filed));
+        current_data = get_next(current_data);
+    }
+    if(current_data != NULL){
+        printf("Error: there are more data words than the data counter\n");
+        exit(1);
     }
 
     fclose(output_file);    
@@ -72,7 +85,7 @@ void generate_ent_file(char *file_name, symbol_list *symbol_list){
 @ param code_image - the array of words that represent the instructions
 @ param instruction_counter - the number of instructions in the code
 */
-void generate_ext_file(char *file_name, symbol_list *symbol_list, instruction_word code_image[], long instruction_counter){
+void generate_ext_file(char *file_name, symbol_list *symbol_list){
     {
     bool have_external = FALSE;
     char *output_file_name;
@@ -99,15 +112,13 @@ void generate_ext_file(char *file_name, symbol_list *symbol_list, instruction_wo
 
     if(!have_external){/*If no symbol is external delete the file*/
         remove(output_file_name);
-    } 
-    
+    }    
 
 }
 }
 
 /* This function generates the files in the case of a valid assembly code.*/
-
-void generate_all_files(char *file_name, symbol_list *symbol_table,instruction_word  code_image[], data_word data_image[], long instruction_counter, long data_counter){
+void generate_all_files(char *file_name, symbol_list *symbol_table,inst_list *code_image,data_list *data_image, long instruction_counter, long data_counter){
     generate_ob_file(file_name, instruction_counter, data_counter, code_image, data_image);
     generate_ent_file(file_name, symbol_table);
     generate_ext_file(file_name, symbol_table, code_image, instruction_counter);
