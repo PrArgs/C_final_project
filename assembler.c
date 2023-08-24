@@ -26,8 +26,10 @@ int main(int argc,char *argv[]) {
     
     int file_index = 1;
     int file_name_len=0;
-    long ic =INITIAL_INSTRUCTION_COUNTER;
-    long dc = INITIAL_DATA_COUNTER;
+    long ic;
+    long dc;
+    ic = INITIAL_INSTRUCTION_COUNTER;
+    dc = INITIAL_DATA_COUNTER;
     long *IC = &ic; /*Since INITIAL_INSTRUCTION_COUNTER is an int we want to avoid garbage values*/
     long *DC = &dc;
     bool test = FALSE;
