@@ -942,8 +942,9 @@ void remove_last_inst(inst_list *instruction_image){
 
 unsigned int extract_bits(void *word_ptr){
     word *tmp_word = NULL;
+    unsigned int result;
     tmp_word = (word *)word_ptr;
-    unsigned int result = *(unsigned int *)tmp_word;
+    result = *(unsigned int *)tmp_word;
     return result; 
 }
 
