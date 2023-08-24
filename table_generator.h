@@ -135,12 +135,12 @@ the sybol list will in time be split into two lists, one for external symbols an
 */
 typedef struct symbol
 {
-    char *name;
+    char name[MAX_LABEL_LENGTH];
     int value;
     bool is_external;
     bool is_entry;
     bool is_data;
-    char *error; 
+    char error[MAX_LINE_LENGTH]; 
     struct symbol *next;
     
 } symbol;
@@ -161,7 +161,7 @@ typedef struct symbol_list
 */
 symbol *symbol_init(char *name);
 
-char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type *type);
+char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type type);
 
 char *set_symbol_value(symbol_list *table,char *symbol_name, int value, char *error_massage);
 
