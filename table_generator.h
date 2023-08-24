@@ -167,7 +167,7 @@ char *set_symbol_value(symbol_list *table,char *symbol_name, int value, char *er
 
 bool *set_symbol_is_data(symbol_list *table,char *symbol_name, bool is_data);
 
-void update_data_symbols(symbol_list *table, int *update_value);
+void update_data_symbols(symbol_list *table, int update_value);
 
 char *print_symbol(symbol *symbol);
 
@@ -210,8 +210,7 @@ int default_hash_function(char *data)
     for (i = 0; i < strlen(data); i++)
     {
         sum += (i * (data[i]- '0'));
-    }
-    
+    }    
     return sum % arry_size;
 }
 
