@@ -13,38 +13,49 @@
 #define INITIAL_INSTRUCTION_COUNTER 100 /* The piont in memory where the code begins. */
 #define INITIAL_DATA_COUNTER 0 /* The piont in memory where the data begins. */
 
-void reset_args(symbol_list *symbol_table, inst_list *instruction_image, data_list *data_image, long *IC, long *DC);
+void reset_args(symbol_list *symbol_table, inst_list *instruction_image, data_list *data_image, long *instruction_counter, long *data_counter);
 
 
 int main(int argc,char *argv[]) {
     
-    inst_list *instruction_image = NULL;
-    data_list *data_image = NULL;
-    symbol_list *symbol_table = NULL;   
-    macro_table *m_table = NULL;    
-    
-    int file_index = 1;
-    int file_name_len=0;
-    long ic;
-    long dc;
-    ic = INITIAL_INSTRUCTION_COUNTER;
-    dc = INITIAL_DATA_COUNTER;
-    long *IC; /*Since INITIAL_INSTRUCTION_COUNTER is an int we want to avoid garbage values*/
-    long *DC;
-    IC = &ic;
-    DC = &dc;
-    bool test = FALSE;
-    bool generate_files = TRUE;
+    inst_list *instruction_image;
+    data_list *data_image;
+    symbol_list *symbol_table;   
+    macro_table *m_table;   
 
     char *new_argv[6];
-    char file_name[MAX_LINE_LENGTH];
+    char file_name[MAX_LINE_LENGTH]; 
+    
+    int file_index;
+    int file_name_len;
+    long ic;
+    long dc;
+    bool generate_files;
+    bool test;    
+    long *IC; /*Since INITIAL_INSTRUCTION_COUNTER is an int we want to avoid garbage values*/
+    long *DC;
+
+    instruction_image = NULL;
+    data_image = NULL;
+    symbol_table = NULL;
+    m_table = NULL;
+
+    file_index = 1;
+    ic = INITIAL_INSTRUCTION_COUNTER;
+    dc = INITIAL_DATA_COUNTER;
+    IC = &ic;
+    DC = &dc;
+    test = FALSE;
+    generate_files = TRUE;
+
+    
 
 
     if(argc < 2){
-        /*
+        
         printf("No files were given\n");
         return 0;
-        */
+        /*
         test = TRUE;
         printf("Running tests\n");
         new_argv[1] = "test_from_maman";
@@ -52,12 +63,14 @@ int main(int argc,char *argv[]) {
         new_argv[3] = "test2_warning";
         new_argv[4] = "test3_warning";
         new_argv[5] = "test4_err";
+        */
     }
-
+    /*
     if(test){
         argc = 6;
         argv = new_argv;
     }
+    */
     
 
     while(file_index < argc){
@@ -101,12 +114,12 @@ int main(int argc,char *argv[]) {
     return 1;
 }
 
-void reset_args(symbol_list *symbol_table, inst_list *instruction_image, data_list *data_image, long *IC, long *DC){
+void reset_args(symbol_list *symbol_table, inst_list *instruction_image, data_list *data_image, long *instruction_counter, long *data_counter){
     free_symbol_list(symbol_table);
     free_inst_list(instruction_image);
     free_data_list(data_image);
     long ic = INITIAL_INSTRUCTION_COUNTER; 
-    IC = &ic;
+    instruction_counter = &ic;
     long dc = INITIAL_DATA_COUNTER;
-    DC = &dc;
+    data_counter = &dc;
 }
