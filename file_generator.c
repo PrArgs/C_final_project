@@ -18,20 +18,20 @@ void generate_ob_file(char *file_name, long instruction_counter, long data_count
 
     strcpy(output_file_name, file_name);
     strcat(output_file_name, ".ob");
-    FILE *output_file = open_file(output_file_name, "w");
-    if(output_file == NULL){
+    FILE *file = open_file(output_file_name, "w");
+    if(file == NULL){
         printf("Error: could not open file %s\n", output_file_name);
         free(output_file_name);
         exit(1);
     }
 
-    fprintf(output_file, "%ld %ld\n", instruction_counter, data_counter);
+    fprintf(file, "%ld %ld\n", instruction_counter, data_counter);
     current_inst = get_head(code_image);
 
     while (i < instruction_counter && current_inst != NULL){
-        bin_filed = extract_bits(get_inst_val(current_inst));
-        fprintf(output_file, "%s", encode_to_sixf(bin_filed));
-        current_inst = get_next(current_inst);
+        bin_filed = get_inst_val(current_inst);
+        fprintf(file, "%s", encode_to_sixf(bin_filed));
+        current_inst = get_next_inst(current_inst);
     }
     if(current_inst != NULL){
         printf("Error: there are more instructions than the instruction counter\n");
@@ -41,16 +41,16 @@ void generate_ob_file(char *file_name, long instruction_counter, long data_count
     current_data = get_head(data_image);
 
     while (i < data_counter && current_data != NULL){
-        bin_filed = extract_bits(get_data_val(current_data));
-        fprintf(output_file, "%s", encode_to_sixf(bin_filed));
-        current_data = get_next(current_data);
+        bin_filed = get_data_val(current_data);
+        fprintf(file, "%s", encode_to_sixf(bin_filed));
+        current_data = get_next_data(current_data);
     }
     if(current_data != NULL){
         printf("Error: there are more data words than the data counter\n");
         exit(1);
     }
     free(output_file_name);
-    fclose(output_file);    
+    fclose(file);    
 }
 
 /* This function generates the .ent file a file that contains the names of the labels that are used as entry points
@@ -70,8 +70,8 @@ void generate_ent_file(char *file_name, symbol_list *symbol_list){
     output_file_name = (char *)malloc(strlen(file_name) + strlen(".ent") + 1);
     strcpy(output_file_name, file_name);
     strcat(output_file_name, ".ent");
-    FILE *output_file = open_file(output_file_name, "w");
-    if(output_file == NULL){
+    FILE *file = open_file(output_file_name, "w");
+    if(file == NULL){
         printf("Error: could not open file %s\n", output_file_name);
         free(output_file_name);
         exit(1);
@@ -82,12 +82,12 @@ void generate_ent_file(char *file_name, symbol_list *symbol_list){
         if(is_entry_s(current_symbol)){
             have_entry = TRUE;
             symbol_line = print_symbol(current_symbol);
-            fprintf(output_file, "%s", symbol_line);
+            fprintf(file, "%s", symbol_line);
         }
         current_symbol = get_next(current_symbol);
     }
 
-    fclose(output_file);
+    fclose(file);
 
     if(!have_entry){/*If no symbol is entry delete the file*/
         remove(output_file_name);
@@ -113,8 +113,8 @@ void generate_ext_file(char *file_name, symbol_list *symbol_list){
     output_file_name = (char *)malloc(strlen(file_name) + strlen(".ext") + 1);
     strcpy(output_file_name, file_name);
     strcat(output_file_name, ".ext");
-    FILE *output_file = open_file(output_file_name, "w");
-    if(output_file == NULL){
+    FILE *file = open_file(output_file_name, "w");
+    if(file == NULL){
         printf("Error: could not open file %s\n", output_file_name);
         free(output_file_name);
         exit(1);
@@ -125,12 +125,12 @@ void generate_ext_file(char *file_name, symbol_list *symbol_list){
         if(is_extern_s(current_symbol)){
             have_external = TRUE;
             symbol_line = print_symbol(current_symbol);
-            fprintf(output_file, "%s", symbol_line);
+            fprintf(file, "%s", symbol_line);
         }
         current_symbol = get_next(current_symbol);
     }
     
-    fclose(output_file);
+    fclose(file);
     free(output_file_name);
 
     if(!have_external){/*If no symbol is external delete the file*/
