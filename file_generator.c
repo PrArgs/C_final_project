@@ -19,7 +19,7 @@ void generate_ob_file(char *file_name, long instruction_counter, long data_count
 
     strcpy(output_file_name, file_name);
     strcat(output_file_name, ".ob");
-    file = open_file(output_file_name, "w");
+    file = fopen(output_file_name, "w");
     if(file == NULL){
         printf("Error: could not open file %s\n", output_file_name);
         free(output_file_name);
@@ -72,14 +72,15 @@ void generate_ent_file(char *file_name, symbol_list *symbol_list){
     output_file_name = (char *)malloc(strlen(file_name) + strlen(".ent") + 1);
     strcpy(output_file_name, file_name);
     strcat(output_file_name, ".ent");
-    file = open_file(output_file_name, "w");
+    file = fopen(output_file_name, "w");
     if(file == NULL){
         printf("Error: could not open file %s\n", output_file_name);
         free(output_file_name);
         exit(1);
     }
     
-    current_symbol = get_list_head(symbol_list);
+    current_symbol = get_symbol_head(symbol_list);
+    
     while (current_symbol != NULL){
         if(is_entry_s(current_symbol)){
             have_entry = TRUE;
@@ -116,21 +117,21 @@ void generate_ext_file(char *file_name, symbol_list *symbol_list){
     output_file_name = (char *)malloc(strlen(file_name) + strlen(".ext") + 1);
     strcpy(output_file_name, file_name);
     strcat(output_file_name, ".ext");
-    file = open_file(output_file_name, "w");
+    file = fopen(output_file_name, "w");
     if(file == NULL){
         printf("Error: could not open file %s\n", output_file_name);
         free(output_file_name);
         exit(1);
     }
 
-    current_symbol = get_head(symbol_list);
+    current_symbol = get_symbol_head(symbol_list);
     while (current_symbol != NULL){
         if(is_extern_s(current_symbol)){
             have_external = TRUE;
             symbol_line = print_symbol(current_symbol);
             fprintf(file, "%s", symbol_line);
         }
-        current_symbol = get_next(current_symbol);
+        current_symbol = get_next_symbol(current_symbol);
     }
     
     fclose(file);

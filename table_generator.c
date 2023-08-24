@@ -373,3 +373,9 @@ bool is_external_s(symbol *symbol){
 
 
 
+symbol *get_symbol_head(symbol_list *table){
+    return table->head;
+}
+
+
+
