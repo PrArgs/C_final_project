@@ -100,8 +100,8 @@ bool pre_assembler(char *file_name, macro_table *table){
 
 
 bool can_ignore(char *line) {
-    while (line != '\n') {
-        if (line == ';') {
+    while (*line != '\n') {
+        if (*line == ';') {
             return TRUE; 
         }
         else if (!isspace((unsigned char)*line))/*if char is not a blank we should read the line*/
