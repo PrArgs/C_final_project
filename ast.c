@@ -652,7 +652,7 @@ bool parse_extern(list *args, symbol_list *symbol_table,int line_counter, char *
 
     while(tmp_node != NULL){
         buffer = get_data(tmp_node);
-        if(!ligal_label(buffer,error_msg)){
+        if(ligal_label(buffer,error_msg) != TRUE){
             result = FALSE;
             printf("Error at line %d: %s \n",line_counter,error_msg);    
         }

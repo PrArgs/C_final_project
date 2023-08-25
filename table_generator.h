@@ -158,7 +158,10 @@ typedef struct symbol_list
 {
     symbol **symbols_array;    
 } symbol_list;
+
 */
+
+bool ligal_label(char *label, char *error_massage);
 
 symbol *symbol_init(char *name, int value, bool is_data, char *error_massage);
 
@@ -184,6 +187,8 @@ void update_data_symbols(symbol_list *table, int update_value);
 
 void print_symbol(symbol *symbol, char *result);
 
+bool update_entry_symbols(symbol_list *table, list *args,char *error_massage);
+
 /* A function that will create a new symbol table
 returns a pointer to the new table*/
 symbol_list *init_symbol_list();
@@ -199,7 +204,7 @@ returns FALSE if the symbol was not removed successfully or the symbol does not 
 bool remove_symbol(symbol_list *table, char *key);
 
 /* A function that will search for a symbol in the symbol table and return a pionter to the symbol's address*/
-symbol_list *search_symbol(symbol_list *table, char *name);
+bool search_symbol(symbol_list *table, char *name);
 
 /* A function that will free the memory of all the symbols in the symbol table*/
 void free_symbol_list(symbol_list *table);

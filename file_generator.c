@@ -132,7 +132,7 @@ void generate_ext_file(char *file_name, symbol_list *symbol_list){
 
     current_symbol = get_symbol_head(symbol_list);
     while (current_symbol != NULL){
-        if(is_extern_s(current_symbol)){
+        if(is_external_s(current_symbol)){
             have_external = TRUE;
             print_symbol(current_symbol, symbol_line);
             fprintf(file, "%s", symbol_line);

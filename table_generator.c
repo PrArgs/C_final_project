@@ -264,8 +264,8 @@ symbol *get_next_symbol(symbol *symbol){
 bool set_symbol_type(symbol_list *table,char *symbol_name, symbol_type type, char *result){
     symbol *tmp_symbol = get_symbol(table, symbol_name);
 
-    if(search_symbol(table, symbol_name) == NULL){
-        sprintf(result," %s symbol does not exist", symbol_name);
+    if(tmp_symbol == NULL){
+        sprintf(result, " %s symbol does not exists", symbol_name);
         return FALSE;
     }
     
@@ -334,10 +334,17 @@ symbol_list *init_symbol_list(void){
 
 bool add_symbol(symbol_list *table, char *key, int value){
     bool result = TRUE;
-    symbol *new_symbol = symbol_init(key, value, FALSE, "");
+    symbol *new_symbol;
+
+    if(search_symbol(table, key) == TRUE){
+        printf("Error: symbol %s already exists\n", key);
+        return FALSE;
+    }
+
+    new_symbol = symbol_init(key, value, FALSE, "");
     if(!new_symbol){
         printf("Error: failed to create new symbol\n");
-        exit(1);
+        return FALSE;
     }
 
     if(table->head == NULL){
@@ -357,7 +364,7 @@ bool add_symbol(symbol_list *table, char *key, int value){
         table->tail->next = new_symbol;
         table->tail = new_symbol;
         if(new_symbol->error != NULL){
-            char *result = strcat("Error: ", new_symbol->error);
+            printf("Error: %s\n", (char *)new_symbol->error);
             result = FALSE;
         }
         return TRUE;       
@@ -384,14 +391,14 @@ bool remove_symbol(symbol_list *table, char *key){
     return FALSE;
 }
 
-symbol *search_symbol(symbol_list *table, char *name){
+bool search_symbol(symbol_list *table, char *name){
     symbol *current_symbol = table->head;
     while (current_symbol){
         if(strcmp(current_symbol->name, name) == 0){
-            return current_symbol;
+            return TRUE;
         }
     }
-    return NULL;
+    return FALSE;
 }
 
 void free_symbol_list(symbol_list *table){
@@ -415,7 +422,8 @@ void print_symbol_list(symbol_list *table){
     printf("|Symbol name:\t|\t value\t|");
     
     while (current_symbol){
-        printf("%s\n", print_symbol(current_symbol,symbol_buffer));
+        print_symbol(current_symbol,symbol_buffer);
+        printf("%s\n", symbol_buffer);
         current_symbol = current_symbol->next;
     }
     free(symbol_buffer);
