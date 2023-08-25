@@ -103,12 +103,12 @@ bool can_ignore(char *line) {
         }
         else if (!isspace((unsigned char)*line))/*if char is not a blank we should read the line*/
         {
+            printf("dddddd %s", line);
             return FALSE; 
         }
         
         *line++;/*move to the next char of line*/
     }
-    printf("dddddd %s", line);
     return FALSE; /* Line is blank*/
 }
 
