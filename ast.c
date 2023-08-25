@@ -147,6 +147,17 @@ bool add_to_inst_list(inst_list *list, instruction_word *inst);
 bool valid_addressing(int given_addressing, int ligal_addressing);
 void remove_last_inst(inst_list *instruction_image);
 bool add_to_data_list(data_list *list, data_word *data);
+bool ligal_label(char *first_frase);
+bool legal_indirect_num(int num);
+bool legal_reg(char *reg);
+bool legal_data_num(int num);
+bool legal_char(char c);
+bool init_data_in_data(data_list *data_image, long *data_counter, int num, int line_counter);
+void set_ligal_params(int ins_code, int *ligal_add_source, int *ligal_add_dest, int *word_limit);
+bool valid_addressing(int given_addressing, int ligal_addressing);
+void remove_last_inst(inst_list *instruction_image);
+bool valid_addressing(int given_addressing, int ligal_addressing);
+
 
 bool legal_indirect_num(int num){
     if (num > MAX_IMMEDIATE_VALUE || num < MIN_IMMEDIATE_VALUE){
@@ -329,6 +340,82 @@ bool valid_addressing(int given_addressing, int ligal_addressing)
         printf("Something is wrong at valid_addressing function given %d and %d\n",given_addressing,ligal_addressing);
         return FALSE;
         break;
+    }
+}
+
+int parse_single_oprand(char *args,char *error_msg,instruction_word *tmp_word ){
+    int result = 0;
+    int num = 0;    
+    char error_format[MAX_LINE_LENGTH];
+    immediate_direct_word *rand_word;
+    register_word *reg_word;    
+
+    if (args == NULL){
+        strcat(error_msg,"Error: missing argument\n");
+        free(tmp_word);
+
+        return -1;
+    }
+
+    if(isalpha(args[0])){/*Arg is a label*/
+            rand_word = (immediate_direct_word*)malloc(sizeof(immediate_direct_word));
+            if(rand_word == NULL){
+                strcat(error_msg,"Error: unable to allocate memory\n");
+                return 0;
+            }
+            rand_word->ARE = 0;
+            rand_word->operand = 0;
+
+            tmp_word = (instruction_word *)rand_word;
+
+            return IMMEDIATE;
+    }
+    
+    else if(args[0]== '@'){/*Arg is a sespected */
+        if(args[1] == 'r' && args[2] >= '0' && args[2] <= '7' && args[3] == '\0'){
+            reg_word = (register_word*)malloc(sizeof(register_word));
+            if(reg_word == NULL){
+                strcat(error_msg,"Error: unable to allocate memory\n");
+                return 0;
+            }
+            reg_word->ARE = 0;
+            reg_word->source_reg = 0;
+            reg_word->dest_reg = (unsigned int)(args[2] - '0');
+
+            tmp_word = (instruction_word *)rand_word;
+            return REGISTER;
+            }
+
+        else{/*Invalid register won't be added to image*/            
+            sprintf(error_msg," %s is invalid register\n",args);
+            return 0;
+        }
+    }
+
+    else{
+        num = atoi(args);
+        if(!legal_indirect_num(num)){
+            sprintf(error_msg," %s is invalid immediate value\n",args);
+            return 0;
+        }
+        else{
+            rand_word = (immediate_direct_word*)malloc(sizeof(immediate_direct_word));
+            if(rand_word == NULL){
+                strcat(error_msg,"Error: unable to allocate memory\n");
+                free(tmp_word);
+                return 0;
+            }
+            if (num < 0 )
+            {
+                num = (unsigned int)complement_2(num);
+            }
+
+            rand_word->ARE = 0;
+            rand_word->operand = (unsigned int)num;
+            
+            tmp_word = (instruction_word *)rand_word;
+            return DIRECT;            
+        }
     }
 }
 
@@ -636,81 +723,6 @@ int find_op_code(char *op_code) {
     return -1;
 }
 
-int parse_single_oprand(char *args,char *error_msg,instruction_word *tmp_word ){
-    int result = 0;
-    int num = 0;    
-    char error_format[MAX_LINE_LENGTH];
-    immediate_direct_word *rand_word;
-    register_word *reg_word;    
-
-    if (args == NULL){
-        strcat(error_msg,"Error: missing argument\n");
-        free(tmp_word);
-
-        return -1;
-    }
-
-    if(isalpha(args[0])){/*Arg is a label*/
-            rand_word = (immediate_direct_word*)malloc(sizeof(immediate_direct_word));
-            if(rand_word == NULL){
-                strcat(error_msg,"Error: unable to allocate memory\n");
-                return 0;
-            }
-            rand_word->ARE = 0;
-            rand_word->operand = 0;
-
-            tmp_word = (instruction_word *)rand_word;
-
-            return IMMEDIATE;
-    }
-    
-    else if(args[0]== '@'){/*Arg is a sespected */
-        if(args[1] == 'r' && args[2] >= '0' && args[2] <= '7' && args[3] == '\0'){
-            reg_word = (register_word*)malloc(sizeof(register_word));
-            if(reg_word == NULL){
-                strcat(error_msg,"Error: unable to allocate memory\n");
-                return 0;
-            }
-            reg_word->ARE = 0;
-            reg_word->source_reg = 0;
-            reg_word->dest_reg = (unsigned int)(args[2] - '0');
-
-            tmp_word = (instruction_word *)rand_word;
-            return REGISTER;
-            }
-
-        else{/*Invalid register won't be added to image*/            
-            sprintf(error_msg," %s is invalid register\n",args);
-            return 0;
-        }
-    }
-
-    else{
-        num = atoi(args);
-        if(!legal_indirect_num(num)){
-            sprintf(error_msg," %s is invalid immediate value\n",args);
-            return 0;
-        }
-        else{
-            rand_word = (immediate_direct_word*)malloc(sizeof(immediate_direct_word));
-            if(rand_word == NULL){
-                strcat(error_msg,"Error: unable to allocate memory\n");
-                free(tmp_word);
-                return 0;
-            }
-            if (num < 0 )
-            {
-                num = (unsigned int)complement_2(num);
-            }
-
-            rand_word->ARE = 0;
-            rand_word->operand = (unsigned int)num;
-            
-            tmp_word = (instruction_word *)rand_word;
-            return DIRECT;            
-        }
-    }
-}
 
 bool parse_instruction(int ins_code, list *args, inst_list *instruction_image,long *instruction_counter,int line_counter){
     

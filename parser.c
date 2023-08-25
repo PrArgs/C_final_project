@@ -203,21 +203,13 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
                 strcpy(rest,remove_first_word(remove_first_word(current_line)));
             }
 
-            if(strcmp(first_frase,".data") == 0 || strcmp(first_frase,".string") == 0 || strcmp(first_frase,".extern") == 0){/*if inserting data*/
+            if(strcmp(first_frase,".data") == 0 || strcmp(first_frase,".string") == 0 || strcmp(first_frase,".extern") == 0 || (strcmp(first_frase,".entry") == 0)){/*if inserting data*/
                 line_counter++;
                 list_free(arg_list);
                 continue;
-            }
-
-            get_args(rest,arg_list, line_counter);            
-            
-            if(strcmp(first_frase,".entry") == 0){/*if entry*/
-                if(!parse_entry(arg_list,symbol_table,error_msg,line_counter)){
-                    result = FALSE;
-                }
-            }            
-
+            }                    
             else{
+                get_args(rest,arg_list, line_counter);
                 op_code = find_op_code(first_frase);
                 (*instruction_counter)++;/*increase the instruction counter to ignore the op code*/
                 second_op_code = lable_op_code(op_code);
