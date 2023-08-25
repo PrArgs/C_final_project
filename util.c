@@ -66,7 +66,7 @@ void remove_first_word(char *current_line , char *result){
         if(!(isspace(current_line[i]))){
 
             if(read_first){
-                strcpy(result, (char *)current_line[i]);
+                strcpy(result, (current_line+i));
                 word_exists = TRUE;
                 break;
             }
