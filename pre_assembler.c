@@ -102,8 +102,10 @@ bool can_ignore(char *line) {
         {
             return FALSE; 
         }
+        
         *line++;/*move to the next char of line*/
     }
+    printf("%s", line);
     return FALSE; /* Line is blank*/
 }
 

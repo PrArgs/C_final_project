@@ -22,7 +22,7 @@ int main(int argc,char *argv[]) {
     macro_table *m_table;   
 
     char *new_argv[6];
-    char file_name[MAX_LINE_LENGTH]; 
+    char *file_name;
     
     int file_index;
     int file_name_len;
@@ -52,7 +52,8 @@ int main(int argc,char *argv[]) {
         printf("No files were given\n");
         return 0;
     }
-    
+
+    file_name = (char *)malloc(MAX_LINE_LENGTH + 1);/*Over allocate to avoid overflow*/
 
     while(file_index < argc){
         file_name_len = strlen(argv[file_index]);
@@ -80,7 +81,7 @@ int main(int argc,char *argv[]) {
         data_image = init_data_list();        
         instruction_image = init_inst_list();
 
-        printf("First pass of the assembler\n");
+        
         generate_files = parse(file_name, symbol_table,DC,IC,data_image,instruction_image); 
 
         if(generate_files == TRUE){
@@ -90,7 +91,7 @@ int main(int argc,char *argv[]) {
         generate_files = TRUE;
         file_index++;
     }
-    
+    free(file_name);
     
     return 1;
 }

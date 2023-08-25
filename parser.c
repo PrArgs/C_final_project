@@ -16,9 +16,11 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
     char *tmp_lable;    
     list *arg_list;
     list **entry_list;
+    FILE *file;
     
+    strcat(file_name, ".am");
 
-    FILE *file = fopen(file_name, "r");
+    file = fopen(file_name, "r");
     if (file == NULL){
         printf("Error: file %s does not exist\n", file_name);
         return FALSE;
@@ -35,7 +37,8 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
     
 
     /*Iterating over the lines of the file*/
-    while (fgets(current_line,MAX_POSIBLE_LENGTH, file) != NULL){        
+    while (fgets(current_line,MAX_POSIBLE_LENGTH, file) != NULL){     
+        printf("%s", current_line);/*print the line for debugging purposes*/
         strcpy(tmp_lable,"");
         strcpy(error_msg,"");
         label_flag = FALSE;     
