@@ -63,6 +63,7 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
                     printf("ERROR at line %d: lable %s is the only word in the line\n",line_counter, tmp_lable);
                     result = FALSE;
                     line_counter++;
+                    list_free(arg_list);
                     continue;
             }
         }
@@ -160,8 +161,9 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
         }
 
         if(label_flag){
-            printf("instruction and flag\n");/*for debuging*/
+            
             if(!(add_symbol(symbol_table, tmp_lable, *instruction_counter))){
+
                 result = FALSE;                    
                 line_counter++;
                 list_free(arg_list);
