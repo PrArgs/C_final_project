@@ -10,54 +10,115 @@
 #include "parser.h"
 #include "util.h"
 
-#define INITIAL_INSTRUCTION_COUNTER 100 /* The piont in memory where the code begins. */
 
-void reset_args(symbol_list *symbol_table, instruction_word **instruction_image, data_word **data_image, long *IC, long *DC)
+void reset_args(symbol_list *symbol_table, inst_list *instruction_image, data_list *data_image, long *instruction_counter, long *data_counter);
 
 
-int main(int argc,char *argv[]) { 
-    bool generate_files = TRUE; 
-    int file_index = 1;
-    macro_table *m_table = macro_table_init();
-    char *file_name = malloc(sizeof(char) * 100); // allocate memory for file_name
-    long *IC = INITIAL_INSTRUCTION_COUNTER; // remove pointer
-    long *DC = 0;
+int main(int argc,char *argv[]) {
+    
+    inst_list *instruction_image;
+    data_list *data_image;
+    symbol_list *symbol_table;   
+    macro_table *m_table;   
+
+    char *new_argv[6];
+    char file_name[MAX_LINE_LENGTH]; 
+    
+    int file_index;
+    int file_name_len;
+    long ic;
+    long dc;
+    bool generate_files;
+    bool test;    
+    long *IC; /*Since INITIAL_INSTRUCTION_COUNTER is an int we want to avoid garbage values*/
+    long *DC;
+
+    instruction_image = NULL;
+    data_image = NULL;
+    symbol_table = NULL;
+    m_table = NULL;
+
+    file_index = 1;
+    ic = INITIAL_INSTRUCTION_COUNTER;
+    dc = INITIAL_DATA_COUNTER;
+    IC = &ic;
+    DC = &dc;
+    test = FALSE;
+    generate_files = TRUE;
+
+    
+
+
+    if(argc < 2){
+        
+        printf("No files were given\n");
+        return 0;
+        /*
+        test = TRUE;
+        printf("Running tests\n");
+        new_argv[1] = "test_from_maman";
+        new_argv[2] = "test1";
+        new_argv[3] = "test2_warning";
+        new_argv[4] = "test3_warning";
+        new_argv[5] = "test4_err";
+        */
+    }
+    /*
+    if(test){
+        argc = 6;
+        argv = new_argv;
+    }
+    */
+    
 
     while(file_index < argc){
+        file_name_len = strlen(argv[file_index]);
+
+        if (file_name_len > MAX_FILE_NAME_LENGTH) {
+            printf("File name is too long\n");
+            continue;
+        }
 
         strcpy(file_name, argv[file_index]);
-        file_name = strcat(file_name, ".as");
+        strcat(file_name, ".as");
+        m_table = macro_table_init();
         if(!pre_assembler(file_name, m_table)){
-            generate_files = FALSE; // change FALSE to false
+            generate_files = FALSE; 
         }
-        if (m_table != NULL) {
-            printf("Somthing went wrong with the pre-assembler\n");
-            free_macro_table(m_table);
+        free_macro_table(m_table);
+        
+        if (!generate_files) {
+            file_index++;
+            continue;
         }
-
         /*First pass of the assembler*/
 
-        symbol_list *symbol_table = init_symbol_list();
-        /*Init the instruction image (an arry of pionters to inst_word)*/
-        instruction_word **instruction_image[] = malloc(sizeof(instruction_word*) * MEMORY_SIZE);
-        /*Init data image (an arry of pionters to data_word)*/
-        data_word **data_image[] = malloc(sizeof(data_word*) * MEMORY_SIZE);
+        symbol_table = init_symbol_list();
+        /*Init the instruction image (an arry of pionters to inst_word)*/        
+        data_image = init_data_list();        
+        instruction_image = init_inst_list();
 
-        generate_files = first_parse(file_name, symbol_table, DC, IC,data_image,data_image); 
+        generate_files = parse(file_name, symbol_table,DC,IC,data_image,instruction_image); 
 
-        if(generate_files){
-            generate_files(file_name, symbol_table, instruction_image, data_image, IC, DC);
+        if(generate_files == TRUE){
+            generate_all_files(file_name, symbol_table, instruction_image, data_image, *IC, *DC);
         }
-        reset_args(symbol_table, instruction_image, data_image, IC, DC);
+        reset_args(symbol_table, instruction_image, data_image, IC, DC);/*Free all the memory*/
+        generate_files = TRUE;
         file_index++;
     }
-    return 0;
+    
+    
+    return 1;
 }
 
-void reset_args(symbol_list *symbol_table, instruction_word **instruction_image, data_word **data_image, long *IC, long *DC){
+void reset_args(symbol_list *symbol_table, inst_list *instruction_image, data_list *data_image, long *instruction_counter, long *data_counter){
+    long ic, dc;
     free_symbol_list(symbol_table);
-    free_ins_array(instruction_image, *IC);
-    free_data_array(data_image, *DC);
-    *IC = INITIAL_INSTRUCTION_COUNTER;
-    *DC = 0;
+    free_inst_list(instruction_image);
+    free_data_list(data_image);
+    ic = INITIAL_INSTRUCTION_COUNTER;     
+    dc = INITIAL_DATA_COUNTER;
+    instruction_counter = &ic;
+    data_counter = &dc;
 }

@@ -13,7 +13,7 @@ implementing the following data structures:
 
 typedef struct node
 {
-    char *data[MAX_LINE_LENGTH];
+    char data[MAX_LINE_LENGTH];
     struct node *next;
     
 } node;
@@ -29,10 +29,21 @@ typedef struct list
 */
 node *node_init(char *data);
 
+char *get_data(node *node);
+
+bool set_data(node *node, char *data);
+
+node *get_next(node *node);
+
+
+
 /*This is the decleration of function wiil init a new list
 @returns: a pointer to the new list
 */
 list *list_init();
+
+node *get_list_head(list *list);
+
 
 /*This is the decleration of function wiil add a new data to the list (each node in the list is unique)
 @params list: a pointer to the list

@@ -5,47 +5,66 @@ bool pre_assembler(char *file_name, macro_table *table){
     bool result = TRUE;
     bool read_macro = FALSE; /*a flag that will be true if the line is a macro definition*/
     int line_counter = 0;
-    char *macro_name[MAX_LINE_LENGTH+1];/*the name of potential macro*/
-    strcpy(macro_name, "");
+    char *macro_name;/*the name of potential macro*/
+    char *error_msg;
+    char *file_name_am;
+    char *line;/*the line that will be read from the file*/
     list *macro_lines = NULL; /*a pionte that will be used to print the macro*/
-    char line[MAX_LINE_LENGTH+1] = "";
+    FILE *file_as;
 
-    /*Setting the macro table and files*/
-    macro_table *macro_table = macro_table_init();/*create a macro table*/
-    if (!macro_table){
-        printf("Error: macro table could not be created\n");
-        exit(1);
-    }
+    macro_name = (char *)malloc(MAX_LINE_LENGTH+1);
+    error_msg = (char *)malloc(MAX_POSIBLE_LENGTH);
+    file_name_am = (char *)malloc(MAX_FILE_NAME_LENGTH + strlen(".am") + 1);
+    line = (char *)malloc(MAX_POSIBLE_LENGTH);
+
+
+    strcat(strtok(file_name,'.'), ".am");    
+    strcpy(line, "");
+    strcpy(error_msg, "");
+
     FILE *file = fopen(file_name, "r");
     if(!file){
         printf("Error: file %s does not exist\n", file_name);
+        free(macro_name);
+        free(error_msg);
+        free(file_name_am);
+        free(line);
         return FALSE;
     }
-    /*creat the .as file*/
-    char *file_name_as = strcat(strtok(file_name,"."), ".am");
-    FILE *file_as = fopen(file_name_as, "w");
+
+    strcpy(file_name_am, file_name);
+    strcat(file_name_am, ".am");
+    file_as = fopen(file_name_am, "w");
+
     if(!file_as){
-        printf("Error: file %s could not be created\n", file_name_as);
+        printf("Error: file %s could not be created\n", file_name_am);
+         free(macro_name);
+        free(error_msg);
+        free(file_name_am);
+        free(line);
         return FALSE;
     }
 
     
     /*iterate over the file*/
-    while(fgets(line, MAX_LINE_LENGTH+1, file)){
+    while(fgets(line, MAX_POSIBLE_LENGTH, file)){
         if(!can_ignore(line)){
-            strcpy(line, remove_spaces(line));
             if(is_macro_definition(line))
             {
+                if(read_macro){/*if there is already a macro being defined*/
+                    fprintf(file_as, "Error: macro definition inside a macro is not allowed\n");
+                    result = FALSE;
+                }
                 read_macro = TRUE;
                 strcpy(macro_name, get_second_word(line));
-                if(!(add_new_macro(macro_table,macro_name)))
+                if(!(add_new_macro(table,macro_name,error_msg)))/*Macro already exists or too long name*/
                 {
-                    fprintf(file_as, "Error: macro %s already exists \n",macro_name);
+                    fprintf(file_as,"%s",error_msg);
+                    strcpy(error_msg, "");
                     result = FALSE;
                 };
             }
-            else if(read_macro){
-                
+            else if(read_macro){                
                 if (is_macro_end(line))/*Stop reading and defining macro*/
                 {
                     strcpy(macro_name, "");
@@ -53,23 +72,15 @@ bool pre_assembler(char *file_name, macro_table *table){
                 }
                 else
                 {
-                    add_to_macro(macro_table, line, macro_name);
+                    add_to_macro(table, line, macro_name,error_msg);
                 }
             }
-            else if(is_macro(line, macro_table)){
-                macro_lines = get_macro_lines(macro_table,macro_name);
-                node *current = macro_lines->head;
-                while(current){
-                    fprintf(file_as, strcat(current->data, "\n"));
-                    current = current->next;
-                    line_counter++;
-                }
-            }  
             else{/*if the line is not a macro a macro or a part of a macro*/
-                fprintf(file_as, strcat(line, "\n"));
-                line_counter++;              
+                fprintf(file_as, "%s", line);                            
             }
+            line_counter++;
         }/*end of can't be ignored*/
+        
         if (line_counter > MEMORY_SIZE){
             fprintf(file_as, "Error: file is too long\n");
             result = FALSE;
@@ -79,7 +90,10 @@ bool pre_assembler(char *file_name, macro_table *table){
     /*free all alocaed memory*/
     fclose(file);
     fclose(file_as);
-    free_macro_table(macro_table);
+    free(macro_name);
+    free(error_msg);
+    free(file_name_am);
+    free(line);
     return result;
 }
 
@@ -108,25 +122,30 @@ char *remove_spaces(char *line){
     return result;
 }
 
-bool can_ignore(char *line){
-    char *empty_line= "\n";
-    char *first_char = strtok(line, " ");/* Remove spaces from the beginning of the line*/   
-    if (first_char[0] == ';' || strcmp(line, empty_line) == 0)
-    {
-        return TRUE;
+bool can_ignore(const char *line) {
+    while (*line) {
+        if (*line == ';') {
+            return TRUE; 
+        }
+        else if (!isspace((unsigned char)*line))/*if char is not a blank we should read the line*/
+        {
+            return FALSE; 
+        }
+        line++;/*move to the next char of line*/
     }
-    return FALSE;
+    return FALSE; // Line is blank
 }
 
 /*###########################
 #### Might be useless  ######
 #############################
-*/
-bool unfold_macros(char *line, macro_table *table, int *line_counter)
+
+bool unfold_macros(char *line, macro_table *table, int line_counter)
 {
     bool result = TRUE;
     return result;
 }
+*/
 
 bool is_macro_definition(char *line)
 {
@@ -144,7 +163,8 @@ bool is_macro(char *line, macro_table *table){
 }
 
 bool is_macro_end(char *line){
-    if (strcmp(line, "endmcro") == 0)
+    line = strtok(line, '\n');
+    if(strcmp(line, "endmcro") == 0)
     {
         return TRUE;
     }

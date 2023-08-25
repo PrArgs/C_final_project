@@ -1,6 +1,23 @@
-#Shortcuts:
-default = -ansi -pedantic -Wall -g
+CC = gcc
+CFLAGS = -g -Wall -ansi -lm -pedantic
 
+# List of source files
+SOURCES = assembler.c data_structures.c ast.c file_generator.c parser.c pre_assembler.c table_generator.c
 
+# List of header files
+HEADERS = stdio.h stdlib.h string.h ctype.h "globals.h" "data_structures.h" "table_generator.h" "file_generator.h" "pre_assembler.h" "parser.h" "util.h" "ast.h"
+
+# Object files will be derived from source files
+OBJECTS = $(SOURCES:.c=.o)
+
+# Build target
+assembler: $(OBJECTS)
+	$(CC) $(CFLAGS) -o assembler $(OBJECTS)
+
+# Pattern rule to compile .c to .o
+%.o: %.c
+	$(CC) -c $(CFLAGS) $< -o $@
+
+# Clean target
 clean:
-	rm -rf *.o *.am *.ob *.ent *.ext 
+	rm -f $(OBJECTS) assembler

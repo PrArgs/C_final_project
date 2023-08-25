@@ -13,6 +13,8 @@
 #include "globals.h"
 #include "table_generator.h"
 #include "util.h"
+#include <ctype.h>
+
 
 /*This is the main function of the pre assembler
 @param file_name - the name of the file to pre assemble
@@ -41,7 +43,7 @@ bool can_ignore(char *line);
 @return the new line counter
 */
 
-bool unfold_macros(char *line, macro_table *table, int *line_counter); 
+bool unfold_macros(char *line, macro_table *table, int line_counter); 
 
 /*This function will check if the line is a macro definition
 @param line - a pointer to the line of assembly code

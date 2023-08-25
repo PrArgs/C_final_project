@@ -60,7 +60,7 @@ macro_table *macro_table_init();
 @params name: the name of the macro to add
 @returns: 1 if the data was added successfully and 0 otherwise
 */
-bool add_new_macro(macro_table *macro_table, char *name);
+bool add_new_macro(macro_table *macro_table, char *name, char *error_msg);
 
 /*This function will add new line to a macro in the macro table
 @params:
@@ -69,7 +69,7 @@ bool add_new_macro(macro_table *macro_table, char *name);
     macro_name: the name of the macro to add the data to
 @returns: true if the data was added successfully and false otherwise
 */
-bool add_to_macro(macro_table *macro_table, char *data, char *macro_name);
+bool add_to_macro(macro_table *macro_table, char *data, char *macro_name, char *error_msg);
 
 /*This is the decleration of function wiil remove a data from the hash table
 @params macro_table: a pointer to the hash table
@@ -119,7 +119,7 @@ NONE: a symbol that is not defined in any file value 2
 typedef enum symbol_type
 {
     EXT=0,
-    ENTRY=1,
+    ENTRY=1
     
 } symbol_type;
 
@@ -135,12 +135,12 @@ the sybol list will in time be split into two lists, one for external symbols an
 */
 typedef struct symbol
 {
-    char *name;
-    int *value;
-    bool *is_external;
-    bool *is_entry;
-    bool *is_data;
-    char *error; 
+    char name[MAX_LABEL_LENGTH];
+    int value;
+    bool is_external;
+    bool is_entry;
+    bool is_data;
+    char error[MAX_LINE_LENGTH]; 
     struct symbol *next;
     
 } symbol;
@@ -161,13 +161,25 @@ typedef struct symbol_list
 */
 symbol *symbol_init(char *name);
 
-char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type *type);
+symbol *get_next_symbol(symbol *symbol);
 
-char *set_symbol_value(symbol_list *table,char *symbol_name, int *value);
+int get_symbol_val(symbol_list *table, char *symbol_name);
 
-bool *set_symbol_is_data(symbol_list *table,char *symbol_name, bool *is_data);
+symbol *get_symbol(symbol_list *table, char *symbol_name);
 
-void update_data_symbols(symbol_list *table, int *update_value);
+symbol *get_symbol_head(symbol_list *table);
+
+char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type type);
+
+char *set_symbol_value(symbol_list *table,char *symbol_name, int value, char *error_massage);
+
+bool *set_symbol_is_data(symbol_list *table,char *symbol_name, bool is_data);
+
+bool is_entry_s(symbol *symbol);
+
+bool is_external_s(symbol *symbol);
+
+void update_data_symbols(symbol_list *table, int update_value);
 
 char *print_symbol(symbol *symbol);
 
@@ -178,7 +190,7 @@ symbol_list *init_symbol_list();
 /* A function that will add a new symbol to the symbol table
 returns TRUE if the symbol was added successfully
 returns FALSE if the symbol was not added successfully or the symbol already exists in the table*/
-bool add_symbol(symbol_list *table, char *key, long value);
+bool add_symbol(symbol_list *table, char *key, int value);
 
 /* A function that will remove a symbol from the symbol table and free the memory
 returns TRUE if the symbol was removed successfully
@@ -203,21 +215,16 @@ modulo the size of the map
 */
 int default_hash_function(char *data)
 {
-    int arry_size;
-    arry_size = MEMORY_SIZE;
-    int sum, i;
-    sum = 0;
+    int arry_size = MEMORY_SIZE;
+    int sum = 0;
+    int i;
+    
     for (i = 0; i < strlen(data); i++)
     {
-        sum += i*data[i];
-    }
-    return sum%arry_size;
+        sum += (i * (data[i]- '0'));
+    }    
+    return sum % arry_size;
 }
-
-
-
-
-
 /*Our "special" map is a hasj table the data is stored in an array of lists
 @params:
     size: size of the array
@@ -228,7 +235,7 @@ int default_hash_function(char *data)
 */
 
 typedef struct map {
-    int *size;
+    int size;
     list **array;
     int (*hash_function)(char *,int arry_size);
 } map;
@@ -237,7 +244,7 @@ typedef struct map {
 
 bool default_compare_function(char *data1, char *data2)
 {
-    return strcmp(data1, data2) == 0;
+    return (strcmp(data1, data2) == 0)? TRUE : FALSE;
 }
 
 #endif

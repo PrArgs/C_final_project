@@ -5,9 +5,27 @@ node *node_init(char *data){
     if (!node){
         exit(1);/*exit if malloc fails*/
     }    
-    strcpy(node->data, data);
+    strcpy((char *)node->data, data);
     node->next = NULL;
     return node;
+}
+
+char *get_data(node *node){
+    char *result;
+    result = (char *)node->data;
+    return result;
+}
+
+bool set_data(node *node, char *data){
+    if (node == NULL || data == NULL){
+        return FALSE;
+    }
+    strcpy((char *)node->data, data);
+    return TRUE;
+}
+
+node *get_next(node *node){
+    return node->next;
 }
 
 list *list_init()
@@ -17,6 +35,11 @@ list *list_init()
        exit(1);/*exit if malloc fails*/
     }
     list->head = NULL;
+}
+
+node *get_list_head(list *list)
+{
+    return list->head;
 }
 
 bool add_to_list(list *list, node *new_node){
@@ -41,7 +64,7 @@ bool list_remove(list *list, node *r_node){
     node *current = list->head;
     node *previous = NULL;
     while(current){
-        if (strcmp(current->data, r_node->data) == 0){
+        if (strcmp((char *)current->data, (char *)r_node->data) == 0){
             if (previous){/*if the node is not the first node in the list*/
                 previous->next = current->next;
             }
@@ -59,7 +82,7 @@ bool list_remove(list *list, node *r_node){
 bool list_contains(list *list,  node *node_to_search){
     node *current = list->head;
     while(current){
-        if (strcmp(current->data, node_to_search->data) == 0){
+        if (strcmp((char *)current->data, (char *)node_to_search->data) == 0){
             return TRUE;
         }
         current = current->next;
