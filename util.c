@@ -1,6 +1,13 @@
 #include "util.h"
 #define ALL_RIGHT_BIT_ON 63
 
+char *get_second_word(char *line){
+    char *second_word;
+    second_word = strtok(line, " ");
+    second_word = strtok(NULL, " ");
+    return second_word;
+}
+
 
 char *encode_to_sixf(unsigned int bin_filed){
 

@@ -24,12 +24,7 @@ takes arbitrary number of pionters and free the momory they point to
 @line: the line to get the second word from
 @returns: the second word in the line
 */
-char *get_second_word(char *line){
-    char *second_word;
-    second_word = strtok(line, " ");
-    second_word = strtok(NULL, " ");
-    return second_word;
-}
+char *get_second_word(char *line);
 
 char *remove_first_word(char *current_line);
 

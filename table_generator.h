@@ -214,38 +214,7 @@ modulo the size of the map
 @params data: the data to hash
 
 */
-int default_hash_function(char *data){
-    int arry_size = MEMORY_SIZE;
-    int sum = 0;
-    int i;
-    
-    for (i = 0; i < strlen(data); i++)
-    {
-        sum += (i * (data[i]- '0'));
-    }    
-    return sum % arry_size;
-}
-/*Our "special" map is a hasj table the data is stored in an array of lists
-@params:
-    size: size of the array
-    array: the array of lists 
-    hash_function: a function that returns the index of the list in which the data should be stored
-    the default hash function is the sum of the ascii values of the data characters
-    compare_function: a function that compares two data elements and returns 1 if they are equal and 0 otherwise
-*/
 
-typedef struct map {
-    int size;
-    list **array;
-    int (*hash_function)(char *,int arry_size);
-} map;
-
-
-
-bool default_compare_function(char *data1, char *data2)
-{
-    return (strcmp(data1, data2) == 0)? TRUE : FALSE;
-}
 
 #endif
 

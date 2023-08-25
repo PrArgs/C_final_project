@@ -1,5 +1,24 @@
 #include "table_generator.h"
 
+static int default_hash_function(char *data){
+    int arry_size = MEMORY_SIZE;
+    int sum = 0;
+    int i;
+    
+    for (i = 0; i < strlen(data); i++)
+    {
+        sum += (i * (data[i]- '0'));
+    }    
+    return sum % arry_size;
+}
+
+
+
+static bool default_compare_function(char *data1, char *data2)
+{
+    return (strcmp(data1, data2) == 0)? TRUE : FALSE;
+}
+
 
 macro *macro_init(char *name){
 
