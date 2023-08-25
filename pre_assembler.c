@@ -27,8 +27,7 @@ bool pre_assembler(char *file_name, macro_table *table){
 
 
     file = fopen(file_name, "r");
-    if(!file){
-        printf("file name: %s\n am file name %s\n", file_name, file_name_am);
+    if(!file){        
         printf("Error: file %s does not exist\n", file_name);
         free(macro_name);
         free(error_msg);
@@ -109,7 +108,7 @@ bool can_ignore(char *line) {
         
         *line++;/*move to the next char of line*/
     }
-    printf("%s", line);
+    printf("dddddd %s", line);
     return FALSE; /* Line is blank*/
 }
 

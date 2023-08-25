@@ -81,7 +81,7 @@ int main(int argc,char *argv[]) {
         data_image = init_data_list();        
         instruction_image = init_inst_list();
 
-        
+        strcpy(file_name, argv[file_index]);
         generate_files = parse(file_name, symbol_table,DC,IC,data_image,instruction_image); 
 
         if(generate_files == TRUE){
