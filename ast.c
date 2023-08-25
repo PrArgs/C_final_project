@@ -214,7 +214,7 @@ bool init_data_in_data(data_list *data_image,long *data_counter,int num,int line
         return FALSE;
     }
     if(num < 0){
-        num = complement_2(num);
+        num = complement_two(num);
     }
 
     d_word->data = (unsigned int)num;
@@ -417,7 +417,7 @@ int parse_single_oprand(char *args,char *error_msg,instruction_word *tmp_word ){
             }
             if (num < 0 )
             {
-                num = (unsigned int)complement_2(num);
+                num = (unsigned int)complement_two(num);
             }
 
             rand_word->ARE = 0;
