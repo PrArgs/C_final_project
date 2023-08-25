@@ -33,6 +33,7 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
     rest = (char *)malloc(MAX_LINE_LENGTH+1);
     tmp_lable = (char *)malloc(MAX_LINE_LENGTH+1);
     entry_list = (list **)malloc(1 * sizeof(list *));
+    under_construction();
 
     
 
@@ -45,10 +46,7 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
         get_first_word(current_line, first_frase);
         remove_first_word(current_line,rest);
         arg_list = list_init();
-        under_construction();
         
-        
-
         /*First word is a lable*/
         if(is_label(first_frase)){
             
