@@ -107,6 +107,17 @@ typedef struct instruction_op_word{
     unsigned int source_add:3;
     } instruction_op_word;
 
+typedef union m_word {
+    register_word reg_word;
+    immediate_direct_word imm_direct_word;
+    instruction_op_word inst_op_word;
+    data_word data_word;
+} m_word;
+
+typedef struct word {
+    m_word m_word;
+} word;
+
 
 /* Define union for instruction word types */
 typedef union inst_word {
@@ -147,7 +158,6 @@ bool add_to_inst_list(inst_list *list, instruction_word *inst);
 bool valid_addressing(int given_addressing, int ligal_addressing);
 void remove_last_inst(inst_list *instruction_image);
 bool add_to_data_list(data_list *list, data_word *data);
-bool ligal_label(char *first_frase);
 bool legal_indirect_num(int num);
 bool legal_reg(char *reg);
 bool legal_data_num(int num);
