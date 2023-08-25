@@ -33,7 +33,7 @@ bool pre_assembler(char *file_name, macro_table *table){
         return FALSE;
     }
 
-    strcat(file_name, ".am");
+    strcat(file_name_am, ".am");
     file_am = fopen(file_name_am, "w");
 
     if(!file_am){
