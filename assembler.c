@@ -44,31 +44,14 @@ int main(int argc,char *argv[]) {
     IC = &ic;
     DC = &dc;
     test = FALSE;
-    generate_files = TRUE;
-
-    
+    generate_files = TRUE;    
 
 
     if(argc < 2){
         
         printf("No files were given\n");
         return 0;
-        /*
-        test = TRUE;
-        printf("Running tests\n");
-        new_argv[1] = "test_from_maman";
-        new_argv[2] = "test1";
-        new_argv[3] = "test2_warning";
-        new_argv[4] = "test3_warning";
-        new_argv[5] = "test4_err";
-        */
     }
-    /*
-    if(test){
-        argc = 6;
-        argv = new_argv;
-    }
-    */
     
 
     while(file_index < argc){
@@ -80,7 +63,6 @@ int main(int argc,char *argv[]) {
         }
 
         strcpy(file_name, argv[file_index]);
-        strcat(file_name, ".as");
         m_table = macro_table_init();
         if(!pre_assembler(file_name, m_table)){
             generate_files = FALSE; 
