@@ -69,7 +69,9 @@ void generate_ent_file(char *file_name, symbol_list *symbol_list){
     char *output_file_name;
     FILE *file;
 
-    output_file_name = (char *)malloc(strlen(file_name) + strlen(".ent") + 1);
+    output_file_name = (char *)malloc(strlen(file_name) + strlen(".ent") + 1);    
+    symbol_line = (char *)malloc(MAX_LINE_LENGTH + 1);
+    
     strcpy(output_file_name, file_name);
     strcat(output_file_name, ".ent");
     file = fopen(output_file_name, "w");
@@ -84,18 +86,20 @@ void generate_ent_file(char *file_name, symbol_list *symbol_list){
     while (current_symbol != NULL){
         if(is_entry_s(current_symbol)){
             have_entry = TRUE;
-            symbol_line = print_symbol(current_symbol);
+            print_symbol(current_symbol,symbol_line);
             fprintf(file, "%s", symbol_line);
         }
         current_symbol = get_next_symbol(current_symbol);
     }
 
     fclose(file);
+    free(output_file_name); 
+    free(symbol_line);
 
     if(!have_entry){/*If no symbol is entry delete the file*/
         remove(output_file_name);
     }
-    free(output_file_name); 
+    
 }
 
 
@@ -108,13 +112,15 @@ void generate_ent_file(char *file_name, symbol_list *symbol_list){
 void generate_ext_file(char *file_name, symbol_list *symbol_list){
 
     int i = 0;
-    char *symbol_line = NULL;
+    char *symbol_line = NULL;    
+    char *output_file_name;
     symbol *current_symbol;
     bool have_external = FALSE;
-    char *output_file_name;
     FILE *file;
+    
 
     output_file_name = (char *)malloc(strlen(file_name) + strlen(".ext") + 1);
+    symbol_line = (char *)malloc(MAX_LINE_LENGTH + 1);
     strcpy(output_file_name, file_name);
     strcat(output_file_name, ".ext");
     file = fopen(output_file_name, "w");
@@ -128,7 +134,7 @@ void generate_ext_file(char *file_name, symbol_list *symbol_list){
     while (current_symbol != NULL){
         if(is_extern_s(current_symbol)){
             have_external = TRUE;
-            symbol_line = print_symbol(current_symbol);
+            print_symbol(current_symbol, symbol_line);
             fprintf(file, "%s", symbol_line);
         }
         current_symbol = get_next_symbol(current_symbol);
@@ -136,6 +142,7 @@ void generate_ext_file(char *file_name, symbol_list *symbol_list){
     
     fclose(file);
     free(output_file_name);
+    free(symbol_line);
 
     if(!have_external){/*If no symbol is external delete the file*/
         remove(output_file_name);

@@ -77,6 +77,7 @@ bool list_free(list *list);
 */
 void print_list(list *list);
 
+void free_entry_list(list **entry_list,int entry_counter);
 
 
 

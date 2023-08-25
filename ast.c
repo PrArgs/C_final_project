@@ -415,22 +415,17 @@ bool parse_string_guid(list *args,data_list *data_image,long *data_counter,int l
     return result;
 }
 
-bool parse_extern(list *args, symbol_list *symbol_table,int line_counter){
+bool parse_extern(list *args, symbol_list *symbol_table,int line_counter, char *error_msg){
     
     node *tmp_node;
     bool result = TRUE;
-    char *error;
     char *buffer;
     tmp_node = get_list_head(args);
-
 
     if (tmp_node == NULL){
         printf("Error at line %d: .extern command must have at least one argument\n",line_counter);
         return FALSE;
-    }
-    
-    
-    error = (char *)malloc(sizeof(char)*(MAX_LINE_LENGTH+1));
+    }      
 
     while(tmp_node != NULL){
         buffer = get_data(tmp_node);
@@ -441,20 +436,40 @@ bool parse_extern(list *args, symbol_list *symbol_table,int line_counter){
         else{            
             if(!(add_symbol(symbol_table,buffer,0))){
                 result = FALSE;                    
-                printf("Error at line %d: %s is not a legal label and wount be added to the symbol list",line_counter,buffer);
+                printf("Error at line %d: %s is already defined in the file and wount be added to the symbol list",line_counter,buffer);
             }
             else{
-                strcpy(error,set_symbol_type(symbol_table,buffer,EXT));
-                if(strcmp(error,"") != 0){
+                
+                if(!(set_symbol_type(symbol_table,buffer,EXT,error_msg))){
                     result = FALSE;
-                    printf("Error at line %d: %s\n",line_counter,error);
-                    strcpy(error,"");
+                    printf("Error at line %d: %s\n",line_counter,error_msg);
+                    strcpy(error_msg,"");
                 }
             }
         }
         tmp_node = get_next(tmp_node);
     }
-    free(error) ;
+    return result;
+}
+
+bool update_entry_symbols(symbol_list *symbol_table,list **entry_list,int entry_counter,char *error_msg){
+    int i;
+    bool result = TRUE;
+    node *tmp_node;
+    char *buffer;
+
+    for(i = 0; i < entry_counter; i++){
+        tmp_node = get_list_head(entry_list[i]);
+        while(tmp_node != NULL){
+            buffer = get_data(tmp_node);
+            if(!(set_symbol_type(symbol_table,buffer,ENTRY,error_msg))){
+                result = FALSE;
+                printf("Error at %d's entry statement: %s\n",i,error_msg);
+                strcpy(error_msg,"");
+            }
+            tmp_node = get_next(tmp_node);
+        }        
+    }
     return result;
 }
 
@@ -493,32 +508,6 @@ int find_op_code(char *op_code) {
         return STOP;
     }
     return -1;
-}
-
-bool parse_entry(list *args, symbol_list *symbol_table,char *error_msg,int line_counter){
-    bool result = TRUE;
-    char error_buffer[MAX_LINE_LENGTH];
-    char *error;    
-    node *tmp_node;
-
-    error = (char *)malloc(sizeof(char)*(MAX_LINE_LENGTH+1));
-    tmp_node = get_list_head(args);
-
-    if (tmp_node != NULL){
-        result = FALSE;
-        printf("Error: .entry should have at least one argument\n");
-    }  
-
-    while(tmp_node != NULL){
-        strcpy(error,set_symbol_type(symbol_table,get_data(tmp_node),ENTRY));
-        if(strcmp(error,"") != 0){
-            result = FALSE;
-            printf("Error at line %d: %s\n",line_counter,error);
-            strcpy(error,"");
-        }
-        tmp_node = get_next(tmp_node);
-    }
-    return result;
 }
 
 int parse_single_oprand(char *args,char *error_msg,instruction_word *tmp_word ){

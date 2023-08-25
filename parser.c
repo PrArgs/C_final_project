@@ -5,6 +5,7 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
     int line_counter = 0;
     int op_code = -1;
     int second_op_code = -1;
+    int entry_counter = 0;
     bool label_flag = FALSE;
     bool result = TRUE;
     bool second_pass = FALSE;
@@ -14,6 +15,7 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
     char *current_line;
     char *tmp_lable;    
     list *arg_list;
+    list **entry_list;
     
 
     FILE *file = fopen(file_name, "r");
@@ -28,6 +30,7 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
     first_frase = (char *)malloc(MAX_LINE_LENGTH+1);
     rest = (char *)malloc(MAX_LINE_LENGTH+1);
     tmp_lable = (char *)malloc(MAX_LINE_LENGTH+1);
+    entry_list = (list **)malloc(1 * sizeof(list *));
 
     
 
@@ -110,9 +113,32 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
             /*.entry will be handled in the second pass*/
             if (strcmp(first_frase,".extern"))
             {
-                if(!(parse_extern(arg_list,symbol_table,line_counter))){
+                if(!(parse_extern(arg_list,symbol_table,line_counter, error_msg))){
                     result = FALSE;
                 }
+            }
+
+            else if(strcmp(first_frase,".entry") == 0){
+                if(get_list_head(arg_list) == NULL){
+                    printf("ERROR at line %d: .entry must have at least one argument\n",line_counter);
+                    result = FALSE;
+                }/*if there is no arguments print an error message*/
+                else{
+                    entry_counter++;
+                    entry_list = (list **)realloc(entry_list, entry_counter * sizeof(list *));
+                    if(entry_list == NULL){
+                        printf("ERROR: could not allocate memory\n");
+                        free(current_line);
+                        free(error_msg);
+                        free(first_frase);
+                        free(rest);
+                        free(tmp_lable);                            
+                        fclose(file);                        
+                        exit(1);
+                    }
+                    entry_list[entry_counter-1] = arg_list;
+                }
+                
             }
             line_counter++;
             list_free(arg_list);
@@ -144,9 +170,20 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
         list_free(arg_list);
         line_counter++;
     }
+    if(entry_counter == 0){
+        free_entry_list(entry_list, entry_counter);
+    }
+    
 
     if(result){ /*start the second pass*/
         update_data_symbols(symbol_table, *instruction_counter);/*updates the data symbols*/
+        if(entry_counter > 0){
+            if(!update_entry_symbols(symbol_table, entry_list, entry_counter, error_msg)){
+                result = FALSE;
+            }
+            free_entry_list(entry_list, entry_counter);
+        }    
+            
         rewind(file);
         line_counter = 0;
         second_pass = TRUE;
@@ -251,6 +288,7 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
     free(first_frase);
     free(rest);
     free(tmp_lable);
+    
           
     fclose(file);
     return result;    

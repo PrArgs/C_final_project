@@ -110,5 +110,12 @@ void print_list(list *list){
     }
 }
 
+void free_entry_list(list **entry_list,int entry_counter){
+    int i;
+    for(i = 0; i < entry_counter; i++){
+        list_free(entry_list[i]);
+    }
+    free(entry_list);
+}
 
 

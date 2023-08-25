@@ -170,7 +170,7 @@ symbol *get_symbol(symbol_list *table, char *symbol_name);
 
 symbol *get_symbol_head(symbol_list *table);
 
-char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type type);
+bool set_symbol_type(symbol_list *table,char *symbol_name, symbol_type type, char *result);
 
 char *set_symbol_value(symbol_list *table,char *symbol_name, int value, char *error_massage);
 
@@ -182,7 +182,7 @@ bool is_external_s(symbol *symbol);
 
 void update_data_symbols(symbol_list *table, int update_value);
 
-void *print_symbol(symbol *symbol, char *result[])
+void print_symbol(symbol *symbol, char *result);
 
 /* A function that will create a new symbol table
 returns a pointer to the new table*/
@@ -214,8 +214,7 @@ modulo the size of the map
 @params data: the data to hash
 
 */
-int default_hash_function(char *data)
-{
+int default_hash_function(char *data){
     int arry_size = MEMORY_SIZE;
     int sum = 0;
     int i;

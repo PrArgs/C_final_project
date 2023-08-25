@@ -181,6 +181,30 @@ void update_data_symbols(symbol_list *table, int update_value){
     }
 }
 
+bool update_entry_symbols(symbol_list *table, list *args,char *error_massage){
+    bool result = TRUE;
+    char *symbol_name;
+    symbol *current_symbol;
+    node *current_node = args->head;    
+
+    while(current_node != NULL){
+        symbol_name = get_data(current_node);
+        current_symbol = get_symbol(table, symbol_name);
+        if(current_symbol == NULL){
+            sprintf(error_massage," symbol %s does not exist\n", symbol_name);
+            result = FALSE;
+        }
+        else{
+            if(!set_symbol_type(table, symbol_name, ENTRY, error_massage))
+            {
+                result = FALSE;
+            }
+        }
+        current_node = current_node->next;
+    }
+    return result;
+} 
+
 bool ligal_label(char *label, char *error_massage){
     if(label == NULL){
         return FALSE;
@@ -218,16 +242,12 @@ symbol *get_next_symbol(symbol *symbol){
 }
 
 
-char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type type){
-    char err_buffer[MAX_LINE_LENGTH];
-    char *result;
-    err_buffer[0] = '\0';
-    result = &err_buffer[0];
+bool set_symbol_type(symbol_list *table,char *symbol_name, symbol_type type, char *result){
     symbol *tmp_symbol = get_symbol(table, symbol_name);
 
     if(search_symbol(table, symbol_name) == NULL){
         sprintf(result," %s symbol does not exist", symbol_name);
-        return result;
+        return FALSE;
     }
     
     switch (type)
@@ -235,19 +255,22 @@ char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type type){
             tmp_symbol->is_external = TRUE;
             if(tmp_symbol->is_entry == TRUE){
                 sprintf(result, " %s symbol is both external and entry", symbol_name);
+                return FALSE;
             }
             break;
         case ENTRY:
             tmp_symbol->is_entry = TRUE;
             if(tmp_symbol->is_external == TRUE){
                 sprintf(result, " %s symbol is both external and entry", symbol_name);
+                return FALSE;
             }
             break;
         default:
             sprintf(result, " %d is an invalid symbol type", type);
+            return FALSE;
             break;
     }
-    return result;
+    return TRUE;
 }
 
 char *set_symbol_value(symbol_list *table,char *symbol_name, int value, char *error_massage){
@@ -268,32 +291,10 @@ char *set_symbol_value(symbol_list *table,char *symbol_name, int value, char *er
     return error_massage;
 }
 
-void *print_symbol(symbol *symbol, char *result[])
+void print_symbol(symbol *symbol, char *result)
 { 
     if(symbol != NULL){
-        /*Turn each var to string*/
-        strcpy(result[0], symbol->name);
-        sprintf(result[1], "%ld", symbol->value);
-        if(symbol->is_entry){
-            strcpy(result[2], "True");
-        }
-        if(symbol->is_external){
-            strcpy(result[3], "True");
-        }
-        if(symbol->is_data){
-            strcpy(result[4], "True");
-        }
-        /*Concatenate all strings with tabs*/
-        result = strcat(result, result[0]);
-        result = strcat(result, "\t");
-        result = strcat(result, result[1]);
-        result = strcat(result, "\t");
-        result = strcat(result, result[2]);
-        result = strcat(result, "\t");
-        result = strcat(result, result[3]);
-        result = strcat(result, "\t");
-        result = strcat(result, result[4]);
-        result = strcat(result, "\t");               
+        sprintf(result,"|\t%s\t|\t%d\t|",(char*)symbol->name, symbol->value);         
     }
     else{
         printf("Error: symbol is NULL\n");
@@ -386,12 +387,19 @@ void free_symbol_list(symbol_list *table){
 }
 
 void print_symbol_list(symbol_list *table){
-    printf("Symbol table:\t|\t value\t|\t is_entry\t|\t is_external\t|\n");
+    char *symbol_buffer;
     symbol *current_symbol = table->head;
+    
+    symbol_buffer = (char *)malloc(sizeof(char) * MAX_LINE_LENGTH);
+
+
+    printf("|Symbol name:\t|\t value\t|");
+    
     while (current_symbol){
-        printf("%s\n", print_symbol(current_symbol));
+        printf("%s\n", print_symbol(current_symbol,symbol_buffer));
         current_symbol = current_symbol->next;
     }
+    free(symbol_buffer);
 }
 
 bool is_entry_s(symbol *symbol){
@@ -417,6 +425,8 @@ symbol *get_symbol(symbol_list *table, char *symbol_name){
     }
     return NULL;
 }
+
+
 
 
 

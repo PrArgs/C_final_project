@@ -181,7 +181,7 @@ bool get_args(char *args, list *arg_array, int line_counter);
 bool is_label(char *first_frase);
 bool parse_data_guid(list *args, data_list *data_image, long *data_counter, int line_counter);
 bool parse_string_guid(list *args, data_list *data_image, long *data_counter, int line_counter);
-bool parse_extern(list *args, symbol_list *symbol_table, int line_counter);
+bool parse_extern(list *args, symbol_list *symbol_table, int line_counter,char *error_msg);
 int find_op_code(char *op_code);
 bool parse_entry(list *args, symbol_list *symbol_table, char *error_msg, int line_counter);
 int parse_single_oprand(char *args, char *error_msg, instruction_word *tmp_word);
