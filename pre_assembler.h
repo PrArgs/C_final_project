@@ -23,13 +23,6 @@
 */
 bool pre_assembler(char *file_name, macro_table *table);
 
-
-/* This function will convers a single line of assembly code to a string with no extra spaces
-@param line - a pointer to the line of assembly code
-@return a pointer to the new string
-*/
-char *remove_spaces(char *line);
-
 /* This function will returns TRUE if the line can be ignored e.g. a comment or an empty line
 @param line - a pointer to the line of assembly code
 @return TRUE if the line is a comment, FALSE otherwise

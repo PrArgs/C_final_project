@@ -11,6 +11,7 @@ bool pre_assembler(char *file_name, macro_table *table){
     char *line;/*the line that will be read from the file*/
     list *macro_lines = NULL; /*a pionte that will be used to print the macro*/
     FILE *file_am;
+    FILE *file;
 
     macro_name = (char *)malloc(MAX_LINE_LENGTH+1);
     error_msg = (char *)malloc(MAX_POSIBLE_LENGTH);
@@ -22,7 +23,7 @@ bool pre_assembler(char *file_name, macro_table *table){
     strcpy(line, "");
     strcpy(error_msg, "");
 
-    FILE *file = fopen(file_name, "r");
+    file = fopen(file_name, "r");
     if(!file){
         printf("Error: file %s does not exist\n", file_name);
         free(macro_name);
@@ -92,7 +93,7 @@ bool pre_assembler(char *file_name, macro_table *table){
 
 
 
-bool can_ignore(const char *line) {
+bool can_ignore(char *line) {
     while (*line) {
         if (*line == ';') {
             return TRUE; 
@@ -101,9 +102,9 @@ bool can_ignore(const char *line) {
         {
             return FALSE; 
         }
-        line++;/*move to the next char of line*/
+        *line++;/*move to the next char of line*/
     }
-    return FALSE; // Line is blank
+    return FALSE; /* Line is blank*/
 }
 
 bool is_macro_definition(char *line)
@@ -123,7 +124,7 @@ bool is_macro(char *line, macro_table *table){
 }
 
 bool is_macro_end(char *line){
-    line = strtok(line, '\n');
+    line = strtok(line, "\n");
     if(strcmp(line, "endmcro") == 0)
     {
         return TRUE;
