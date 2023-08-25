@@ -1,150 +1,257 @@
 #include "parser.h"
 
-bool first_parse(char *file_name, symbol_list *symbol_table, long *data_counter, long *instruction_counter){
+bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long *instruction_counter, data_list *data_image, inst_list *instruction_image){
+    
+    int line_counter = 0;
+    int op_code = -1;
+    int second_op_code = -1;
+    bool label_flag = FALSE;
+    bool result = TRUE;
+    bool second_pass = FALSE;
+    char *rest;
+    char *error_msg;   
+    char *first_frase;
+    char *current_line;
+    char *tmp_lable;    
+    list *arg_list;
+    
+
     FILE *file = fopen(file_name, "r");
     if (file == NULL){
         printf("Error: file %s does not exist\n", file_name);
         return FALSE;
     }
-    bool *label_flag = FALSE;
-    char *current_line;
-    bool result = TRUE;
-    char *first_frase;
-    char *second_frase;
-    char *tmp_lable;
-    char *error_msg;
-    ast_line *ast_line = NULL;
-    data_word *data_image= malloc(sizeof(data_word) * MEMORY_SIZE) = {NULL}};
-    instruction_word *instruction_image = malloc(sizeof(instruction_word) * MEMORY_SIZE) = {NULL};
 
-    
-    ast_line *ast_line = NULL;
-    int num_of_words;
-    symbol *tmp_symbol;
-    char *rest;
-    word *tmp_word
+    /*Allocate memory to prevet overwriting of data*/
+    current_line = (char *)malloc(MAX_POSIBLE_LENGTH);
+    error_msg = (char *)malloc(MAX_POSIBLE_LENGTH);
+    first_frase = (char *)malloc(MAX_LINE_LENGTH+1);
+    rest = (char *)malloc(MAX_LINE_LENGTH+1);
+    tmp_lable = (char *)malloc(MAX_LINE_LENGTH+1);
 
     
 
     /*Iterating over the lines of the file*/
-    while (fgets(current_line, MAX_LINE_LENGTH+1, file) ){
-        tmp_lable = NULL;
+    while (fgets(current_line,MAX_POSIBLE_LENGTH, file) != NULL){        
+        strcpy(tmp_lable,"");
         strcpy(error_msg,"");
+        label_flag = FALSE;     
         first_frase = strtok(current_line, " ");
-        second_frase = get_second_word(current_line);
-        rest = remove_first_word(current_line);
+        strcpy(rest,remove_first_word(current_line));
+        arg_list = list_init();
+        
         
 
         /*First word is a lable*/
         if(is_label(first_frase))
         {
-            if(second_frase == NULL){
-                printf("ERROR: lable %s is the only word in the line\n",tmp_lable);
-                result = FALSE;
-            }
-            else{
-                toLowerCase(second_frase); /*make sure the second word is lower case so we will be able to compare it*/
-                tmp_lable = strtok(first_frase, ":");
-                if(tmp_lable == NULL)
-                { strcpy(error_msg,"Error: labla is enoty")
-                strcpy(tmp_lable,"Default_lable");
-                }
-
-                if ((strcmp(second_frase,".extern") == 0) || (strcmp(second_frase,".entry") == 0))
-                {          
-                    printf("Warning: can't defin lable before extern or entry %s will not be added to symbol table\n",tmp_lable);
-                }
-                else
-                {
-                    if((strcmp(second_frase,".data") == 0) || (strcmp(second_frase,".string") == 0))
-                    {
-                        if(!(add_symbol(symbol_table, tmp_lable, *data_counter,error_msg))){
-                            result = FALSE;
-                        }
-                    }
-                    else
-                    {
-                        
-                        if(!(add_symbol(symbol_table, tmp_lable, *instruction_counter,error_msg))){
-                            result = FALSE;
-                        }
-                        
-                    }
-                }
-            }
+            label_flag = TRUE;
+            strcpy(tmp_lable, strtok(first_frase, ":"));
+            first_frase = get_second_word(current_line);
             current_line = remove_first_word(current_line);
-            rest = remove_first_word(current_line);
-            first_frase = strtok(current_line, " ");                   
+            strcpy(rest,remove_first_word(current_line));
+
+            if(first_frase == NULL || *first_frase == '\n'){
+                
+                    printf("ERROR at line %d: lable %s is the only word in the line\n",line_counter, tmp_lable);
+                    result = FALSE;
+                    line_counter++;
+                    continue;
+            }
         }
 
-        else if ((strcmp(first_frase,".data") == 0) || (strcmp(first_frase,".string") == 0)){
-            {           
-                if(!(parse_data(rest,data_image,data_counter,error_msg))){
-                    result = FALSE;
-                }
-            }    
-        }
-        else if (strcmp(first_frase,".extern"))
-        {
-             if(!(parse_extern(rest,symbol_table,error_msg))){
-                result = FALSE;
-             }
+        /*First since all instructions comands are in lower case, if the first word is not in lower case it is not legal*/
+        if(strcmp(first_frase,(toLowerCase(first_frase)))){
+            result = FALSE;
+            printf("ERROR at line %d: %s must be in lower case and might not be ligal \n",line_counter, first_frase);
         }
         
-        int instruction = find_instructio(first_frase , error_msg);
-        if (*instruction > -1)
-            strcpy(error_msg,"");
-            parse_instruction(instrction,rest,symbol_table,instruction_counter,error_msg);
-    }
-    
-    }
-    if(result){
-        if(!second_parse(symbol_table, data_image, instruction_image, data_counter, instruction_counter)){
+        /*First word turns to lower case*/
+        strcpy(first_frase,toLowerCase(first_frase));
+
+        /*Get all the posible arguments*/
+        if(!get_args(rest,arg_list, line_counter)){
             result = FALSE;
         }
+
+        if(strcmp(first_frase,".data") == 0 || strcmp(first_frase,".string") == 0){/*if inserting data*/
+            if(label_flag){
+                if(!(add_symbol(symbol_table, tmp_lable, *data_counter))){
+                    result = FALSE;                    
+                    line_counter++;
+                    list_free(arg_list);
+                    continue;
+                }/*add the lable to the symbol table or print an error message*/
+            }
+
+            if(strcmp(first_frase,".data") == 0){
+                if(!parse_data_guid(arg_list, data_image, data_counter, line_counter)){
+                    result = FALSE;
+                }
+            }
+
+            else {
+                if(!parse_string_guid(arg_list, data_image, data_counter, line_counter)){
+                    result = FALSE;
+                }
+            }            
+            line_counter++;
+            list_free(arg_list);
+            continue;
+        }
+
+        else if (strcmp(first_frase,".extern") == 0 || strcmp(first_frase,".entry") == 0){/*if extern or entry*/
+
+            if(label_flag){
+                printf("WARNING at line %d: lable %s is not needed for %s guid and will not show in the symbol table\n",line_counter, tmp_lable, first_frase);
+            }
+
+            
+            /*.entry will be handled in the second pass*/
+            if (strcmp(first_frase,".extern"))
+            {
+                if(!(parse_extern(arg_list,symbol_table,line_counter))){
+                    result = FALSE;
+                }
+            }
+            line_counter++;
+            list_free(arg_list);
+            continue;
+        }        
+        
+        /*Either an instruction or line or an error*/
+        op_code = find_op_code(first_frase);
+        if (op_code < 0){
+            printf("ERROR at line %d: %s is not a valid instruction\n",line_counter, first_frase);
+            result = FALSE;
+            line_counter++;
+            list_free(arg_list);
+            continue;
+        }
+
+        if(label_flag){
+            if(!(add_symbol(symbol_table, tmp_lable, *instruction_counter))){
+                result = FALSE;                    
+                line_counter++;
+                list_free(arg_list);
+                continue;
+            }/*add the lable to the symbol table or print an error message*/
+        }        
+
+        if(!parse_instruction(op_code, arg_list, instruction_image, instruction_counter, line_counter)){
+            result = FALSE;
+        }
+        list_free(arg_list);
+        line_counter++;
     }
 
-    if ((strcmp(frase,".data") == 0) || (strcmp(frase,".string") == 0))
-    {
-        if(label_flag)
-        {
-            if(set_symbol_value(symbol_table,lable,data_counter) != ""){                
-                strcat(error_msg,"Error: unable to add value to symbol\n");
-                *result = FALSE;
-            }
-            else{
-                *data_counter++;
-                /*Add lable to data image*/
-                word *tmp_word = init_lable_in_data(lable,error_msg);
-                data_image[*data_counter] = tmp_word;                
-            }
+    if(result){ /*start the second pass*/
+        update_data_symbols(symbol_table, *instruction_counter);/*updates the data symbols*/
+        rewind(file);
+        line_counter = 0;
+        second_pass = TRUE;
+        op_code = -1;
+        second_op_code = -1;
+
+        while (fgets(current_line, MAX_LINE_LENGTH+1, file) != NULL){        
+            strcpy(tmp_lable,"");
             strcpy(error_msg,"");
-            return (parse_data(rest,data_image,data_counter,error_msg) && *result);
-        }    
-    }
-    else if (strcmp(frase,".extern"))
-    {
-        return parse_extern(rest,symbol_table,error_msg);
-    }
-    int *instruction = find_instructio(frase , error_msg);
-    if (*instruction > -1){
-        if(label_flag)
-        {
-            if(set_symbol_value(symbol_table,lable,instruction_counter) != ""){                
-                strcat(error_msg,"Error: unable to add value to symbol\n");
-                *result = FALSE;
+            label_flag = FALSE;     
+            strcpy(first_frase, strtok(current_line, " "));
+            strcpy(rest,remove_first_word(current_line));
+            arg_list = list_init();
+            
+            if(is_label(first_frase)){
+                first_frase = get_second_word(current_line);
+                strcpy(rest,remove_first_word(remove_first_word(current_line)));
             }
+
+            if(strcmp(first_frase,".data") == 0 || strcmp(first_frase,".string") == 0 || strcmp(first_frase,".extern") == 0){/*if inserting data*/
+                line_counter++;
+                list_free(arg_list);
+                continue;
+            }
+
+            get_args(rest,arg_list, line_counter);            
+            
+            if(strcmp(first_frase,".entry") == 0){/*if entry*/
+                if(!parse_entry(arg_list,symbol_table,error_msg,line_counter)){
+                    result = FALSE;
+                }
+            }            
+
             else{
-                *instruction_counter++;
-                /*Add lable to instruction image*/
-                word *tmp_word = init_lable_in_instruction(lable,error_msg);
-                instruction_image[*instruction_counter] = tmp_word;                
+                op_code = find_op_code(first_frase);
+                (*instruction_counter)++;/*increase the instruction counter to ignore the op code*/
+                second_op_code = lable_op_code(op_code);
+                switch (second_op_code)
+                {
+                case 1:/*check is first arg is a lable*/
+                    strcpy(tmp_lable, get_data(get_list_head(arg_list)));
+                    if(is_label(tmp_lable)){
+                        if(!set_i_inst(instruction_image, *instruction_counter, tmp_lable, symbol_table)){
+                            result = FALSE;
+                        }
+                    }
+                    (*instruction_counter)++;
+                    if(get_next(get_list_head(arg_list)) != NULL)/*if there is 2 args increase the instruction counter*/
+                    {
+                        (*instruction_counter)++;
+                    }
+                    break;
+
+                case 2:
+                    (*instruction_counter)++;/*increase the instruction counter to ignore the first arg*/
+                    strcpy(tmp_lable, get_data(get_next(get_list_head(arg_list))));
+                    if(is_label(tmp_lable)){
+                        if(!set_i_inst(instruction_image, *instruction_counter, tmp_lable, symbol_table)){
+                            result = FALSE;
+                        }
+                    }
+                    (*instruction_counter)++;
+                    break;
+                
+                case 3:/*Both might be labels*/
+                    strcpy(tmp_lable, get_data(get_list_head(arg_list)));
+                    if(is_label(tmp_lable)){
+                        if(!set_i_inst(instruction_image, *instruction_counter, tmp_lable, symbol_table)){
+                            result = FALSE;
+                        }
+                    }
+                    (*instruction_counter)++;
+
+                    strcpy(tmp_lable, get_data(get_next(get_list_head(arg_list))));
+                    if(is_label(tmp_lable)){
+                        if(!set_i_inst(instruction_image, *instruction_counter, tmp_lable, symbol_table)){
+                            result = FALSE;
+                        }
+                    }
+                    (*instruction_counter)++;
+                    break;
+                
+                default:
+                    if(get_next(get_list_head(arg_list)) != NULL)/*if there is 2 non label args increase the instruction counter*/
+                    {
+                        (*instruction_counter)+= 2;
+                    }
+                    else if (get_list_head(arg_list) != NULL)/*if there is 1 non label arg increase the instruction counter*/
+                    {
+                        (*instruction_counter)++;
+                    }
+                    break;
+                }
             }
-            strcpy(error_msg,"");
+            list_free(arg_list);
+            line_counter++;       
         }
-        return parse_operation(frase,rest,symbol_table,instruction_counter,error_msg);
     }
+    /* Free the allocated memory*/
+    free(current_line);
+    free(error_msg);
+    free(first_frase);
+    free(rest);
+    free(tmp_lable);
+          
     fclose(file);
-    return result;
-    
+    return result;    
 }

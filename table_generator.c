@@ -2,7 +2,7 @@
 
 
 macro *macro_init(char *name){
-int i;
+
     macro *macro = malloc(sizeof(macro));
     if(macro == NULL){
         printf("Error: memory allocation failed\n");
@@ -14,8 +14,10 @@ int i;
     return macro;
 }
 
+
+
 macro_table *macro_table_init(){
-    macro_table *table = (macro_table *)malloc(sizeof(macro_table)); /*TODO mix decleration*/
+    macro_table *table = (macro_table *)malloc(sizeof(macro_table));
     if(table == NULL){
         printf("Error: memory allocation failed\n");
         return NULL;
@@ -26,22 +28,21 @@ macro_table *macro_table_init(){
         return NULL;
     }
     /*Init the array to NULL*/
-    for(i = 0; i < MAX_TABLE_SIZE; i++){
+    for(int i = 0; i < MAX_TABLE_SIZE; i++){
         table->macros_array[i] = NULL;
     }
     return table; 
 }
 
-bool add_new_macro(macro_table *macro_table, char *name){
-int index;
+bool add_new_macro(macro_table *macro_table, char *name, char *error_msg){
     if (table_contains(macro_table, name)){
-        printf("Error: macro %s already exists\n", name);
+        strcpy(error_msg,sprintf("Error: macro %s already exists\n", name));
         return FALSE;
     }
-    index = default_hash_function(name);
-    macro *new_macro = macro_init(name);/*TODO mix decleration*/
+    int index = default_hash_function(name);
+    macro *new_macro = macro_init(name);
     if(new_macro == NULL){
-        printf("Error: memory allocation failed\n");
+        strcpy(error_msg,"Error: memory allocation failed\n");
         return FALSE;
     }
 
@@ -50,26 +51,20 @@ int index;
         macro_table->macros_array[index] = new_macro;
     }
     else{
-        macro *current_macro = macro_table->macros_array[index]; /*TODO mix decleration*/
+        macro *current_macro = macro_table->macros_array[index];
         while(current_macro->next != NULL){
             current_macro = current_macro->next;
         }
         current_macro->next = new_macro;
     }
-return TRUE;
 }
 
-bool add_to_macro(macro_table *macro_table, char *data, char *macro_name){
-int index;
-    if (!table_contains(macro_table, macro_name)){
-        printf("Error: macro %s does not exists\n", macro_name);
-        return FALSE;
-    }
-    index = default_hash_function(macro_name);
-    macro *current_macro = macro_table->macros_array[index];/*TODO mix decleration*/
+bool add_to_macro(macro_table *macro_table, char *data, char *macro_name, char *error_msg){
+    int index = default_hash_function(macro_name);
+    macro *current_macro = macro_table->macros_array[index];
     while(current_macro != NULL){
         if(strcmp(current_macro->name, macro_name) == 0){
-            node *new_node = node_init(data); /*TODO mix decleration*/
+            node *new_node = node_init(data);
             add_to_list(current_macro->data, new_node);
             return TRUE;
         }
@@ -81,9 +76,8 @@ int index;
 bool remove_macro(macro_table *macro_table, char *data);
 
 bool table_contains(macro_table *macro_table, char *macro_name){
-	bool result = FALSE;
-	int index;
-    index = default_hash_function(macro_name);
+    bool result = FALSE;
+    int index = default_hash_function(macro_name);
     macro *current_macro = macro_table->macros_array[index];
     while(current_macro){
         if(strcmp(current_macro->name, macro_name) == 0){
@@ -92,15 +86,13 @@ bool table_contains(macro_table *macro_table, char *macro_name){
         }
         current_macro = current_macro->next;
     }
-	return FALSE;
 }
 
 bool free_macro_table(macro_table *macro_table){
-int i;
     if(macro_table == NULL){
         return FALSE;
     }
-    for(i = 0; i < MAX_TABLE_SIZE; i++){
+    for(int i = 0; i < MAX_TABLE_SIZE; i++){
         macro *current_macro = macro_table->macros_array[i];
         while(current_macro){
             macro *temp = current_macro;
@@ -118,12 +110,11 @@ int i;
 }
 
 list *get_macro_lines(macro_table *macro_table,char *macro_name){
-int index;
     if (!table_contains(macro_table, macro_name)){
         printf("Error: macro %s does not exists\n", macro_name);
         return NULL;
     }
-    index = default_hash_function(macro_name);
+    int index = default_hash_function(macro_name);
     macro *current_macro = macro_table->macros_array[index];
     while(current_macro != NULL){
         if(strcmp(current_macro->name, macro_name) == 0){
@@ -131,8 +122,7 @@ int index;
         }
         current_macro = current_macro->next;
     }
-	
-	return NULL;
+
 }
 
 void print_macro(macro *macro){
@@ -140,14 +130,34 @@ void print_macro(macro *macro){
     print_list(macro->data);
 }
 
-void print_macro_table(macro_table *table){
-int i;
-    for (i = 0; i < MAX_TABLE_SIZE; i++){
+char *print_macro_table(macro_table *table){
+    for (int i = 0; i < MAX_TABLE_SIZE; i++){
         macro *current_macro = table->macros_array[i];
         while(current_macro != NULL){
             print_macro(current_macro);
             current_macro = current_macro->next;
         }
+    }
+}
+
+int get_symbol_val(symbol_list *table, char *symbol_name);{
+    symbol *current_symbol = table->head;
+    while (current_symbol){
+        if(strcmp((char *)current_symbol->name, symbol_name) == 0){
+            return current_symbol->value;
+        }
+    }
+    return -1;
+}
+
+void update_data_symbols(symbol_list *table, int update_value){
+    bool result = TRUE;
+    symbol *current_symbol = table->head;
+    while(current_symbol != NULL){
+        if(current_symbol->is_data){
+            current_symbol->value = update_value;
+        }
+        current_symbol = current_symbol->next;
     }
 }
 
@@ -166,7 +176,7 @@ bool ligal_label(char *label, char *error_massage){
     return TRUE;
 }
 
-symbol *symbol_init(char *name, int *value, bool *is_data, char *error_massage){
+symbol *symbol_init(char *name, int *value, bool is_data, char *error_massage){
     symbol *symbol = malloc(sizeof(symbol));
     ligal_label(name, error_massage);
     if(symbol == NULL){
@@ -176,36 +186,47 @@ symbol *symbol_init(char *name, int *value, bool *is_data, char *error_massage){
     strcpy(symbol->name, name);
     symbol->is_entry = FALSE;
     symbol->is_external = FALSE;
-    symbol->value = -1;
+    symbol->value = *value;
     symbol->is_data = FALSE;
     strcpy(symbol->error, error_massage);
     return symbol;
 }
 
-char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type *type){
-	int symbol_type;
-    symbol *tmp_symbol = get_symbol(table, symbol_name);/*TODO mix decleration problem*/
-    char *result = "";
+symbol *get_next_symbol(symbol *symbol){
+    return symbol->next;
+}
+
+
+char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type type){
+    symbol *tmp_symbol = get_symbol(table, symbol_name);
+    char *result;
+    strcpy(result, "");
     if(search_symbol(table, symbol_name) == NULL){
-        sprintf(result, "Error: %s symbol does not exist", symbol_name);
+        sprintf("Error: %s symbol does not exist", symbol_name);
         return result;
     }
-    symbol_type = type;
+    int symbol_type = type;
     switch (symbol_type)
-    {   case EXTERNAL:
+    {   case EXT:
             tmp_symbol->is_external = TRUE;
+            if(tmp_symbol->is_entry == TRUE){
+                sprintf(result, " %s symbol is both external and entry", symbol_name);
+            }
             break;
         case ENTRY:
             tmp_symbol->is_entry = TRUE;
+            if(tmp_symbol->is_external == TRUE){
+                sprintf(result, " %s symbol is both external and entry", symbol_name);
+            }
             break;
         default:
-            sprintf(result, "Error: %d is an invalid symbol type", type);
+            sprintf(result, " %d is an invalid symbol type", type);
             break;
     }
     return result;
 }
 
-char *set_symbol_value(symbol_list *table,char *symbol_name, int *value){
+char *set_symbol_value(symbol_list *table,char *symbol_name, int value, char *error_massage){
     symbol *tmp_symbol = get_symbol(table, symbol_name);
     char *result = "";
     if(tmp_symbol){
@@ -270,9 +291,9 @@ symbol_list *init_symbol_list(void){
     return table;    
 }
 
-bool add_symbol(symbol_list *table, char *key,bool *is_data, int *val, char *error_msg){
-    bool result = TRUE; /*unused variable*/
-    symbol *new_symbol = symbol_init(key, val, is_data, error_msg);/*TODO mix decleration*/
+bool add_symbol(symbol_list *table, char *key, int value){
+    bool result = TRUE;
+    symbol *new_symbol = symbol_init(key, value, FALSE, "");
     if(!new_symbol){
         printf("Error: failed to create new symbol\n");
         exit(1);
@@ -283,7 +304,7 @@ bool add_symbol(symbol_list *table, char *key,bool *is_data, int *val, char *err
         table->tail = new_symbol;
         if(new_symbol->error != NULL){
             char *result = strcat("Error: ", new_symbol->error);
-            result = FALSE; /* TODO what result does?*/
+            result = FALSE;
         }
         return TRUE;
     }
@@ -295,7 +316,7 @@ bool add_symbol(symbol_list *table, char *key,bool *is_data, int *val, char *err
         table->tail->next = new_symbol;
         table->tail = new_symbol;
         if(new_symbol->error != NULL){
-            char *result = strcat("Error: ", new_symbol->error); /* TODO what result does?*/
+            char *result = strcat("Error: ", new_symbol->error);
             result = FALSE;
         }
         return TRUE;       
@@ -303,8 +324,8 @@ bool add_symbol(symbol_list *table, char *key,bool *is_data, int *val, char *err
 }
 
 bool remove_symbol(symbol_list *table, char *key){
-    symbol *current_symbol = table->head; /*TODO decleration problem*/
-    symbol *prev_symbol = NULL; /*TODO decleration problem*/
+    symbol *current_symbol = table->head;
+    symbol *prev_symbol = NULL;
     while (current_symbol){
         if(strcmp(current_symbol->name, key) == 0){
             if(prev_symbol){
@@ -322,8 +343,8 @@ bool remove_symbol(symbol_list *table, char *key){
     return FALSE;
 }
 
-symbol/*TODO add _list? or remove from h file*/ *search_symbol(symbol_list *table, char *name){
-    symbol *current_symbol = table->head; /*TODO decleration problem*/
+symbol *search_symbol(symbol_list *table, char *name){
+    symbol *current_symbol = table->head;
     while (current_symbol){
         if(strcmp(current_symbol->name, name) == 0){
             return current_symbol;
@@ -333,8 +354,8 @@ symbol/*TODO add _list? or remove from h file*/ *search_symbol(symbol_list *tabl
 }
 
 void free_symbol_list(symbol_list *table){
-    symbol *current_symbol = table->head; /*TODO decleration problem*/
-    symbol *prev_symbol = NULL; /*TODO decleration problem*/
+    symbol *current_symbol = table->head;
+    symbol *prev_symbol = NULL;
     while (current_symbol){
         prev_symbol = current_symbol;
         current_symbol = current_symbol->next;
@@ -345,11 +366,35 @@ void free_symbol_list(symbol_list *table){
 
 void print_symbol_list(symbol_list *table){
     printf("Symbol table:\t|\t value\t|\t is_entry\t|\t is_external\t|\n");
-    symbol *current_symbol = table->head; /*TODO decleration problem*/
+    symbol *current_symbol = table->head;
     while (current_symbol){
         printf("%s\n", print_symbol(current_symbol));
         current_symbol = current_symbol->next;
     }
+}
+
+bool is_entry_s(symbol *symbol){
+    return (symbol->is_entry)? TRUE:FALSE;
+}
+
+bool is_external_s(symbol *symbol){
+    return (symbol->is_external)? TRUE:FALSE;
+}
+
+
+
+symbol *get_symbol_head(symbol_list *table){
+    return table->head;
+}
+symbol *get_symbol(symbol_list *table, char *symbol_name);
+{
+    symbol *current_symbol = table->head;
+    while (current_symbol){
+        if(strcmp((char *)current_symbol->name, symbol_name) == 0){
+            return current_symbol;
+        }
+    }
+    return NULL;
 }
 
 

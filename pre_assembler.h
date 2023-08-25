@@ -5,14 +5,16 @@
 4. spread macros
 */
 #ifndef PRE_ASSEMBLER_H
+#define PRE_ASSEMBLER_H
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include "globals.h"
-#include "ast.h"
 #include "table_generator.h"
 #include "util.h"
+#include <ctype.h>
+
 
 /*This is the main function of the pre assembler
 @param file_name - the name of the file to pre assemble
@@ -41,7 +43,7 @@ bool can_ignore(char *line);
 @return the new line counter
 */
 
-bool unfold_macros(char *line, macro_table *table, int *line_counter); 
+bool unfold_macros(char *line, macro_table *table, int line_counter); 
 
 /*This function will check if the line is a macro definition
 @param line - a pointer to the line of assembly code
@@ -64,6 +66,5 @@ bool is_macro(char *line, macro_table *table);
 bool is_macro_end(char *line);
 
 
-
-
 #endif
+
