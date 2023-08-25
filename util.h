@@ -25,11 +25,11 @@ takes arbitrary number of pionters and free the momory they point to
 @line: the line to get the second word from
 @returns: the second word in the line
 */
-void get_second_word(char *line);
+void get_second_word(char *line,char *result);
 
 void get_first_word(char *line , char *result);
 
-void remove_first_word(char *current_line);
+void remove_first_word(char *current_line,char *result);
 
 char *toLowerCase(char *str);
 
