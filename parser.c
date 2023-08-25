@@ -45,13 +45,13 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
         get_first_word(current_line, first_frase);
         remove_first_word(current_line,rest);
         arg_list = list_init();
+        under_construction();
         
         
 
         /*First word is a lable*/
-        if(is_label(first_frase))
-        {
-            printf("we are in the lable section\n"); /*for debuging*/
+        if(is_label(first_frase)){
+            
             label_flag = TRUE;
             strcpy(tmp_lable, strtok(first_frase, ":"));
             get_second_word(current_line, first_frase);
