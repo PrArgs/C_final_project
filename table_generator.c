@@ -140,6 +140,16 @@ char *print_macro_table(macro_table *table){
     }
 }
 
+int get_symbol_val(symbol_list *table, char *symbol_name);{
+    symbol *current_symbol = table->head;
+    while (current_symbol){
+        if(strcmp((char *)current_symbol->name, symbol_name) == 0){
+            return current_symbol->value;
+        }
+    }
+    return -1;
+}
+
 void update_data_symbols(symbol_list *table, int update_value){
     bool result = TRUE;
     symbol *current_symbol = table->head;
@@ -176,7 +186,7 @@ symbol *symbol_init(char *name, int *value, bool is_data, char *error_massage){
     strcpy(symbol->name, name);
     symbol->is_entry = FALSE;
     symbol->is_external = FALSE;
-    symbol->value = -1;
+    symbol->value = *value;
     symbol->is_data = FALSE;
     strcpy(symbol->error, error_massage);
     return symbol;
@@ -375,6 +385,16 @@ bool is_external_s(symbol *symbol){
 
 symbol *get_symbol_head(symbol_list *table){
     return table->head;
+}
+symbol *get_symbol(symbol_list *table, char *symbol_name);
+{
+    symbol *current_symbol = table->head;
+    while (current_symbol){
+        if(strcmp((char *)current_symbol->name, symbol_name) == 0){
+            return current_symbol;
+        }
+    }
+    return NULL;
 }
 
 

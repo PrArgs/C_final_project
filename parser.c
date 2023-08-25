@@ -1,27 +1,35 @@
 #include "parser.h"
 
 bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long *instruction_counter, data_list *data_image, inst_list *instruction_image){
-    int zero = 0;
+    
     int line_counter = 0;
-    bool label_flag;
-    char *current_line;
-    bool result = TRUE;
-    char *first_frase;
-    char *second_frase;
-    char tmp_lable[MAX_LABEL_LENGTH+1];
-    char *error_msg;
-    int num_of_words;
-    symbol tmp_symbol[MAX_LABEL_LENGTH+1];
-    char *rest;
     int op_code = -1;
+    int second_op_code = -1;
+    bool label_flag = FALSE;
+    bool result = TRUE;
     bool second_pass = FALSE;
-    list *arg_list;  
+    char *rest;
+    char *error_msg;   
+    char *first_frase;
+    char *current_line;
+    char *tmp_lable;    
+    list *arg_list;
+    
 
     FILE *file = fopen(file_name, "r");
     if (file == NULL){
         printf("Error: file %s does not exist\n", file_name);
         return FALSE;
     }
+
+    /*Allocate memory to prevet overwriting of data*/
+    current_line = (char *)malloc(MAX_POSIBLE_LENGTH);
+    error_msg = (char *)malloc(MAX_POSIBLE_LENGTH);
+    first_frase = (char *)malloc(MAX_LINE_LENGTH+1);
+    rest = (char *)malloc(MAX_LINE_LENGTH+1);
+    tmp_lable = (char *)malloc(MAX_LINE_LENGTH+1);
+
+    
 
     /*Iterating over the lines of the file*/
     while (fgets(current_line,MAX_POSIBLE_LENGTH, file) != NULL){        
@@ -43,7 +51,7 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
             current_line = remove_first_word(current_line);
             strcpy(rest,remove_first_word(current_line));
 
-            if(first_frase == NULL || first_frase == '\n'){
+            if(first_frase == NULL || *first_frase == '\n'){
                 
                     printf("ERROR at line %d: lable %s is the only word in the line\n",line_counter, tmp_lable);
                     result = FALSE;
@@ -68,9 +76,10 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
 
         if(strcmp(first_frase,".data") == 0 || strcmp(first_frase,".string") == 0){/*if inserting data*/
             if(label_flag){
-                if(!(add_symbol(symbol_table, tmp_lable, data_counter))){
+                if(!(add_symbol(symbol_table, tmp_lable, *data_counter))){
                     result = FALSE;                    
                     line_counter++;
+                    list_free(arg_list);
                     continue;
                 }/*add the lable to the symbol table or print an error message*/
             }
@@ -87,6 +96,7 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
                 }
             }            
             line_counter++;
+            list_free(arg_list);
             continue;
         }
 
@@ -105,6 +115,7 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
                 }
             }
             line_counter++;
+            list_free(arg_list);
             continue;
         }        
         
@@ -114,13 +125,15 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
             printf("ERROR at line %d: %s is not a valid instruction\n",line_counter, first_frase);
             result = FALSE;
             line_counter++;
+            list_free(arg_list);
             continue;
         }
 
         if(label_flag){
-            if(!(add_symbol(symbol_table, tmp_lable, instruction_counter))){
+            if(!(add_symbol(symbol_table, tmp_lable, *instruction_counter))){
                 result = FALSE;                    
                 line_counter++;
+                list_free(arg_list);
                 continue;
             }/*add the lable to the symbol table or print an error message*/
         }        
@@ -128,15 +141,17 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
         if(!parse_instruction(op_code, arg_list, instruction_image, instruction_counter, line_counter,second_pass)){
             result = FALSE;
         }
+        list_free(arg_list);
         line_counter++;
-        list_free(arg_list);   
     }
 
     if(result){ /*start the second pass*/
-        update_data_symbols(symbol_table, data_counter);/*updates the data symbols*/
+        update_data_symbols(symbol_table, *instruction_counter);/*updates the data symbols*/
         rewind(file);
         line_counter = 0;
         second_pass = TRUE;
+        op_code = -1;
+        second_op_code = -1;
 
         while (fgets(current_line, MAX_LINE_LENGTH+1, file) != NULL){        
             strcpy(tmp_lable,"");
@@ -144,42 +159,99 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
             label_flag = FALSE;     
             strcpy(first_frase, strtok(current_line, " "));
             strcpy(rest,remove_first_word(current_line));
+            arg_list = list_init();
             
             if(is_label(first_frase)){
                 first_frase = get_second_word(current_line);
                 strcpy(rest,remove_first_word(remove_first_word(current_line)));
             }
 
-            /*First word mend for parsing*/
-            if(strcmp(first_frase,(toLowerCase(first_frase)))){
-                result = FALSE;
-                printf("ERROR at line %d: %s must be in lower case and might not be ligal \n",line_counter, first_frase);
-            }
-
-            /*First word turns to lower case*/
-            strcpy(first_frase,toLowerCase(first_frase));
-
-            if(strcmp(first_frase,".entry") == 0){/*if entry*/
-                if(!parse_entry(arg_list,symbol_table,line_counter,error_msg)){
-                    result = FALSE;
-                }
-            }
-            else if(strcmp(first_frase,".data") == 0 || strcmp(first_frase,".string") == 0 || strcmp(first_frase,".extern") == 0){/*if inserting data*/
+            if(strcmp(first_frase,".data") == 0 || strcmp(first_frase,".string") == 0 || strcmp(first_frase,".extern") == 0){/*if inserting data*/
                 line_counter++;
+                list_free(arg_list);
                 continue;
             }
 
-            else{/*instruction*/
-                op_code = find_op_code(first_frase);
-                
-                get_args(rest,arg_list, line_counter);
-                if(!parse_instruction(op_code, arg_list, instruction_image, instruction_counter, line_counter,second_pass)){
+            get_args(rest,arg_list, line_counter);            
+            
+            if(strcmp(first_frase,".entry") == 0){/*if entry*/
+                if(!parse_entry(arg_list,symbol_table,error_msg,line_counter)){
                     result = FALSE;
                 }
+            }            
+
+            else{
+                op_code = find_op_code(first_frase);
+                (*instruction_counter)++;/*increase the instruction counter to ignore the op code*/
+                second_op_code = lable_op_code(op_code);
+                switch (second_op_code)
+                {
+                case 1:/*check is first arg is a lable*/
+                    strcpy(tmp_lable, get_data(get_list_head(arg_list)));
+                    if(is_label(tmp_lable)){
+                        if(!set_i_inst(instruction_image, *instruction_counter, tmp_lable, symbol_table)){
+                            result = FALSE;
+                        }
+                    }
+                    (*instruction_counter)++;
+                    if(get_next(get_list_head(arg_list)) != NULL)/*if there is 2 args increase the instruction counter*/
+                    {
+                        (*instruction_counter)++;
+                    }
+                    break;
+
+                case 2:
+                    (*instruction_counter)++;/*increase the instruction counter to ignore the first arg*/
+                    strcpy(tmp_lable, get_data(get_next(get_list_head(arg_list))));
+                    if(is_label(tmp_lable)){
+                        if(!set_i_inst(instruction_image, *instruction_counter, tmp_lable, symbol_table)){
+                            result = FALSE;
+                        }
+                    }
+                    (*instruction_counter)++;
+                    break;
+                
+                case 3:/*Both might be labels*/
+                    strcpy(tmp_lable, get_data(get_list_head(arg_list)));
+                    if(is_label(tmp_lable)){
+                        if(!set_i_inst(instruction_image, *instruction_counter, tmp_lable, symbol_table)){
+                            result = FALSE;
+                        }
+                    }
+                    (*instruction_counter)++;
+
+                    strcpy(tmp_lable, get_data(get_next(get_list_head(arg_list))));
+                    if(is_label(tmp_lable)){
+                        if(!set_i_inst(instruction_image, *instruction_counter, tmp_lable, symbol_table)){
+                            result = FALSE;
+                        }
+                    }
+                    (*instruction_counter)++;
+                    break;
+                
+                default:
+                    if(get_next(get_list_head(arg_list)) != NULL)/*if there is 2 non label args increase the instruction counter*/
+                    {
+                        (*instruction_counter)+= 2;
+                    }
+                    else if (get_list_head(arg_list) != NULL)/*if there is 1 non label arg increase the instruction counter*/
+                    {
+                        (*instruction_counter)++;
+                    }
+                    break;
+                }
             }
+            list_free(arg_list);
             line_counter++;       
         }
-    }      
+    }
+    /* Free the allocated memory*/
+    free(current_line);
+    free(error_msg);
+    free(first_frase);
+    free(rest);
+    free(tmp_lable);
+          
     fclose(file);
     return result;    
 }

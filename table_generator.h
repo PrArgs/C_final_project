@@ -163,6 +163,10 @@ symbol *symbol_init(char *name);
 
 symbol *get_next_symbol(symbol *symbol);
 
+int get_symbol_val(symbol_list *table, char *symbol_name);
+
+symbol *get_symbol(symbol_list *table, char *symbol_name);
+
 symbol *get_symbol_head(symbol_list *table);
 
 char *set_symbol_type(symbol_list *table,char *symbol_name, symbol_type type);

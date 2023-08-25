@@ -185,7 +185,7 @@ bool parse_extern(list *args, symbol_list *symbol_table, int line_counter);
 int find_op_code(char *op_code);
 bool parse_entry(list *args, symbol_list *symbol_table, char *error_msg, int line_counter);
 int parse_single_oprand(char *args, char *error_msg, instruction_word *tmp_word);
-bool parse_instruction(int ins_code, list *args, inst_list *instruction_image, long *instruction_counter, int line_counter, bool second_pass);
+bool parse_instruction(int ins_code, list *args, inst_list *instruction_image, long *instruction_counter, int line_counter);
 bool add_to_data_list(data_list *list, data_word *data);
 bool add_to_inst_list(inst_list *list, instruction_word *inst);
 
@@ -194,6 +194,8 @@ unsigned int get_data_val(data_node *data);
 inst_list *init_inst_list();
 data_list *init_data_list();
 inst_node *get_next_inst(inst_node *inst);
+inst_node *get_i_inst(inst_list *list, long i);
+bool set_i_inst(inst_list *list, long i,char *symbol_name, symbol_list *symbol_table);
 data_node *get_next_data(data_node *data);
 
 inst_node *get_head_inst(inst_list *list);
@@ -203,6 +205,9 @@ void free_data_list(data_list *list);
 void free_inst_list(inst_list *list);
 void remove_last_inst(inst_list *instruction_image);
 unsigned int extract_bits(void *word_ptr);
+
+bool is_lable_rand(char *arg);
+int lable_op_code(int op_code);
 
 
 

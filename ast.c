@@ -597,7 +597,7 @@ int parse_single_oprand(char *args,char *error_msg,instruction_word *tmp_word ){
     }
 }
 
-bool parse_instruction(int ins_code, list *args, inst_list *instruction_image,long *instruction_counter,int line_counter,bool second_pass){
+bool parse_instruction(int ins_code, list *args, inst_list *instruction_image,long *instruction_counter,int line_counter){
     
     int i = 0, f_rand_add = 0, s_rand_add = 0;       
     int *word_limit, *ligal_add_source, *ligal_add_dest;
@@ -622,216 +622,210 @@ bool parse_instruction(int ins_code, list *args, inst_list *instruction_image,lo
         strcpy(args_array[i],get_data(tmp_node));
         tmp_node = get_next(tmp_node);
         i++;
-    }  
-
-    if(second_pass){
-        return update_lable_rand(args_array,instruction_counter,instruction_image);
     }
 
-    else{
-        error = (char *)malloc(sizeof(char)*(MAX_LINE_LENGTH+1)); 
-        args_array[0] = (char *)malloc(sizeof(char)*(MAX_LINE_LENGTH+1));
-        args_array[1] = (char *)malloc(sizeof(char)*(MAX_LINE_LENGTH+1)); 
-        tmp_instruction = (instruction_op_word *)malloc(sizeof(instruction_op_word));
+    error = (char *)malloc(sizeof(char)*(MAX_LINE_LENGTH+1)); 
+    args_array[0] = (char *)malloc(sizeof(char)*(MAX_LINE_LENGTH+1));
+    args_array[1] = (char *)malloc(sizeof(char)*(MAX_LINE_LENGTH+1)); 
+    tmp_instruction = (instruction_op_word *)malloc(sizeof(instruction_op_word));
 
-        if(tmp_instruction == NULL){
-            printf("Error at line %d: unable to allocate memory\n",line_counter);
-            return FALSE;
-        } 
-        
-        
-        set_ligal_params(ins_code,ligal_add_source,ligal_add_dest,word_limit);
+    if(tmp_instruction == NULL){
+        printf("Error at line %d: unable to allocate memory\n",line_counter);
+        return FALSE;
+    } 
+    
+    
+    set_ligal_params(ins_code,ligal_add_source,ligal_add_dest,word_limit);
 
-        switch(*word_limit){
-            case 0:
-                if(args_array[0] != NULL){
-                    printf("Error at line %d: too many arguments\n",line_counter);
-                    free(tmp_instruction);
-                    free(error);
-                    free(args_array[0]);
-                    free(args_array[1]);
-                    return FALSE;                
-                }
-                tmp_instruction->ARE = 0;
-                tmp_instruction->dest_add = 0;
-                tmp_instruction->op_code = ins_code;
-                tmp_instruction->source_add = 0;
-
-                rapping_word = (instruction_word *)tmp_instruction;
-
-                if(!(add_to_inst_list(instruction_image,rapping_word))){
-                    printf("Error at line %d: unable to allocate memory\n",line_counter);
-                    free(tmp_instruction);                    
-                    free(error);
-                    free(args_array[0]);
-                    free(args_array[1]);
-                    return FALSE;
-                }
-                (*instruction_counter)++;
+    switch(*word_limit){
+        case 0:
+            if(args_array[0] != NULL){
+                printf("Error at line %d: too many arguments\n",line_counter);
+                free(tmp_instruction);
                 free(error);
                 free(args_array[0]);
                 free(args_array[1]);
-                return result;
-
-            case 1:
-                if(args_array[1] != NULL){
-                    printf("Error at line %d: too many arguments\n",line_counter);
-                    free(tmp_instruction);
-                    free(error);
-                    free(args_array[0]);
-                    free(args_array[1]);
-                    return FALSE;                
-                }
-                
-                f_rand_add = parse_single_oprand(args_array[0],error,first_rand);
-                if((f_rand_add < 1) || !(valid_addressing(f_rand_add,*ligal_add_source))){
-                    printf("Error at line %d: %s\n",line_counter,error);
-                    free(tmp_instruction);
-                    free(first_rand);
-                    free(error);
-                    free(args_array[0]);
-                    free(args_array[1]);         
-                    return FALSE;
-                }
-                /*If ligal instruction and after that the oprand*/
-                tmp_instruction->ARE = 0;
-                tmp_instruction->dest_add = (unsigned int)(f_rand_add);
-                tmp_instruction->op_code = ins_code;
-                tmp_instruction->source_add = 0;
-                rapping_word = (instruction_word *)tmp_instruction;
-                
-                if(!(add_to_inst_list(instruction_image,rapping_word))){
-                    printf("Error at line %d: unable to allocate memory\n",line_counter);
-                    free(tmp_instruction);
-                    free(first_rand);
-                    free(error);
-                    free(args_array[0]);
-                    free(args_array[1]);  
-                    return FALSE;
-                }
-                (*instruction_counter)++;
-
-                if(!(add_to_inst_list(instruction_image,first_rand))){
-                    printf("Error at line %d: unable to add %s to instruction image\n",line_counter,args_array[0]);
-                    remove_last_inst(instruction_image);
-                    free(tmp_instruction);
-                    free(first_rand);
-                    free(error);
-                    free(args_array[0]);
-                    free(args_array[1]);
-                    (*instruction_counter)--;
-                    return FALSE;
-                }
-                (*instruction_counter)++;
-                return result;
-
-            case 2:
-                if(args_array[1] == NULL){
-                    printf("Error at line %d: not enough arguments\n",line_counter);
-                    free(tmp_instruction);
-                    free(first_rand);
-                    free(error);
-                    free(args_array[0]);
-                    free(args_array[1]);  
-                    return FALSE;   
-                }
-
-                
-                f_rand_add = parse_single_oprand(args_array[0],error,first_rand);
-                if(f_rand_add < 1 || !(valid_addressing(f_rand_add,*ligal_add_source))){
-                    printf("Error at line %d: %s\n",line_counter,error);
-                    free(tmp_instruction);
-                    free(first_rand);
-                    free(error);
-                    free(args_array[0]);
-                    free(args_array[1]);                 
-                    return FALSE;
-                }
-
-                
-                s_rand_add = parse_single_oprand(args_array[1],error,second_rand);
-                if(s_rand_add < 1 || !(valid_addressing(s_rand_add,*ligal_add_dest))){
-                    printf("Error at line %d: %s\n",line_counter,error);
-                    free(tmp_instruction);
-                    free(first_rand);
-                    free(second_rand);
-                    free(error);
-                    free(args_array[0]);
-                    free(args_array[1]);              
-                    return FALSE;
-                }
-
-                /*If ligal instruction and after that the oprand*/
-                
-                tmp_instruction->ARE = 0;
-                tmp_instruction->dest_add = (unsigned int)(s_rand_add);
-                tmp_instruction->op_code = ins_code;
-                tmp_instruction->source_add = (unsigned int)(f_rand_add);
-
-                rapping_word = (instruction_word *)tmp_instruction;
-                
-                if(!(add_to_inst_list(instruction_image,rapping_word))){
-                    printf("Error at line %d: unable to allocate memory\n",line_counter);
-                    free(tmp_instruction);
-                    free(first_rand);
-                    free(second_rand);
-                    free(error);
-                    free(args_array[0]);
-                    free(args_array[1]);
-                    return FALSE;
-                }
-                (*instruction_counter)++;
-
-                if(f_rand_add == REGISTER && s_rand_add == REGISTER){/*Both are registers we can use the same line*/
-                    combine_register(first_rand,second_rand);
-                    free(first_rand);
-
-                    if(!(add_to_inst_list(instruction_image,first_rand))){
-                        printf("Error at line %d: unable to add %s to instruction image\n",line_counter,args_array[0]);
-                        remove_last_inst(instruction_image);
-                        free(tmp_instruction);
-                        free(first_rand);
-                        free(second_rand);
-                        free(error);
-                        free(args_array[0]);
-                        free(args_array[1]);
-                        (*instruction_counter)--;
-                        result = FALSE;
-                    }
-                    (*instruction_counter)++;
-                    return result;           
-                }
-
-
-                if(!(add_to_inst_list(instruction_image,first_rand))){
-                    printf("Error at line %d: unable to add %s to instruction image\n",line_counter,args_array[0]);
-                    remove_last_inst(instruction_image);
-                    (*instruction_counter)--;
-                    free(tmp_instruction);
-                    free(first_rand);
-                    free(second_rand);
-                    free(error);
-                    free(args_array[0]);
-                    free(args_array[1]);
-                    return FALSE;
-                }
-                (*instruction_counter)++;
-                
-                if(!(add_to_inst_list(instruction_image,second_rand))){
-                    printf("Error at line %d: unable to add %s to instruction image\n",line_counter,args_array[1]);
-                    remove_last_inst(instruction_image);
-                    remove_last_inst(instruction_image);
-                    (*instruction_counter)-= 2;
-                    free(tmp_instruction);
-                    free(first_rand);
-                    free(second_rand);
-                    free(error);
-                    free(args_array[0]);
-                    free(args_array[1]);
-                    return FALSE;
-                }
-                (*instruction_counter)++;
+                return FALSE;                
             }
+            tmp_instruction->ARE = 0;
+            tmp_instruction->dest_add = 0;
+            tmp_instruction->op_code = ins_code;
+            tmp_instruction->source_add = 0;
+
+            rapping_word = (instruction_word *)tmp_instruction;
+
+            if(!(add_to_inst_list(instruction_image,rapping_word))){
+                printf("Error at line %d: unable to allocate memory\n",line_counter);
+                free(tmp_instruction);                    
+                free(error);
+                free(args_array[0]);
+                free(args_array[1]);
+                return FALSE;
+            }
+            (*instruction_counter)++;
+            free(error);
+            free(args_array[0]);
+            free(args_array[1]);
+            return result;
+
+        case 1:
+            if(args_array[1] != NULL){
+                printf("Error at line %d: too many arguments\n",line_counter);
+                free(tmp_instruction);
+                free(error);
+                free(args_array[0]);
+                free(args_array[1]);
+                return FALSE;                
+            }
+            
+            f_rand_add = parse_single_oprand(args_array[0],error,first_rand);
+            if((f_rand_add < 1) || !(valid_addressing(f_rand_add,*ligal_add_source))){
+                printf("Error at line %d: %s\n",line_counter,error);
+                free(tmp_instruction);
+                free(first_rand);
+                free(error);
+                free(args_array[0]);
+                free(args_array[1]);         
+                return FALSE;
+            }
+            /*If ligal instruction and after that the oprand*/
+            tmp_instruction->ARE = 0;
+            tmp_instruction->dest_add = (unsigned int)(f_rand_add);
+            tmp_instruction->op_code = ins_code;
+            tmp_instruction->source_add = 0;
+            rapping_word = (instruction_word *)tmp_instruction;
+            
+            if(!(add_to_inst_list(instruction_image,rapping_word))){
+                printf("Error at line %d: unable to allocate memory\n",line_counter);
+                free(tmp_instruction);
+                free(first_rand);
+                free(error);
+                free(args_array[0]);
+                free(args_array[1]);  
+                return FALSE;
+            }
+            (*instruction_counter)++;
+
+            if(!(add_to_inst_list(instruction_image,first_rand))){
+                printf("Error at line %d: unable to add %s to instruction image\n",line_counter,args_array[0]);
+                remove_last_inst(instruction_image);
+                free(tmp_instruction);
+                free(first_rand);
+                free(error);
+                free(args_array[0]);
+                free(args_array[1]);
+                (*instruction_counter)--;
+                return FALSE;
+            }
+            (*instruction_counter)++;
+            return result;
+
+        case 2:
+            if(args_array[1] == NULL){
+                printf("Error at line %d: not enough arguments\n",line_counter);
+                free(tmp_instruction);
+                free(first_rand);
+                free(error);
+                free(args_array[0]);
+                free(args_array[1]);  
+                return FALSE;   
+            }
+
+            
+            f_rand_add = parse_single_oprand(args_array[0],error,first_rand);
+            if(f_rand_add < 1 || !(valid_addressing(f_rand_add,*ligal_add_source))){
+                printf("Error at line %d: %s\n",line_counter,error);
+                free(tmp_instruction);
+                free(first_rand);
+                free(error);
+                free(args_array[0]);
+                free(args_array[1]);                 
+                return FALSE;
+            }
+
+            
+            s_rand_add = parse_single_oprand(args_array[1],error,second_rand);
+            if(s_rand_add < 1 || !(valid_addressing(s_rand_add,*ligal_add_dest))){
+                printf("Error at line %d: %s\n",line_counter,error);
+                free(tmp_instruction);
+                free(first_rand);
+                free(second_rand);
+                free(error);
+                free(args_array[0]);
+                free(args_array[1]);              
+                return FALSE;
+            }
+
+            /*If ligal instruction and after that the oprand*/
+            
+            tmp_instruction->ARE = 0;
+            tmp_instruction->dest_add = (unsigned int)(s_rand_add);
+            tmp_instruction->op_code = ins_code;
+            tmp_instruction->source_add = (unsigned int)(f_rand_add);
+
+            rapping_word = (instruction_word *)tmp_instruction;
+            
+            if(!(add_to_inst_list(instruction_image,rapping_word))){
+                printf("Error at line %d: unable to allocate memory\n",line_counter);
+                free(tmp_instruction);
+                free(first_rand);
+                free(second_rand);
+                free(error);
+                free(args_array[0]);
+                free(args_array[1]);
+                return FALSE;
+            }
+            (*instruction_counter)++;
+
+            if(f_rand_add == REGISTER && s_rand_add == REGISTER){/*Both are registers we can use the same line*/
+                combine_register(first_rand,second_rand);
+                free(first_rand);
+
+                if(!(add_to_inst_list(instruction_image,first_rand))){
+                    printf("Error at line %d: unable to add %s to instruction image\n",line_counter,args_array[0]);
+                    remove_last_inst(instruction_image);
+                    free(tmp_instruction);
+                    free(first_rand);
+                    free(second_rand);
+                    free(error);
+                    free(args_array[0]);
+                    free(args_array[1]);
+                    (*instruction_counter)--;
+                    result = FALSE;
+                }
+                (*instruction_counter)++;
+                return result;           
+            }
+
+
+            if(!(add_to_inst_list(instruction_image,first_rand))){
+                printf("Error at line %d: unable to add %s to instruction image\n",line_counter,args_array[0]);
+                remove_last_inst(instruction_image);
+                (*instruction_counter)--;
+                free(tmp_instruction);
+                free(first_rand);
+                free(second_rand);
+                free(error);
+                free(args_array[0]);
+                free(args_array[1]);
+                return FALSE;
+            }
+            (*instruction_counter)++;
+            
+            if(!(add_to_inst_list(instruction_image,second_rand))){
+                printf("Error at line %d: unable to add %s to instruction image\n",line_counter,args_array[1]);
+                remove_last_inst(instruction_image);
+                remove_last_inst(instruction_image);
+                (*instruction_counter)-= 2;
+                free(tmp_instruction);
+                free(first_rand);
+                free(second_rand);
+                free(error);
+                free(args_array[0]);
+                free(args_array[1]);
+                return FALSE;
+            }
+            (*instruction_counter)++;
         }
     free(error);
     free(args_array[0]);
@@ -967,4 +961,74 @@ inst_node *get_head_inst(inst_list *list){
 }
 data_node *get_head_data(data_list *list){
     return list->head;
+}
+
+int lable_op_code(int op_code){
+    int *op , *first , *seconde;
+    int result = 0;
+    set_ligal_params(op_code,first,seconde,op);
+    if(valid_addressing(DIRECT,*first)){
+        result += 1;
+        if(valid_addressing(DIRECT,*seconde)){
+            result += 2;
+        }
+    }
+    else if(valid_addressing(DIRECT,*seconde)){
+        result += 2;
+    }
+    return result;    
+}
+
+bool is_lable_rand(char *arg){
+    if(isalpha(arg[0]) && arg[0] != '@' && arg[0] != '-' && arg[0] != '+'){
+        return TRUE;
+    }
+    return FALSE;
+}
+
+inst_node *get_i_inst(inst_list *list, long i){
+    inst_node *tmp_node;
+    int j = 0;
+    tmp_node = list->head;
+    if( i == 0 || tmp_node == NULL){
+        printf("Error: unable to get the %d'th instruction\n",i);
+        return tmp_node;
+    }
+    while (j < i)
+    {
+        tmp_node = tmp_node->next;
+        if(tmp_node == NULL){
+            printf("Error: unable to get the %d'th instruction\n",i);
+            return tmp_node;
+        }
+        j++;
+    }
+    return tmp_node;
+}
+
+bool set_i_inst(inst_list *list, long i,char *symbol_name, symbol_list *symbol_table){
+    int s_val, are;
+    inst_node *tmp_node;
+    symbol *tmp_symbol;
+    s_val = get_symbol_val(symbol_table,symbol_name);
+    if(s_val < 0 ){
+        return FALSE;
+    }
+
+    tmp_symbol = get_symbol(symbol_table,symbol_name);
+    if(is_external_s(tmp_symbol)){
+        are = E;
+    }
+    else{
+        are = R;
+    }
+    
+    tmp_node = get_i_inst(list,i);
+    if(tmp_node == NULL){
+        return FALSE;
+    }
+    
+    tmp_node->inst->word_type.imm_direct_word.ARE = (unsigned int)are;
+    tmp_node->inst->word_type.imm_direct_word.operand = (unsigned int)s_val;
+    return TRUE;
 }
