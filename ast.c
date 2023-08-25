@@ -988,17 +988,17 @@ bool is_lable_rand(char *arg){
 
 inst_node *get_i_inst(inst_list *list, long i){
     inst_node *tmp_node;
-    int j = 0;
+    long j = 0;
     tmp_node = list->head;
     if( i == 0 || tmp_node == NULL){
-        printf("Error: unable to get the %d'th instruction\n",i);
+        printf("Error: unable to get the %li'th instruction\n",i);
         return tmp_node;
     }
     while (j < i)
     {
         tmp_node = tmp_node->next;
         if(tmp_node == NULL){
-            printf("Error: unable to get the %d'th instruction\n",i);
+            printf("Error: unable to get the %li'th instruction\n",i);
             return tmp_node;
         }
         j++;
