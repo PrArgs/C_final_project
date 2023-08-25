@@ -52,7 +52,8 @@ bool pre_assembler(char *file_name, macro_table *table){
     /*iterate over the file*/
     while(fgets(line, MAX_LINE_LENGTH+1, file)){
 
-        if(!can_ignore(line)){
+        if(!can_ignore(line))
+        {
             if(is_macro_definition(line))
             {
                 if(read_macro){/*if there is already a macro being defined*/
@@ -79,8 +80,7 @@ bool pre_assembler(char *file_name, macro_table *table){
                     add_to_macro(table, line, macro_name,error_msg);
                 }
             }
-            else{/*if the line is not a macro a macro or a part of a macro*/
-                printf("%d %s",i,line);                
+            else{/*if the line is not a macro a macro or a part of a macro*/                             
                 fprintf(file_am, "%s", line);                            
             }          
         } 
@@ -100,8 +100,8 @@ bool pre_assembler(char *file_name, macro_table *table){
 
 
 bool can_ignore(char *line) {
-    while (*line) {
-        if (*line == ';') {
+    while (line != '\n') {
+        if (line == ';') {
             return TRUE; 
         }
         else if (!isspace((unsigned char)*line))/*if char is not a blank we should read the line*/
@@ -110,7 +110,7 @@ bool can_ignore(char *line) {
         }        
         *line++;/*move to the next char of line*/
     }
-    return FALSE; /* Line is blank*/
+    return TRUE; /* Line is blank*/
 }
 
 bool is_macro_definition(char *line)
