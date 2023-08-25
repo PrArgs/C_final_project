@@ -1,7 +1,7 @@
 #include "pre_assembler.h"
 
 bool pre_assembler(char *file_name, macro_table *table){
-    
+    int i;
     bool result = TRUE;
     bool read_macro = FALSE; /*a flag that will be true if the line is a macro definition*/
     int line_counter = 0;
@@ -48,9 +48,10 @@ bool pre_assembler(char *file_name, macro_table *table){
         return FALSE;
     }
 
-    
+    i = 0;
     /*iterate over the file*/
-    while(fgets(line, MAX_LINE_LENGTH+1, file)){        
+    while(fgets(line, MAX_LINE_LENGTH+1, file)){
+
         if(!can_ignore(line)){
             if(is_macro_definition(line))
             {
@@ -78,10 +79,12 @@ bool pre_assembler(char *file_name, macro_table *table){
                     add_to_macro(table, line, macro_name,error_msg);
                 }
             }
-            else{/*if the line is not a macro a macro or a part of a macro*/                
+            else{/*if the line is not a macro a macro or a part of a macro*/
+                printf("%d %s",i,line);                
                 fprintf(file_am, "%s", line);                            
             }          
-        }     
+        } 
+        i++;    
     }
 
     /*free all alocaed memory*/
