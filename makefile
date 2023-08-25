@@ -5,7 +5,7 @@ CC = gcc
 SOURCES = assembler.c data_structures.c ast.c file_generator.c parser.c pre_assembler.c table_generator.c
 
 # List of header files
-HEADERS = stdio.h stdlib.h string.h ctype.h "globals.h" "data_structures.h" "table_generator.h" "file_generator.h" "pre_assembler.h" "parser.h" "util.h" "ast.h"
+HEADERS = "globals.h" "data_structures.h" "table_generator.h" "file_generator.h" "pre_assembler.h" "parser.h" "util.h" "ast.h"
 
 # Object files will be derived from source files
 OBJECTS = $(SOURCES:.c=.o)

@@ -79,7 +79,7 @@ char *toLowerCase(char *str){
     return result;
 }
 
-int complement_2(int num){
+int complement_two(int num){
     signed int result = 0;
     signed int mask = 1;
     while (mask)
