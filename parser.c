@@ -138,7 +138,7 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
             }/*add the lable to the symbol table or print an error message*/
         }        
 
-        if(!parse_instruction(op_code, arg_list, instruction_image, instruction_counter, line_counter,second_pass)){
+        if(!parse_instruction(op_code, arg_list, instruction_image, instruction_counter, line_counter)){
             result = FALSE;
         }
         list_free(arg_list);
