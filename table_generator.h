@@ -159,7 +159,8 @@ typedef struct symbol_list
     symbol **symbols_array;    
 } symbol_list;
 */
-symbol *symbol_init(char *name);
+
+symbol *symbol_init(char *name, int value, bool is_data, char *error_massage);
 
 symbol *get_next_symbol(symbol *symbol);
 
@@ -181,7 +182,7 @@ bool is_external_s(symbol *symbol);
 
 void update_data_symbols(symbol_list *table, int update_value);
 
-char *print_symbol(symbol *symbol);
+void *print_symbol(symbol *symbol, char *result[])
 
 /* A function that will create a new symbol table
 returns a pointer to the new table*/
