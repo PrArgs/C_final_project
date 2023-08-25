@@ -80,7 +80,7 @@ int main(int argc,char *argv[]) {
         data_image = init_data_list();        
         instruction_image = init_inst_list();
 
-        prinf("file name is %s\n", file_name);
+        printf("First pass of the assembler\n");
         generate_files = parse(file_name, symbol_table,DC,IC,data_image,instruction_image); 
 
         if(generate_files == TRUE){
