@@ -59,13 +59,13 @@ bool pre_assembler(char *file_name, macro_table *table){
                     result = FALSE;
                 }
                 read_macro = TRUE;
-                strcpy(macro_name, get_second_word(line));
+                get_second_word(line,macro_name);
                 if(!(add_new_macro(table,macro_name,error_msg)))/*Macro already exists or too long name*/
                 {
                     fprintf(file_am,"%s",error_msg);
                     strcpy(error_msg, "");
                     result = FALSE;
-                };
+                }
             }
             else if(read_macro){                
                 if (is_macro_end(line))/*Stop reading and defining macro*/
@@ -103,18 +103,18 @@ bool can_ignore(char *line) {
         }
         else if (!isspace((unsigned char)*line))/*if char is not a blank we should read the line*/
         {
-            printf("dddddd %s", line);
             return FALSE; 
-        }
-        
+        }        
         *line++;/*move to the next char of line*/
     }
     return FALSE; /* Line is blank*/
 }
 
 bool is_macro_definition(char *line)
-{   char *first_word;
-    first_word = strtok(line, " ");
+{   char f_w[MAX_LINE_LENGTH + 1];
+    char *first_word = &f_w[0];
+    get_first_word(line, first_word);
+
     if (strcmp(first_word, "macro") == 0)
     {
         return TRUE;
@@ -123,14 +123,18 @@ bool is_macro_definition(char *line)
 }
 
 bool is_macro(char *line, macro_table *table){
-    char *first_word = strtok(line, " ");
+    char original_line[MAX_LINE_LENGTH + 1];
+    char *first_word;
+    first_word = &original_line[0];
+    get_first_word(line, first_word);
     return table_contains(table, first_word);
     
 }
 
 bool is_macro_end(char *line){
-    line = strtok(line, "\n");
-    if(strcmp(line, "endmcro") == 0)
+    char og_line[MAX_LINE_LENGTH + 1];
+    get_first_word(line, (char *)og_line);
+    if(strcmp(og_line, "endmcro") == 0)
     {
         return TRUE;
     }

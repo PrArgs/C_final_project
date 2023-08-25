@@ -10,6 +10,7 @@ distructors (freeing memory by type)
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "globals.h"
 
 
 /*
@@ -24,9 +25,11 @@ takes arbitrary number of pionters and free the momory they point to
 @line: the line to get the second word from
 @returns: the second word in the line
 */
-char *get_second_word(char *line);
+void get_second_word(char *line);
 
-char *remove_first_word(char *current_line);
+void get_first_word(char *line , char *result);
+
+void remove_first_word(char *current_line);
 
 char *toLowerCase(char *str);
 

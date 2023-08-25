@@ -1,11 +1,10 @@
 #include "util.h"
 #define ALL_RIGHT_BIT_ON 63
 
-char *get_second_word(char *line){
-    char *second_word;
-    second_word = strtok(line, " ");
-    second_word = strtok(NULL, " ");
-    return second_word;
+void get_second_word(char *line , char *result){
+    strcpy(result,line);
+    result = strtok(result, " ");
+    result = strtok(NULL, " ");
 }
 
 
@@ -55,19 +54,39 @@ char int_to_sixf(const int num){
     
 }
 
-char *remove_first_word(char *current_line){
-    char *result;
-    int i;
-    while (current_line[i] != ' ')
-    {
-        if(current_line[i] != '\0'){
-            printf("you inserted an invalid command %s\n", current_line);
-            exit(1);
+void get_first_word(char *line , char *result){
+    strcpy(result,line);
+    strcpy(result,strtok(result, " "));
+}
+
+void remove_first_word(char *current_line , char *result){
+    bool read_first = FALSE, last_was_space = TRUE , word_exists = FALSE;
+    int i = 0;
+    while (current_line[i] != '\n'){            
+        if(!(isspace(current_line[i]))){
+
+            if(read_first){
+                strcpy(result, current_line[i]);
+                word_exists = TRUE;
+                break;
+            }
+            else{
+                last_was_space = FALSE;
+            }
         }
+        else{
+            if(!last_was_space)
+            {
+                last_was_space = TRUE;
+                read_first = TRUE;
+            }
+        }        
         i++;
     }
-    result = strcpy(result, current_line + i);
-    return result;   
+    if(!word_exists){
+    result = NULL;   
+    }              
+       
 }
 
 char *toLowerCase(char *str){

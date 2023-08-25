@@ -24,7 +24,7 @@
 */
 typedef struct macro
 {
-    char name[MAX_TABLE_SIZE];
+    char name[MAX_LABEL_LENGTH];
     list *data;
     struct macro *next;    
 } macro;

@@ -59,6 +59,10 @@ bool add_new_macro(macro_table *macro_table, char *name, char *error_msg){
     macro *new_macro;
     macro *current_macro;
 
+    if(ligal_label(name, error_msg) == FALSE){
+        return FALSE;
+    }
+
     if (table_contains(macro_table, name)){
         sprintf(error_msg,"Error: macro %s already exists\n", name);
         return FALSE;
@@ -226,11 +230,11 @@ bool ligal_label(char *label, char *error_massage){
         return FALSE;
     }
     if(strlen(label) > MAX_LABEL_LENGTH){
-        strcat(error_massage,"Error: label is too long\n");
+        strcat(error_massage,"Error: label/macro is too long\n");
         return FALSE;
     }
     if(isalpha(label[0])){
-        strcat(error_massage,"Error: label must start with a letter\n");
+        strcat(error_massage,"Error: label/macro must start with a letter\n");
         return FALSE;
     }
     return TRUE;

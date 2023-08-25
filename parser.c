@@ -42,8 +42,8 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
         strcpy(tmp_lable,"");
         strcpy(error_msg,"");
         label_flag = FALSE;     
-        first_frase = strtok(current_line, " ");
-        strcpy(rest,remove_first_word(current_line));
+        get_first_word(current_line, first_frase);
+        remove_first_word(current_line,rest);
         arg_list = list_init();
         
         
@@ -53,9 +53,9 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
         {
             label_flag = TRUE;
             strcpy(tmp_lable, strtok(first_frase, ":"));
-            first_frase = get_second_word(current_line);
-            current_line = remove_first_word(current_line);
-            strcpy(rest,remove_first_word(current_line));
+            get_second_word(current_line, first_frase);
+            remove_first_word(current_line, rest);
+            remove_first_word(rest, rest);
 
             if(first_frase == NULL || *first_frase == '\n'){
                 
@@ -197,13 +197,14 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
             strcpy(tmp_lable,"");
             strcpy(error_msg,"");
             label_flag = FALSE;     
-            strcpy(first_frase, strtok(current_line, " "));
-            strcpy(rest,remove_first_word(current_line));
+            get_first_word(current_line, first_frase);
+            remove_first_word(current_line,rest);
             arg_list = list_init();
             
             if(is_label(first_frase)){
-                first_frase = get_second_word(current_line);
-                strcpy(rest,remove_first_word(remove_first_word(current_line)));
+                remove_first_word(current_line,rest);
+                get_second_word(current_line,first_frase);
+                remove_first_word(rest,rest);
             }
 
             if(strcmp(first_frase,".data") == 0 || strcmp(first_frase,".string") == 0 || strcmp(first_frase,".extern") == 0 || (strcmp(first_frase,".entry") == 0)){/*if inserting data*/
