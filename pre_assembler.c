@@ -107,7 +107,7 @@ bool can_ignore(char *line) {
         {
             return FALSE; 
         }        
-        *line++;/*move to the next char of line*/
+        line++;/*move to the next char of line*/
     }
     return TRUE; /* Line is blank*/
 }
