@@ -50,7 +50,7 @@ bool pre_assembler(char *file_name, macro_table *table){
 
     
     /*iterate over the file*/
-    while(fgets(line, MAX_POSIBLE_LENGTH, file)){        
+    while(fgets(line, MAX_LINE_LENGTH+1, file)){        
         if(!can_ignore(line)){
             if(is_macro_definition(line))
             {
@@ -78,11 +78,10 @@ bool pre_assembler(char *file_name, macro_table *table){
                     add_to_macro(table, line, macro_name,error_msg);
                 }
             }
-            else{/*if the line is not a macro a macro or a part of a macro*/
+            else{/*if the line is not a macro a macro or a part of a macro*/                
                 fprintf(file_am, "%s", line);                            
             }          
-        }
-        printf("\n");/*end of can't be ignored*/       
+        }     
     }
 
     /*free all alocaed memory*/
