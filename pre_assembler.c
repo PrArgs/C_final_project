@@ -50,7 +50,7 @@ bool pre_assembler(char *file_name, macro_table *table){
 
     i = 0;
     /*iterate over the file*/
-    while(fgets(line, MAX_LINE_LENGTH+1, file)){
+    while(fgets(line, MAX_POSIBLE_LENGTH, file)){
 
         if(!can_ignore(line))
         {
