@@ -23,6 +23,9 @@ bool pre_assembler(char *file_name, macro_table *table){
     strcpy(line, "");
     strcpy(error_msg, "");
 
+    printf("file name: %s\n am file name %s\n", file_name, file_name_am);
+
+
     file = fopen(file_name, "r");
     if(!file){
         printf("Error: file %s does not exist\n", file_name);
