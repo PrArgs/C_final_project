@@ -66,7 +66,7 @@ int main(int argc,char *argv[]) {
         m_table = macro_table_init();
         if(!pre_assembler(file_name, m_table)){
             generate_files = FALSE; 
-        }
+        }        
         free_macro_table(m_table);
         
         if (!generate_files) {
@@ -80,6 +80,7 @@ int main(int argc,char *argv[]) {
         data_image = init_data_list();        
         instruction_image = init_inst_list();
 
+        prinf("file name is %s\n", file_name);
         generate_files = parse(file_name, symbol_table,DC,IC,data_image,instruction_image); 
 
         if(generate_files == TRUE){

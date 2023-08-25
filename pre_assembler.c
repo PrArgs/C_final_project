@@ -47,7 +47,7 @@ bool pre_assembler(char *file_name, macro_table *table){
 
     
     /*iterate over the file*/
-    while(fgets(line, MAX_POSIBLE_LENGTH, file)){
+    while(fgets(line, MAX_POSIBLE_LENGTH, file)){        
         if(!can_ignore(line)){
             if(is_macro_definition(line))
             {
