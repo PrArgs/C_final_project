@@ -81,7 +81,8 @@ bool pre_assembler(char *file_name, macro_table *table){
             else{/*if the line is not a macro a macro or a part of a macro*/
                 fprintf(file_am, "%s", line);                            
             }          
-        }/*end of can't be ignored*/       
+        }
+        printf("\n");/*end of can't be ignored*/       
     }
 
     /*free all alocaed memory*/
