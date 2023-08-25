@@ -38,7 +38,7 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
 
     /*Iterating over the lines of the file*/
     while (fgets(current_line,MAX_POSIBLE_LENGTH, file) != NULL){     
-        printf("%s", current_line);/*print the line for debugging purposes*/
+        
         strcpy(tmp_lable,"");
         strcpy(error_msg,"");
         label_flag = FALSE;     
@@ -51,6 +51,7 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
         /*First word is a lable*/
         if(is_label(first_frase))
         {
+            printf("we are in the lable section\n"); /*for debuging*/
             label_flag = TRUE;
             strcpy(tmp_lable, strtok(first_frase, ":"));
             get_second_word(current_line, first_frase);
@@ -159,6 +160,7 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
         }
 
         if(label_flag){
+            printf("instruction and flag\n");/*for debuging*/
             if(!(add_symbol(symbol_table, tmp_lable, *instruction_counter))){
                 result = FALSE;                    
                 line_counter++;

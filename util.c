@@ -90,12 +90,12 @@ void remove_first_word(char *current_line , char *result){
 }
 
 char *toLowerCase(char *str){
-    char *result;
-    result = strcpy(result, str);
+    char result[MAX_LABEL_LENGTH + 1];
+    strcpy((char *)result, str);
     for (int i = 0; result[i]; i++) {
         str[i] = tolower(result[i]);
     }
-    return result;
+    return (char *)result;
 }
 
 int complement_two(int num){
