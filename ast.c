@@ -146,6 +146,7 @@ int parse_single_oprand(char *args, char *error_msg, instruction_word *tmp_word)
 bool add_to_inst_list(inst_list *list, instruction_word *inst);
 bool valid_addressing(int given_addressing, int ligal_addressing);
 void remove_last_inst(inst_list *instruction_image);
+bool add_to_data_list(data_list *list, data_word *data);
 
 bool legal_indirect_num(int num){
     if (num > MAX_IMMEDIATE_VALUE || num < MIN_IMMEDIATE_VALUE){
