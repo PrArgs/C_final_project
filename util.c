@@ -90,7 +90,8 @@ void remove_first_word(char *current_line , char *result){
 }
 
 char *toLowerCase(char *str){
-    char result[MAX_LABEL_LENGTH + 1];
+    char tmp_arr[MAX_LABEL_LENGTH + 1];
+    char *result = &tmp_arr[0];
     strcpy((char *)result, str);
     for (int i = 0; result[i]; i++) {
         str[i] = tolower(result[i]);
