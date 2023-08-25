@@ -24,7 +24,6 @@ void encode_to_sixf(unsigned int bin_filed , char *result){
     result[0] = (char)int_to_sixf(left);
     result[1] = (char)int_to_sixf(right);
     strcat(result, "\n");
-    return result;    
 }
 
 char int_to_sixf(const int num){
