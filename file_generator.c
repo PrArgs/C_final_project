@@ -27,11 +27,13 @@ void generate_ob_file(char *file_name, long instruction_counter, long data_count
     }
 
     fprintf(file, "%ld %ld\n", instruction_counter, data_counter);
+    base64_encoded = (char *)malloc(sizeof(char) * 2 + strlen("\n"));
     current_inst = get_head_inst(code_image);
 
     while (i < instruction_counter && current_inst != NULL){
         bin_filed = get_inst_val(current_inst);
-        fprintf(file, "%s", encode_to_sixf(bin_filed));
+        encode_to_sixf(bin_filed,base64_encoded);
+        fprintf(file, "%s", base64_encoded);
         current_inst = get_next_inst(current_inst);
     }
     if(current_inst != NULL){
@@ -43,7 +45,8 @@ void generate_ob_file(char *file_name, long instruction_counter, long data_count
 
     while (i < data_counter && current_data != NULL){
         bin_filed = get_data_val(current_data);
-        fprintf(file, "%s", encode_to_sixf(bin_filed));
+        encode_to_sixf(bin_filed,base64_encoded);
+        fprintf(file, "%s", base64_encoded);
         current_data = get_next_data(current_data);
     }
     if(current_data != NULL){

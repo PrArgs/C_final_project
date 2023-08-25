@@ -32,7 +32,7 @@ char *toLowerCase(char *str);
 
 int complement_two(int num);
 
-char *encode_to_sixf(unsigned int bin_filed);
+void encode_to_sixf(unsigned int bin_filed,char *result);
 
 char int_to_sixf(const int num);
 

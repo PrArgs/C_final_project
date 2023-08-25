@@ -9,13 +9,13 @@ char *get_second_word(char *line){
 }
 
 
-char *encode_to_sixf(unsigned int bin_filed){
+void encode_to_sixf(unsigned int bin_filed , char *result){
 
     unsigned i = bin_filed;
     unsigned right = 0;
     unsigned left = 0;
     unsigned mask = ALL_RIGHT_BIT_ON;
-    char result[3]="ER\n";
+    strcpy(result, "ER\n");
     
     right = i & mask;
     mask = mask << 6;
@@ -23,6 +23,7 @@ char *encode_to_sixf(unsigned int bin_filed){
     left = left >> 6;
     result[0] = (char)int_to_sixf(left);
     result[1] = (char)int_to_sixf(right);
+    strcat(result, "\n");
     return result;    
 }
 
