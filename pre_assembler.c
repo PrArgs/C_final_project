@@ -5,24 +5,43 @@ bool pre_assembler(char *file_name, macro_table *table){
     bool result = TRUE;
     bool read_macro = FALSE; /*a flag that will be true if the line is a macro definition*/
     int line_counter = 0;
-    char *macro_name[MAX_POSIBLE_LENGTH];/*the name of potential macro*/
-    strcpy(macro_name, "");
+    char *macro_name;/*the name of potential macro*/
+    char *error_msg;
+    char *file_name_am;
+    char *line;/*the line that will be read from the file*/
     list *macro_lines = NULL; /*a pionte that will be used to print the macro*/
-    char line[MAX_POSIBLE_LENGTH];
+    FILE *file_as;
+
+    macro_name = (char *)malloc(MAX_LINE_LENGTH+1);
+    error_msg = (char *)malloc(MAX_POSIBLE_LENGTH);
+    file_name_am = (char *)malloc(MAX_FILE_NAME_LENGTH + strlen(".am") + 1);
+    line = (char *)malloc(MAX_POSIBLE_LENGTH);
+
+
+    strcat(strtok(file_name,'.'), ".am");    
     strcpy(line, "");
-    char *error_msg[MAX_POSIBLE_LENGTH];
     strcpy(error_msg, "");
 
     FILE *file = fopen(file_name, "r");
     if(!file){
         printf("Error: file %s does not exist\n", file_name);
+        free(macro_name);
+        free(error_msg);
+        free(file_name_am);
+        free(line);
         return FALSE;
     }
-    /*creat the .as file*/
-    char *file_name_am = strcat(strtok(file_name,'.'), ".am");
-    FILE *file_as = fopen(file_name_am, "w");
+
+    strcpy(file_name_am, file_name);
+    strcat(file_name_am, ".am");
+    file_as = fopen(file_name_am, "w");
+
     if(!file_as){
         printf("Error: file %s could not be created\n", file_name_am);
+         free(macro_name);
+        free(error_msg);
+        free(file_name_am);
+        free(line);
         return FALSE;
     }
 
@@ -57,7 +76,7 @@ bool pre_assembler(char *file_name, macro_table *table){
                 }
             }
             else{/*if the line is not a macro a macro or a part of a macro*/
-                fprintf(file_as, strcat(line, "\n"));                            
+                fprintf(file_as, "%s", line);                            
             }
             line_counter++;
         }/*end of can't be ignored*/
@@ -71,6 +90,10 @@ bool pre_assembler(char *file_name, macro_table *table){
     /*free all alocaed memory*/
     fclose(file);
     fclose(file_as);
+    free(macro_name);
+    free(error_msg);
+    free(file_name_am);
+    free(line);
     return result;
 }
 
