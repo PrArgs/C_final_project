@@ -200,29 +200,26 @@ void update_data_symbols(symbol_list *table, int update_value){
     }
 }
 
-bool update_entry_symbols(symbol_list *table, list *args,char *error_massage){
+bool update_entry_symbols(symbol_list *symbol_table,list **entry_list,int entry_counter,char *error_msg){
+    int i;
     bool result = TRUE;
+    node *tmp_node;
     char *symbol_name;
-    symbol *current_symbol;
-    node *current_node = args->head;    
 
-    while(current_node != NULL){
-        symbol_name = get_data(current_node);
-        current_symbol = get_symbol(table, symbol_name);
-        if(current_symbol == NULL){
-            sprintf(error_massage," symbol %s does not exist\n", symbol_name);
-            result = FALSE;
-        }
-        else{
-            if(!set_symbol_type(table, symbol_name, ENTRY, error_massage))
-            {
+    for(i = 0; i < entry_counter; i++){
+        tmp_node = get_list_head(entry_list[i]);
+        while(tmp_node != NULL){
+            symbol_name = get_data(tmp_node);
+            if(!(set_symbol_type(symbol_table,symbol_name,ENTRY,error_msg))){
                 result = FALSE;
+                printf("Error at %d's entry statement: %s\n",i,error_msg);
+                strcpy(error_msg,"");
             }
-        }
-        current_node = current_node->next;
+            tmp_node = get_next(tmp_node);
+        }        
     }
     return result;
-} 
+}
 
 bool ligal_label(char *label, char *error_massage){
     if(label == NULL){

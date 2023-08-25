@@ -675,26 +675,6 @@ bool parse_extern(list *args, symbol_list *symbol_table,int line_counter, char *
     return result;
 }
 
-bool update_entry_symbols(symbol_list *symbol_table,list **entry_list,int entry_counter,char *error_msg){
-    int i;
-    bool result = TRUE;
-    node *tmp_node;
-    char *buffer;
-
-    for(i = 0; i < entry_counter; i++){
-        tmp_node = get_list_head(entry_list[i]);
-        while(tmp_node != NULL){
-            buffer = get_data(tmp_node);
-            if(!(set_symbol_type(symbol_table,buffer,ENTRY,error_msg))){
-                result = FALSE;
-                printf("Error at %d's entry statement: %s\n",i,error_msg);
-                strcpy(error_msg,"");
-            }
-            tmp_node = get_next(tmp_node);
-        }        
-    }
-    return result;
-}
 
 int find_op_code(char *op_code) {
     if (strcmp(op_code, "mov") == 0) {

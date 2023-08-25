@@ -187,7 +187,7 @@ void update_data_symbols(symbol_list *table, int update_value);
 
 void print_symbol(symbol *symbol, char *result);
 
-bool update_entry_symbols(symbol_list *table, list *args,char *error_massage);
+bool update_entry_symbols(symbol_list *symbol_table,list **entry_list,int entry_counter,char *error_msg);
 
 /* A function that will create a new symbol table
 returns a pointer to the new table*/
