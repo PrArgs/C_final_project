@@ -13,13 +13,6 @@ static int default_hash_function(char *data){
 }
 
 
-
-static bool default_compare_function(char *data1, char *data2)
-{
-    return (strcmp(data1, data2) == 0)? TRUE : FALSE;
-}
-
-
 macro *macro_init(char *name){
 
     macro *macro = malloc(sizeof(macro));
@@ -123,6 +116,7 @@ bool table_contains(macro_table *macro_table, char *macro_name){
         }
         current_macro = current_macro->next;
     }
+    return result;
 }
 
 bool free_macro_table(macro_table *macro_table){
@@ -165,7 +159,7 @@ list *get_macro_lines(macro_table *macro_table,char *macro_name){
         }
         current_macro = current_macro->next;
     }
-
+    return NULL;
 }
 
 void print_macro(macro *macro){
@@ -173,8 +167,9 @@ void print_macro(macro *macro){
     print_list(macro->data);
 }
 
-char *print_macro_table(macro_table *table){
-    for (int i = 0; i < MAX_TABLE_SIZE; i++){
+void print_macro_table(macro_table *table){
+    int i;
+    for(i = 0; i < MAX_TABLE_SIZE; i++){
         macro *current_macro = table->macros_array[i];
         while(current_macro != NULL){
             print_macro(current_macro);
@@ -186,7 +181,8 @@ char *print_macro_table(macro_table *table){
 int get_symbol_val(symbol_list *table, char *symbol_name){
     symbol *current_symbol = table->head;
     while (current_symbol){
-        if(strcmp((char *)current_symbol->name, symbol_name) == 0){
+        if(strcmp((char *)current_symbol->name, symbol_name) == 0)
+        {
             return current_symbol->value;
         }
     }
@@ -194,11 +190,11 @@ int get_symbol_val(symbol_list *table, char *symbol_name){
 }
 
 void update_data_symbols(symbol_list *table, int update_value){
-    bool result = TRUE;
+    
     symbol *current_symbol = table->head;
     while(current_symbol != NULL){
         if(current_symbol->is_data){
-            current_symbol->value = update_value;
+            current_symbol->value += update_value;
         }
         current_symbol = current_symbol->next;
     }
@@ -352,7 +348,7 @@ bool add_symbol(symbol_list *table, char *key, int value){
         table->head = new_symbol;
         table->tail = new_symbol;
         if(new_symbol->error != NULL){
-            char *result = strcat("Error: ", new_symbol->error);
+            printf("Error: %s ", new_symbol->error);
             result = FALSE;
         }
         return TRUE;
@@ -370,6 +366,7 @@ bool add_symbol(symbol_list *table, char *key, int value){
         }
         return TRUE;       
     }
+    return result;
 }
 
 bool remove_symbol(symbol_list *table, char *key){

@@ -21,15 +21,14 @@ int main(int argc,char *argv[]) {
     symbol_list *symbol_table;   
     macro_table *m_table;   
 
-    char *new_argv[6];
+    
     char *file_name;
     
     int file_index;
     int file_name_len;
     long ic;
     long dc;
-    bool generate_files;
-    bool test;    
+    bool generate_files = TRUE; 
     long *IC; /*Since INITIAL_INSTRUCTION_COUNTER is an int we want to avoid garbage values*/
     long *DC;
 
@@ -43,8 +42,6 @@ int main(int argc,char *argv[]) {
     dc = INITIAL_DATA_COUNTER;
     IC = &ic;
     DC = &dc;
-    test = FALSE;
-    generate_files = TRUE;    
 
 
     if(argc < 2){

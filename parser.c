@@ -8,7 +8,6 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
     int entry_counter = 0;
     bool label_flag = FALSE;
     bool result = TRUE;
-    bool second_pass = FALSE;
     char *rest;
     char *error_msg;   
     char *first_frase;
@@ -191,7 +190,6 @@ bool parse(char *file_name, symbol_list *symbol_table, long *data_counter, long 
             
         rewind(file);
         line_counter = 0;
-        second_pass = TRUE;
         op_code = -1;
         second_op_code = -1;
 

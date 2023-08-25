@@ -105,7 +105,7 @@ list *get_macro_lines(macro_table *macro_table,char *macro_name);
 void print_macro(macro *macro);
 
 /* A function that will return the string of all the macro table (for debugging)*/
-char *print_macro_table(macro_table *table);
+void print_macro_table(macro_table *table);
 
 
 

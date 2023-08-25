@@ -1,25 +1,37 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "cppbuild",
-			"label": "C/C++: gcc.exe build active file",
-			"command": "C:\\MinGW\\bin\\gcc.exe",
-			"args": [
-				"-fdiagnostics-color=always",
-				"-g",
-				"${file}",
-				"-o",
-				"${fileDirname}\\${fileBasenameNoExtension}.exe"
-			],
-			"options": {
-				"cwd": "${fileDirname}"
-			},
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build",
-			"detail": "compiler: C:\\MinGW\\bin\\gcc.exe"
-		}
-	]
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "C/C++: gcc.exe build active file",
+            "command": "C:\\MinGW\\bin\\gcc.exe",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "-Wall",
+                "-ansi",
+				"-pedantic",
+                "-o",
+                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "${workspaceFolder}\\assembler.c",
+                "${workspaceFolder}\\data_structures.c",
+                "${workspaceFolder}\\ast.c",
+                "${workspaceFolder}\\file_generator.c",
+                "${workspaceFolder}\\parser.c",
+                "${workspaceFolder}\\pre_assembler.c",
+                "${workspaceFolder}\\table_generator.c",
+                "${workspaceFolder}\\util.c"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
 }

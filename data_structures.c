@@ -32,10 +32,13 @@ list *list_init()
 {  
     list *list = malloc(sizeof(list));
     if (!list){
-       exit(1);/*exit if malloc fails*/
+       printf("Error: unable to allocate memory for list\n");
+       return NULL;
     }
     list->head = NULL;
+    return list;
 }
+
 
 node *get_list_head(list *list)
 {
@@ -77,6 +80,7 @@ bool list_remove(list *list, node *r_node){
         previous = current;
         current = current->next;
     }
+    return FALSE;
 }
 
 bool list_contains(list *list,  node *node_to_search){

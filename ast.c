@@ -200,13 +200,10 @@ bool legal_char(char c){
 bool init_data_in_data(data_list *data_image,long *data_counter,int num,int line_counter){
     bool error = TRUE;
     data_word *d_word;
-    data_node *result;
-    int defualt_val;
-
-    defualt_val = 0;
+    
     if(!legal_data_num(num)){
         printf("Error at line %d: %d is not a legal number\n",line_counter,num);
-        num = defualt_val;
+        num = 0;
     }
     d_word =  (data_word *)malloc(sizeof(data_word));
     if (d_word == NULL){
@@ -219,6 +216,11 @@ bool init_data_in_data(data_list *data_image,long *data_counter,int num,int line
 
     d_word->data = (unsigned int)num;
     error = add_to_data_list(data_image,d_word);
+    if(!error){
+        printf("Error: unable to allocate memory\n");
+        free(d_word);
+        return FALSE;
+    }
     (*data_counter)++;
     return error;
 
@@ -354,9 +356,7 @@ bool valid_addressing(int given_addressing, int ligal_addressing)
 }
 
 int parse_single_oprand(char *args,char *error_msg,instruction_word *tmp_word ){
-    int result = 0;
     int num = 0;    
-    char error_format[MAX_LINE_LENGTH];
     immediate_direct_word *rand_word;
     register_word *reg_word;    
 
@@ -717,7 +717,7 @@ int find_op_code(char *op_code) {
 bool parse_instruction(int ins_code, list *args, inst_list *instruction_image,long *instruction_counter,int line_counter){
     
     int i = 0, f_rand_add = 0, s_rand_add = 0;       
-    int *word_limit, *ligal_add_source, *ligal_add_dest;
+    int *word_limit = NULL, *ligal_add_source= NULL, *ligal_add_dest= NULL;
     node *tmp_node;
     char *error;        
     char *args_array[]= {NULL,NULL};
@@ -750,7 +750,6 @@ bool parse_instruction(int ins_code, list *args, inst_list *instruction_image,lo
         printf("Error at line %d: unable to allocate memory\n",line_counter);
         return FALSE;
     } 
-    
     
     set_ligal_params(ins_code,ligal_add_source,ligal_add_dest,word_limit);
 
@@ -1081,7 +1080,7 @@ data_node *get_head_data(data_list *list){
 }
 
 int lable_op_code(int op_code){
-    int *op , *first , *seconde;
+    int *op= NULL , *first= NULL , *seconde= NULL;
     int result = 0;
     set_ligal_params(op_code,first,seconde,op);
     if(valid_addressing(DIRECT,*first)){

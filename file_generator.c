@@ -114,7 +114,7 @@ void generate_ent_file(char *file_name, symbol_list *symbol_list){
 */
 void generate_ext_file(char *file_name, symbol_list *symbol_list){
 
-    int i = 0;
+    
     char *symbol_line = NULL;    
     char *output_file_name;
     symbol *current_symbol;

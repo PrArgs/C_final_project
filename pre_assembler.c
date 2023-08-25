@@ -9,7 +9,6 @@ bool pre_assembler(char *file_name, macro_table *table){
     char *error_msg;
     char *file_name_am;
     char *line;/*the line that will be read from the file*/
-    list *macro_lines = NULL; /*a pionte that will be used to print the macro*/
     FILE *file_am;
     FILE *file;
 
