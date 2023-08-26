@@ -3,3 +3,4 @@ cmake-build-debug/.ninja_log
 cmake-build-debug/.ninja_deps
 *.obj
 *.ninja
+*.exe

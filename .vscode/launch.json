@@ -9,7 +9,13 @@
             "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceFolder}\\assembler.exe",
-            "args": [],
+            "args": [
+                "test_from_maman",
+                "test1",
+                "test2_warnings",
+                "test3_warning",
+                "test4_err"
+            ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
@@ -20,11 +26,17 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}\\assembler.exe",
-            "args": [],
+            "args": [
+                "test_from_maman",
+                "test1",
+                "test2_warnings",
+                "test3_warning",
+                "test4_err"
+            ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
-            "externalConsole": false,
+            "externalConsole": true,
             "MIMode": "gdb",
             "miDebuggerPath": "C:\\MinGW\\bin\\gdb.exe",
             "setupCommands": [
@@ -44,3 +56,5 @@
 
     ]
 }
+
+
